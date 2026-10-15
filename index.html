@@ -1552,7 +1552,11 @@ async function liveBriefs(){
   try{
     const {data,error}=await SB.from("briefs").select("brief_date,edition,headline,doc,published_at").order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(20);
     if(error) throw error; if(!data||!data.length) return;          // keep the samples until the first real brief exists
-    const conv=data.map(docToBrief).filter(b=>b.sections.length);
+    // A brief finished early is held until 07:00 / 17:00 ET (doc.release_at); show it then.
+    const now=Date.now(), held=data.map(r=>r.doc&&r.doc.release_at?Date.parse(r.doc.release_at):0).filter(t=>t>now);
+    if(held.length){ clearTimeout(liveBriefs._t); liveBriefs._t=setTimeout(liveBriefs,Math.min(...held)-now+5000) }
+    const rows=data.filter(r=>!(r.doc&&r.doc.release_at&&Date.parse(r.doc.release_at)>now)); if(!rows.length) return;
+    const conv=rows.map(docToBrief).filter(b=>b.sections.length);
     if(!conv.length) return;
     const cur=BRIEF&&BRIEF.id; EDITIONS.length=0; conv.forEach(b=>EDITIONS.push(b));
     LIVE_IDS.length=0; EDITIONS.forEach(e=>LIVE_IDS.push(e.id));

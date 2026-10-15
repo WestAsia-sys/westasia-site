@@ -1792,7 +1792,7 @@ function intentChip(){
   return `<div class="intent"><div><b>${p.name}</b> · ${price}</div><span>${intent.mode==="buy"?"After you confirm your email, you’ll add a card and your subscription starts today.":"15 days of full Pro access. We’ll ask for a card, but you won’t be charged until the trial ends."}</span><button type="button" class="linkbtn" data-intent-clear>Change plan</button></div>`;
 }
 function stripeOn(){return !!(window.WAR_LIVE&&window.WAR_LIVE.url&&window.WAR_LIVE.stripe&&window.supabase)}
-function trialEndDate(){if(user&&user.trialEnds)return new Date(user.trialEnds).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});const d=new Date((user&&user.trialStart)||Date.now());d.setDate(d.getDate()+15);return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
+function trialEndDate(){const F={month:"long",day:"numeric",year:"numeric"};if(user&&user.trialEnds)return new Date(user.trialEnds).toLocaleDateString("en-US",F);if(stripeOn()&&user&&!user.cardOnFile){const n=new Date();n.setDate(n.getDate()+15);return n.toLocaleDateString("en-US",F)}const d=new Date((user&&user.trialStart)||Date.now());d.setDate(d.getDate()+15);return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
 function checkout(){
   const i=intent&&PLANS.some(x=>x.k===intent.plan)?intent:{plan:"pro",billing,mode:"buy"}; intent=i; store.set("intent",i);
   const p=PLANS.find(x=>x.k===i.plan), amt=planAmount(i), yearly=i.plan==="teams"||i.billing==="annual";

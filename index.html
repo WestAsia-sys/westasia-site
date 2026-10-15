@@ -559,6 +559,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center;gap:6px}
 .is-admin .view-head{margin-bottom:14px}
 .atabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin:0 0 14px;scrollbar-width:none}
 .atabs a{flex:none;padding:10px 14px;font-size:14px;font-weight:700;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-1px}
+@media (max-width:820px){.atabs{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);padding-right:24px}}
 .atabs a:hover{color:var(--ink)}.atabs a[aria-current="page"]{color:var(--ink);border-color:var(--gold)}
 .anote{font-size:13px;color:var(--ink-2);background:var(--gold-soft);border-radius:10px;padding:10px 14px;margin:0 0 18px}
 .pilot-tag{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-ink);background:var(--gold-soft);border:1px solid var(--gold);border-radius:999px;padding:0 7px;vertical-align:1px}
@@ -714,7 +715,8 @@ a.brand:focus-visible,.sf-brand:focus-visible{outline:2px solid var(--gold);outl
 :root[data-theme="dark"] .dv-developing{background:#3A2C12;color:#F1C77A;border-color:#6E5320}
 :root[data-theme="dark"] .dv-confirmed{background:#173426;color:#8FD3A8;border-color:#2E6447}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .dv-developing{background:#3A2C12;color:#F1C77A;border-color:#6E5320}:root:not([data-theme="light"]) .dv-confirmed{background:#173426;color:#8FD3A8;border-color:#2E6447}}
-.dv-major{display:inline-flex;align-items:center;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--r5);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.dv-major{display:inline-flex;align-items:center;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--r5);border-radius:999px;padding:2px 9px;white-space:nowrap;max-width:100%}
+@media (max-width:400px){.dv-major{white-space:normal;line-height:1.3}}
 .dv-reg{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--ink-2)}
 .dv-reg i{width:8px;height:8px;border-radius:50%;background:var(--c)}
 .dv-lockp{margin:0;font-size:14px;color:var(--ink-2)}
@@ -782,6 +784,14 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .brand .logo-img{width:40px;height:40px}
 .pdf-logo-img{height:18px;width:auto;vertical-align:middle}
 .sf-cta{flex-wrap:wrap}
+
+/* responsive public header (phones and tablets) */
+.pub-nav .brand,.pub-nav .brand b.wm span,.pub-links button,.pub-links a,.btn-gold{white-space:nowrap}
+.pub-nav .brand{flex:none}
+@media (max-width:1100px){.pub-links{gap:14px}.pub-links [data-scroll="features"],.pub-links [data-scroll="standards"]{display:none}}
+@media (max-width:420px){.pub-nav{gap:10px}.pub-links{gap:12px}.pub-nav .btn-gold{padding:9px 12px;font-size:13px}.pub-nav .brand .logo-img{width:34px;height:34px}.pub-nav .brand b.wm{font-size:14.5px}}
+@media (max-width:380px){.pub-nav{gap:8px}.pub-links{gap:10px}.pub-nav .btn-gold{padding:8px 10px;font-size:12.5px}.pub-nav .brand{gap:7px}.pub-nav .brand b.wm{font-size:13.5px}}
+@media (max-width:340px){.pub-nav .brand b.wm{display:none}}
 </style>
 
 <div id="public" hidden></div>
@@ -827,7 +837,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 <div id="modal" hidden></div>
 
 <script src="vendor/supabase-2.117.3.js"></script>
-<script>window.WAR_LIVE={url:"https://nnlixarbulqncotnlvto.supabase.co",key:"sb_publishable_SCNI20nnBi9maqla1vuXOQ_206nB4Q-",sso:[],vapid:""};/* sso: add "Google"/"Microsoft" once enabled in Supabase. vapid: paste VAPID_PUBLIC_KEY (public) */</script>
+<script>window.WAR_LIVE={url:"https://nnlixarbulqncotnlvto.supabase.co",key:"sb_publishable_SCNI20nnBi9maqla1vuXOQ_206nB4Q-",sso:[],vapid:"",stripe:"pk_test_51UQtV8BnVnn23SjMJglK4k8tvcZyEJ1RpLR1N5tTr84IDAPMupbZmySAtDYFrxyMOW81oUhsB8HVLO5MJaIUwBYL00xetoe8kt"};/* sso: add "Google"/"Microsoft" once enabled in Supabase. vapid: paste VAPID_PUBLIC_KEY (public). stripe: Stripe publishable key (pk_test_ now, pk_live_ at launch) */</script>
 <script>
 /* ------------------------------------------------------------------ data
    Sample edition built from live reporting on Sept 23, 2026. Risk ratings,
@@ -1583,13 +1593,14 @@ function viewForYou(){
 function viewPlans(){
   const pro=tier==="pro";
   const ch=[["email","Email"],["push","Push notifications"],["slack","Slack"],["teams","Microsoft Teams"],["whatsapp","WhatsApp"]];
-  return viewHead("Plans and delivery",user&&user.plan?"Manage your plan and how briefs reach you.":"Choose a plan to keep your access after the trial. The preview links switch what you see in this pilot.")+
+  return viewHead("Plans and delivery",user&&user.plan?"Manage your plan and how briefs reach you.":(LIVE?"Choose a plan to keep your access after the trial.":"Choose a plan to keep your access after the trial. The preview links switch what you see in this pilot."))+
+  `${stripeOn()&&user&&user.hasStripe?`<p style="margin:0 0 14px"><button class="btn ghost" type="button" data-portal>Manage billing, card and invoices</button></p>`:""}`+
   `${user&&user.plan?`<div class="trial"><b>You’re subscribed</b><span>${PLANS.find(x=>x.k===user.plan).name}, billed ${user.billing==="annual"?"yearly":"monthly"}. Change or cancel anytime.</span></div>`:(user&&user.trial&&user.trialPlan?`<div class="trial"><b>Free trial until ${trialEndDate()}</b><span>Then ${PLANS.find(x=>x.k===user.trialPlan).name} starts at ${money(planAmount({plan:user.trialPlan,billing:user.trialBilling}))} ${user.trialPlan==="teams"||user.trialBilling==="annual"?"a year":"a month"}. Change your plan below or cancel anytime before then.</span></div>`:`<div class="trial"><b>15-day free trial</b><span>Every new account gets full Pro access for 15 days. A card is required; the first charge comes when the trial ends.</span></div>`)}
   ${billToggle()}
   ${planCards("app")}
   <h2 class="sub-title">Delivery</h2>
   <div class="delivery">${ch.map(([k,l])=>{const locked=!pro&&["slack","teams","whatsapp"].includes(k);return `<label class="toggle" for="dl-${k}"><span>${l}</span><input type="checkbox" id="dl-${k}" data-deliv="${k}" ${delivery[k]&&!locked?"checked":""} ${locked?"disabled":""}></label>`}).join("")}</div>
-  <p class="foot">Prototype: nothing is charged or sent.${pro?"":" Slack, Teams and WhatsApp delivery are in Pro."}</p>`;
+  <p class="foot">${LIVE?"":"Prototype: nothing is charged or sent."}${pro?"":" Slack, Teams and WhatsApp delivery are in Pro."}</p>`;
 }
 
 /* ------------------------------------------------------------------ Archive */
@@ -1780,7 +1791,8 @@ function intentChip(){
   const price=intent.plan==="teams"?"$3,950 a year for 5 seats":(intent.billing==="annual"?`$${p.y} a year`:`$${p.m} a month`);
   return `<div class="intent"><div><b>${p.name}</b> · ${price}</div><span>${intent.mode==="buy"?"After you confirm your email, you’ll add a card and your subscription starts today.":"15 days of full Pro access. We’ll ask for a card, but you won’t be charged until the trial ends."}</span><button type="button" class="linkbtn" data-intent-clear>Change plan</button></div>`;
 }
-function trialEndDate(){const d=new Date((user&&user.trialStart)||Date.now());d.setDate(d.getDate()+15);return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
+function stripeOn(){return !!(window.WAR_LIVE&&window.WAR_LIVE.url&&window.WAR_LIVE.stripe&&window.supabase)}
+function trialEndDate(){if(user&&user.trialEnds)return new Date(user.trialEnds).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});const d=new Date((user&&user.trialStart)||Date.now());d.setDate(d.getDate()+15);return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
 function checkout(){
   const i=intent&&PLANS.some(x=>x.k===intent.plan)?intent:{plan:"pro",billing,mode:"buy"}; intent=i; store.set("intent",i);
   const p=PLANS.find(x=>x.k===i.plan), amt=planAmount(i), yearly=i.plan==="teams"||i.billing==="annual";
@@ -1789,8 +1801,8 @@ function checkout(){
     <p class="m-sub">${onTrial?`You keep full Pro access until your trial ends on ${trialEndDate()}. The card on file is charged for this plan then.`:"Your subscription starts today. Cancel anytime from your account."}</p>
     ${i.plan==="teams"?"":`<div class="bill" role="group" aria-label="Billing period"><button type="button" data-cbill="monthly" aria-pressed="${!yearly}">Monthly · $${p.m}</button><button type="button" data-cbill="annual" aria-pressed="${yearly}">Annual · $${p.y} <span>2 months free</span></button></div>`}
     <table class="dtable"><tbody><tr><th scope="row">Plan</th><td>${p.name}${i.plan==="teams"?" · 5 seats":""}</td></tr><tr><th scope="row">Billing</th><td>${yearly?"Yearly":"Monthly"}</td></tr><tr><th scope="row">${onTrial?"First charge":"Due today"}</th><td><b>${money(amt)}</b> <small class="mu">plus tax where it applies</small></td></tr></tbody></table>
-    <div class="m-actions"><button class="btn" type="button" data-pay>${onTrial?"Save plan":"Continue to secure checkout"}</button><button class="btn ghost" type="button" data-close>Not now</button></div>
-    <p class="proto">Pilot: no payment is taken. In the live version this opens Stripe’s secure checkout, so card details never touch our servers.</p>`,"Subscribe");
+    <div class="m-actions"><button class="btn" type="button" data-pay>${stripeOn()?(user&&user.hasStripe?"Continue to billing":"Continue to secure checkout"):onTrial?"Save plan":"Continue to secure checkout"}</button><button class="btn ghost" type="button" data-close>Not now</button></div>
+    ${stripeOn()?(user&&user.hasStripe?`<p class="m-sub" style="margin-top:12px">You’ll confirm the change on our secure billing page.</p>`:`<p class="m-sub" style="margin-top:12px">Payment is handled by Stripe. Card details never touch our servers.</p>`):`<p class="proto">Pilot: no payment is taken. In the live version this opens Stripe’s secure checkout, so card details never touch our servers.</p>`}`,"Subscribe");
 }
 function completeCheckout(){
   const i=intent; if(!i||!user) return;
@@ -1803,14 +1815,15 @@ function completeCheckout(){
   toast(`Subscribed to ${PLANS.find(x=>x.k===user.plan).name}`);
 }
 document.addEventListener("click",e=>{
-  const t=e.target.closest("[data-bill],[data-cbill],[data-plan-go],[data-checkout],[data-pay],[data-intent-clear]"); if(!t) return;
+  const t=e.target.closest("[data-bill],[data-cbill],[data-plan-go],[data-checkout],[data-pay],[data-portal],[data-intent-clear]"); if(!t) return;
   if(t.dataset.bill){billing=t.dataset.bill;store.set("billing",billing);const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(t.dataset.cbill){billing=t.dataset.cbill;store.set("billing",billing);intent.billing=billing;store.set("intent",intent);checkout();return}
   if(t.dataset.planGo){const [plan,mode]=t.dataset.planGo.split("|");intent={plan,mode,billing:plan==="teams"?"annual":billing};store.set("intent",intent);
     if(signed){closeModal(); if(mode==="buy") checkout(); else location.hash="today"; return}
     if(location.hash==="#signup") render(); else location.hash="signup"; return}
   if(t.hasAttribute("data-checkout")){checkout();return}
-  if(t.hasAttribute("data-pay")){completeCheckout();return}
+  if(t.hasAttribute("data-portal")){livePortal(t);return}
+  if(t.hasAttribute("data-pay")){ if(stripeOn()){ if(user&&user.hasStripe) livePortal(t); else liveCheckout({...(intent||{plan:"pro",billing}),mode:"buy"},t); return } completeCheckout();return}
   if(t.hasAttribute("data-intent-clear")){intent=null;store.set("intent",null);location.hash="home";setTimeout(()=>{const el=document.getElementById("pricing");if(el)el.scrollIntoView()},60);return}
 });
 
@@ -1995,10 +2008,10 @@ function viewActivate(){
     <fieldset><legend>Plan${buy?"":" after the trial"}</legend><div class="radio-row three">${PLANS.map(opt).join("")}</div></fieldset>
     <table class="dtable"><tbody>
       ${buy?`<tr><th scope="row">Due today</th><td><b>${money(amt)}</b> <small class="mu">plus tax where it applies</small></td></tr><tr><th scope="row">Renews</th><td>${yearly?"Every year":"Every month"} until you cancel</td></tr>`
-      :`<tr><th scope="row">Due today</th><td><b>$0</b></td></tr><tr><th scope="row">Trial</th><td>Full Pro access until ${trialEndDate()}</td></tr><tr><th scope="row">First charge</th><td>${money(amt)} for ${p.name} on ${trialEndDate()}, then ${yearly?"every year":"every month"}</td></tr><tr><th scope="row">Reminder</th><td>We email you three days before the trial ends</td></tr>`}
+      :`<tr><th scope="row">Due today</th><td><b>$0</b></td></tr><tr><th scope="row">Trial</th><td>Full Pro access until ${trialEndDate()}</td></tr><tr><th scope="row">First charge</th><td>${money(amt)} for ${p.name} on ${trialEndDate()}, then ${yearly?"every year":"every month"}</td></tr><tr><th scope="row">Reminder</th><td>We email you before the trial ends</td></tr>`}
     </tbody></table>
     <button class="btn" type="button" data-activate>${buy?"Add card and subscribe":"Add card and start free trial"}</button>
-    <p class="proto">Pilot: no card is collected. In the live version, Stripe’s secure card form appears here, so card details never touch our servers.</p>
+    ${stripeOn()?`<p class="auth-alt" style="margin-top:10px">You’ll add your card on Stripe’s secure page. Card details never touch our servers.</p>`:`<p class="proto">Pilot: no card is collected. In the live version, Stripe’s secure card form appears here, so card details never touch our servers.</p>`}
     ${buy?"":`<p class="auth-alt">Cancel anytime before ${trialEndDate()} and you won’t be charged.</p>`}
   </div>`, SIDE_UP);
 }
@@ -2007,6 +2020,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.abill){billing=t.dataset.abill;store.set("billing",billing);intent.billing=billing;store.set("intent",intent);render();return}
   if(t.dataset.aplan){intent.plan=t.dataset.aplan;if(intent.plan==="teams")intent.billing="annual";else intent.billing=billing;store.set("intent",intent);render();return}
   if(t.hasAttribute("data-activate")){
+    if(stripeOn()){ liveCheckout(intent,t); return }
     const i=intent; if(LIVE) liveSavePrefs({plan_choice:i.plan,billing_choice:i.plan==="teams"?"annual":i.billing}); user.cardOnFile=true;
     const L=store.get("pilotSignups",[])||[]; const en=L.find(x=>x.email===user.email);
     if(i.mode==="buy"){ user.plan=i.plan; user.billing=i.plan==="teams"?"annual":i.billing; user.paidAt=new Date().toISOString(); user.trial=false; tier=i.plan==="essential"?"essential":"pro"; if(en){en.plan=user.plan;en.billing=user.billing;en.paidAt=user.paidAt;} }
@@ -2040,6 +2054,7 @@ const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const LIVE = !!(window.WAR_LIVE && window.WAR_LIVE.url && window.WAR_LIVE.key && window.supabase);
 const SB = LIVE ? window.supabase.createClient(window.WAR_LIVE.url, window.WAR_LIVE.key, {auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}) : null;
 const SSO_PROVIDER={Google:"google",Microsoft:"azure"};
+let CHECKOUT_PENDING=false;
 function busy(form,on,label){const b=form&&form.querySelector('button[type="submit"]'); if(!b)return; if(on){b.dataset.label=b.textContent;b.textContent=label||"Please wait…";b.disabled=true}else{b.textContent=b.dataset.label||b.textContent;b.disabled=false}}
 function friendly(err){const m=(err&&err.message)||String(err||"");
   if(/signups? not allowed|user not found/i.test(m)) return "We couldn’t find an account for that email. Start a free trial instead.";
@@ -2052,14 +2067,16 @@ function profileToUser(p,subs){
   const name=[p.first_name,p.last_name].filter(Boolean).join(" ")||p.email.split("@")[0];
   const u={id:p.id,name,first:p.first_name||"",last:p.last_name||"",email:p.email,phone:p.phone||"",country:p.country||"",title:p.job_title||"",seniority:p.seniority||"",org:p.organization||"",orgtype:p.org_type||"",func:p.job_function||"",size:p.org_size||"",seats:p.seats||"individual",role:p.role==="admin"?"admin":undefined,trialStart:p.trial_started_at};
   if(p.role==="admin"){u.title=u.title||"Founder";u.org=u.org||"Outreach Consult";u.trial=false;return u}
+  u.hasStripe=(subs||[]).some(x=>x.stripe_customer_id);
   if(s&&s.status!=="trialing"){u.plan=s.plan;u.billing=s.billing;u.trial=false;u.cardOnFile=true}
-  else {u.trial=true; if(s){u.cardOnFile=true;u.trialPlan=s.plan;u.trialBilling=s.billing}
+  else {u.trial=true; if(s){u.cardOnFile=true;u.trialPlan=s.plan;u.trialBilling=s.billing;if(s.trial_ends_at)u.trialEnds=s.trial_ends_at}
+    else if(CHECKOUT_PENDING){u.cardOnFile=true}
     else if(!window.WAR_LIVE.stripe&&p.plan_choice){ /* until Stripe is connected, a saved plan choice counts as activated */ u.cardOnFile=true;u.trialPlan=p.plan_choice;u.trialBilling=p.billing_choice||"monthly" } }
   return u;}
 async function loadMe(){
   const {data:{user:au}}=await SB.auth.getUser(); if(!au) return null;
   const {data:p,error}=await SB.from("profiles").select("*").eq("id",au.id).maybeSingle(); if(error) throw error; if(!p) return null;
-  const {data:subs}=await SB.from("subscriptions").select("plan,billing,status,trial_ends_at").eq("user_id",au.id);
+  const {data:subs}=await SB.from("subscriptions").select("plan,billing,status,trial_ends_at,stripe_customer_id").eq("user_id",au.id);
   return {p,subs:subs||[],provider:(au.app_metadata&&au.app_metadata.provider)||"email"};}
 const needsProfile=p=>!(p.organization&&p.job_title&&p.country&&p.seats);
 async function afterAuth(isNewHint){
@@ -2112,6 +2129,39 @@ function pruneSSO(){ // show only the sign-in providers switched on in Supabase 
 async function liveSavePrefs(fields){
   if(!user||!user.id) return; const {error}=await SB.from("profiles").update(fields).eq("id",user.id); if(error) console.warn("save prefs",error.message);
 }
+async function callFn(name,body){
+  const {data:{session}}=await SB.auth.getSession(); if(!session) throw new Error("Please sign in again.");
+  const r=await fetch(window.WAR_LIVE.url+"/functions/v1/"+name,{method:"POST",headers:{"Content-Type":"application/json",apikey:window.WAR_LIVE.key,Authorization:"Bearer "+session.access_token},body:JSON.stringify(body||{})});
+  let j={}; try{j=await r.json()}catch(e){}
+  if(!r.ok){const er=new Error(j.error||"Something went wrong. Please try again."); er.portal=!!j.portal; throw er}
+  return j;}
+function btnBusy(b,on,label){ if(!b||b.tagName!=="BUTTON") return; if(on){b.dataset.label=b.textContent;b.textContent=label;b.disabled=true}else{b.textContent=b.dataset.label||b.textContent;b.disabled=false} }
+async function liveCheckout(i,btn){
+  if(!i||!user) return; btnBusy(btn,true,"Opening secure checkout…");
+  try{
+    await liveSavePrefs({plan_choice:i.plan,billing_choice:i.plan==="teams"?"annual":i.billing});
+    const j=await callFn("create-checkout",{plan:i.plan,billing:i.plan==="teams"?"annual":i.billing,mode:i.mode==="buy"?"buy":"trial"});
+    if(j.url){ location.href=j.url; return }
+    throw new Error("Checkout could not start. Please try again.");
+  }catch(err){ btnBusy(btn,false); if(err.portal) return livePortal(btn); toast(err.message||"Checkout could not start. Please try again.") }
+}
+async function livePortal(btn){
+  btnBusy(btn,true,"Opening billing…");
+  try{ const j=await callFn("billing-portal",{}); if(j.url){ location.href=j.url; return } throw new Error() }
+  catch(err){ btnBusy(btn,false); toast(err.message||"Billing page could not open. Please try again.") }
+}
+async function checkoutReturn(){
+  const q=new URLSearchParams(location.search), st=q.get("checkout"); if(!st) return;
+  try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){}
+  if(st==="cancel"){ setTimeout(()=>toast("Checkout canceled. You haven’t been charged."),300); return }
+  CHECKOUT_PENDING=true;
+  for(let k=0;k<12;k++){ // wait for Stripe to confirm (usually a few seconds)
+    const me=await loadMe().catch(()=>null); const ok=me&&me.subs.some(x=>["trialing","active","past_due"].includes(x.status)&&x.stripe_customer_id);
+    if(ok){ CHECKOUT_PENDING=false; const u=profileToUser(me.p,me.subs); signIn(u); if(u.plan){tier=u.plan==="essential"?"essential":"pro";store.set("tier",tier)} render(); toast(u.plan?`Subscribed to ${PLANS.find(x=>x.k===u.plan).name}`:"Card added. Your trial has started."); return }
+    await new Promise(r=>setTimeout(r,2000));
+  }
+  CHECKOUT_PENDING=false; toast("Payment received. Your account will update in a minute.");
+}
 async function liveContact(n,em,msg,form){
   busy(form,true,"Sending…");
   const topic=($("#cf-topic")||{}).value||null, org=($("#cf-org")||{}).value||null;
@@ -2122,12 +2172,14 @@ async function liveContact(n,em,msg,form){
 async function liveBoot(){
   try{
     const {data:{session}}=await SB.auth.getSession();
+    if(/[?&]checkout=success/.test(location.search)) CHECKOUT_PENDING=true;
     if(/[?&]code=/.test(location.search)){ try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){} }
     if(session){ const h=location.hash.replace("#",""); const me=await loadMe();
       if(me&&(me.p.role==="admin"||!needsProfile(me.p))){ const u=profileToUser(me.p,me.subs); signIn(u); if(!h||h==="home"||h==="signin"||h==="verify") location.hash="today"; else render(); }
       else await afterAuth(true); }
     else if(signed){ signed=false; user=null; store.set("signed",false); store.set("user",null); render(); }
   }catch(err){ console.warn("boot",err) }
+  if(signed) checkoutReturn(); else if(/[?&]checkout=/.test(location.search)){ try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){} }
   devLoad(); setInterval(()=>{ if(document.visibilityState==="visible") devLoad() }, 5*60*1000);
   SB.auth.onAuthStateChange((ev)=>{ if(ev==="SIGNED_OUT"&&signed){ signed=false; user=null; store.set("signed",false); store.set("user",null); location.hash="home"; } });
 }
@@ -2323,6 +2375,12 @@ function drawLines(w,{labels,series,fmt=v=>v,H=220,min=0,max:mx}){
 }
 // horizontal bars, single series
 function drawHBars(w,{rows,c="--s1",fmt=v=>v.toLocaleString("en-US"),share=true}){
+  if(w<480){ // phones: label on its own line above a full-width bar
+    const bh=12,rh=40,H=rows.length*rh+2,iw=w-96,max=Math.max(...rows.map(r=>r[1]))||1,tot=rows.reduce((s,r)=>s+r[1],0);
+    let out="";rows.forEach(([l,v],i)=>{const y=i*rh,by=y+18,bwid=Math.max(2,iw*v/max);
+      out+=`<text class="axl" x="0" y="${y+12}">${esc(l.length>44?l.slice(0,42)+"…":l)}</text><rect x="0" y="${by}" width="${bwid}" height="${bh}" rx="3" style="fill:var(${c})"/><text class="dl" x="${bwid+6}" y="${by+bh-2}">${fmt(v)}${share&&tot?` <tspan class="mu">${pct(v/tot)}</tspan>`:""}</text>`});
+    return `<svg width="${w}" height="${H}" role="img">${out}</svg>`;
+  }
   const labW=Math.min(200,Math.max(110,w*.42)),bh=14,gap=12,H=rows.length*(bh+gap)+4,iw=w-labW-56;
   const max=Math.max(...rows.map(r=>r[1]))||1,tot=rows.reduce((s,r)=>s+r[1],0);
   let out="";rows.forEach(([l,v],i)=>{const y=i*(bh+gap)+2,bwid=Math.max(2,iw*v/max);
@@ -2552,7 +2610,7 @@ function render(){setMarks();
   const adm=v.startsWith("admin");
   renderNav(adm?"admin":v);renderTier();renderAcct();
   document.body.classList.toggle("is-admin",adm);
-  if(adm){$("#view").innerHTML=viewAdmin(v);drawCharts();return}
+  if(adm){$("#view").innerHTML=viewAdmin(v);drawCharts();const n=$(".atabs"),a=n&&n.querySelector("[aria-current]");if(a&&n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;return}
   $("#view").innerHTML={today:viewToday,developments:viewDevelopments,archive:viewArchive,risk:viewRisk,calendar:viewCalendar,foryou:viewForYou,plans:viewPlans}[v]();
   if(v==="plans"&&user){const d=document.createElement("div");d.className="acct acct-m";d.innerHTML=$("#acct").innerHTML;$("#view").prepend(d)}
 }

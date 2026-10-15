@@ -792,6 +792,62 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 @media (max-width:420px){.pub-nav{gap:10px}.pub-links{gap:12px}.pub-nav .btn-gold{padding:9px 12px;font-size:13px}.pub-nav .brand .logo-img{width:34px;height:34px}.pub-nav .brand b.wm{font-size:14.5px}}
 @media (max-width:380px){.pub-nav{gap:8px}.pub-links{gap:10px}.pub-nav .btn-gold{padding:8px 10px;font-size:12.5px}.pub-nav .brand{gap:7px}.pub-nav .brand b.wm{font-size:13.5px}}
 @media (max-width:340px){.pub-nav .brand b.wm{display:none}}
+
+/* admin tools: export, print, refresh */
+.atools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin:0 0 14px}
+.atools-b{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.atools .btn{min-height:40px;display:inline-flex;align-items:center;gap:6px}
+.adata{font-size:12.5px;color:var(--muted)}
+.adata::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#2E8B57;margin-right:6px;vertical-align:1px}
+.aprint-head{display:none}
+.chart-empty{padding:18px 0;margin:0}
+.feed.msgs small{display:block;color:var(--ink-2);margin:3px 0;white-space:normal}
+.feed.msgs a{font-size:12.5px;word-break:break-all}
+@media (max-width:640px){
+  .atools{flex-direction:column;align-items:stretch}
+  .atools-b{margin-left:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .atools-b .btn{justify-content:center;width:100%}
+  .atools-b .btn[data-arefresh]{grid-column:1 / -1}
+  .atabs a{padding:12px 14px}
+  .fchip{min-height:36px}
+  .pager .btn{min-height:40px}
+  /* tables become cards on phones */
+  .atable.cards thead{display:none}
+  .atable.cards,.atable.cards tbody,.atable.cards tr,.atable.cards td{display:block;width:100%}
+  .atable.cards tr{border-bottom:1px solid var(--line);padding:10px 14px}
+  .atable.cards td{border:0;padding:3px 0 3px 112px;white-space:normal;text-align:left;position:relative;min-height:20px}
+  .atable.cards td::before{content:attr(data-l);position:absolute;left:0;top:5px;width:104px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .atable.cards td:first-child{font-size:15px;padding:0 0 6px}
+  .atable.cards td:first-child::before{content:none}
+  .atable.cards td.num{text-align:left}
+  .atable.cards td.empty{padding:20px 0;text-align:center}
+  .atable.cards td.empty::before{content:none}
+  .feed li{grid-template-columns:auto minmax(0,1fr);row-gap:2px}
+  .feed li time,.feed li>.linkbtn{grid-column:2}
+  .m-actions{flex-wrap:wrap}
+  .m-actions .btn{flex:1 1 auto;justify-content:center}
+}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff!important;color:#000}
+  .rail,.tabbar,.mobilehead,.acct-m,.atabs,.atools,.toast,.ctip,#modal,.site-foot,.pager,.fchips,.afilters,.tv summary,.alink,.linkbtn,.sample{display:none!important}
+  #main,#view,.shell{margin:0!important;padding:0!important;max-width:none!important;display:block!important}
+  .vhead,.view-head{background:none!important;color:#000!important;border:0!important;padding:0 0 6px!important}
+  .vhead *,.view-head *{color:#000!important}
+  .aprint-head{display:block;font-size:11px;color:#444;margin:0 0 10px;border-bottom:1px solid #999;padding-bottom:6px}
+  .apanel,.kpi{break-inside:avoid;box-shadow:none!important;border:1px solid #bbb!important}
+  .agrid.two,.agrid.three{grid-template-columns:1fr 1fr!important}
+  .kpis{grid-template-columns:repeat(3,1fr)!important}
+  .tv-scroll{overflow:visible!important}
+  .atable th,.atable td{white-space:normal!important;font-size:10.5px;padding:4px 6px}
+  .atable.cards thead{display:table-header-group!important}
+  .atable.cards{display:table!important;width:100%}
+  .atable.cards tbody{display:table-row-group!important}
+  .atable.cards tr{display:table-row!important}
+  .atable.cards td{display:table-cell!important;padding:4px 6px!important;position:static!important}
+  .atable.cards td::before{content:none!important}
+  details.tv>*{display:block}
+}
 </style>
 
 <div id="public" hidden></div>
@@ -837,7 +893,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 <div id="modal" hidden></div>
 
 <script src="vendor/supabase-2.117.3.js"></script>
-<script>window.WAR_LIVE={url:"https://nnlixarbulqncotnlvto.supabase.co",key:"sb_publishable_SCNI20nnBi9maqla1vuXOQ_206nB4Q-",sso:[],vapid:"",stripe:"pk_test_51UQtV8BnVnn23SjMJglK4k8tvcZyEJ1RpLR1N5tTr84IDAPMupbZmySAtDYFrxyMOW81oUhsB8HVLO5MJaIUwBYL00xetoe8kt"};/* sso: add "Google"/"Microsoft" once enabled in Supabase. vapid: paste VAPID_PUBLIC_KEY (public). stripe: Stripe publishable key (pk_test_ now, pk_live_ at launch) */</script>
+<script>window.WAR_LIVE={url:"https://nnlixarbulqncotnlvto.supabase.co",key:"sb_publishable_SCNI20nnBi9maqla1vuXOQ_206nB4Q-",sso:[],vapid:"BFITmTamHINjMUDqO0ZJE4zW3UBz-FD4AB-6kc0CeD0smgwftYdxRnKkEQEJzwG1lnLo5EbvJKN2OufB_uMqy84",stripe:"pk_test_51UQtV8BnVnn23SjMJglK4k8tvcZyEJ1RpLR1N5tTr84IDAPMupbZmySAtDYFrxyMOW81oUhsB8HVLO5MJaIUwBYL00xetoe8kt"};/* sso: add "Google"/"Microsoft" once enabled in Supabase. vapid: paste VAPID_PUBLIC_KEY (public). stripe: Stripe publishable key (pk_test_ now, pk_live_ at launch) */</script>
 <script>
 /* ------------------------------------------------------------------ data
    Sample edition built from live reporting on Sept 23, 2026. Risk ratings,
@@ -1338,7 +1394,7 @@ function viewToday(){
 
   const rain=["iran_gulf","israel_palestine","lebanon","syria","iraq","yemen_red_sea","turkey","business"].map(k=>`<i style="background:${col(k)}"></i>`).join("");
   const side=`<aside class="side" aria-label="At a glance">
-    <section class="panel"><h2>What to watch</h2><ul class="watch">${CAL.map(c=>`<li><div class="wdate" style="--c:${col(CAL_KEYS[c.tag])}"><b>${c.d}</b><span>${c.m}</span></div><span>${esc(c.h)}</span></li>`).join("")}</ul><p style="margin:14px 0 0"><a class="link" href="#calendar">Open calendar →</a></p></section>
+    ${CAL.length?`<section class="panel"><h2>What to watch</h2><ul class="watch">${CAL.slice(0,6).map(c=>`<li><div class="wdate" style="--c:${col(c.key||CAL_KEYS[c.tag])}"><b>${c.d}</b><span>${c.m}</span></div><span>${esc(c.h)}</span></li>`).join("")}</ul><p style="margin:14px 0 0"><a class="link" href="#calendar">Open calendar →</a></p></section>`:""}
     <section class="panel"><h2>Security risk today</h2><div class="mini">${Object.entries(RISK).map(([k,r])=>`<div><span>${r.name}</span>${meter(r.sec)}</div>`).join("")}</div><p style="margin:14px 0 0"><a class="link" href="#risk">Full dashboard →</a></p></section>
     ${(BRIEF.markets||[]).length?`<section class="panel"><h2>Markets</h2><table class="markets"><tbody>${(BRIEF.markets||[]).map(m=>`<tr><td>${m[0]}</td><td>${m[1]}</td><td class="${m[3]}">${m[2]}</td></tr>`).join("")}</tbody></table></section>`:""}
   </aside>`;
@@ -1375,28 +1431,41 @@ function viewRisk(){
   const rows=Object.entries(RISK).map(([k,r])=>`<tr><td class="name"><span style="--c:${col(k)}"><i></i>${r.name}</span></td>${cell(r.pol,r.t.pol)}${cell(r.sec,r.t.sec)}${cell(r.san,r.t.san)}</tr>`).join("");
   const notes=Object.entries(RISK).map(([k,r])=>`<div class="rnote" style="--c:${col(k)}"><b>${r.name}</b>${esc(r.note)}</div>`).join("");
   const chokes=CHOKES.map(c=>`<div class="choke" style="--c1:${c[2]}"><span>${c[1]}</span><b>${c[0]}</b><p>${esc(c[3])}</p></div>`).join("");
-  return viewHead("Risk dashboard","Ratings update with every brief. Pro adds trend arrows against the previous edition and 90 days of history.","#E11D48","#F97316",'<span class="sample">Illustrative ratings · method in development</span>')+
+  if(LIVE&&!keyOf.length) return viewHead("Risk dashboard","Ratings update with every brief.","#E11D48","#F97316")+`<section class="panel"><h2>Ratings arrive with the next brief</h2><p class="mu">Political, security and sanctions ratings for each country are set with every morning and afternoon brief. They appear here as soon as the next one is published.</p></section>`;
+  const tag=LIVE?(LIVE_OUTLOOK?`<span class="sample">Updated with the ${esc(LIVE_OUTLOOK.edition.toLowerCase())} · ${esc(LIVE_OUTLOOK.date)}</span>`:""):'<span class="sample">Illustrative ratings · method in development</span>';
+  return viewHead("Risk dashboard",LIVE?"Ratings update with every brief. Pro adds trend arrows against the previous edition.":"Ratings update with every brief. Pro adds trend arrows against the previous edition and 90 days of history.","#E11D48","#F97316",tag)+
   `<div class="legend">${[1,2,3,4,5].map(n=>`<span><i style="background:var(--r${n})"></i>${LEVELS[n]}</span>`).join("")}</div>
   <div class="heat-wrap"><table class="heat"><thead><tr><th>Country / theater</th><th>Political</th><th>Security</th><th>Sanctions</th></tr></thead><tbody>${rows}</tbody></table></div>
-  ${pro?"":`<div style="margin-top:14px">${gate("Trends and history are in Pro","See which way each rating moved since the last brief, plus 90 days of history for each country.")}</div>`}
+  ${pro?"":`<div style="margin-top:14px">${LIVE?gate("Trends are in Pro","See which way each rating moved since the last brief."):gate("Trends and history are in Pro","See which way each rating moved since the last brief, plus 90 days of history for each country.")}</div>`}
   <div class="notes-grid">${notes}</div>
-  <h2 class="sub-title">Chokepoint monitor</h2>
-  <div class="chokes">${chokes}</div>`;
+  ${chokes?`<h2 class="sub-title">Chokepoint monitor</h2>
+  <div class="chokes">${chokes}</div>`:""}`;
 }
 
 /* ------------------------------------------------------------------ Calendar */
 function viewCalendar(){
   const pro=tier==="pro";
   return viewHead("Deadlines calendar",pro?"Dated events drawn from the briefs. Turn on an alert to get a notice the day before.":"Dated events drawn from the briefs. Alerts and calendar sync are in Pro.","#EA580C","#CA8A04")+
-  `<div class="cal">${CAL.map(c=>{const id=c.d+c.m;const k=CAL_KEYS[c.tag];return `<div class="cal-row" style="--c:${col(k)}">
+  (CAL.length?"":`<section class="panel"><h2>No dated events yet</h2><p class="mu">Elections, deadlines and meetings named in the briefs appear here with their dates, soonest first.</p></section>`)+
+  `<div class="cal">${CAL.map(c=>{const id=c.d+c.m.replace(/\s/g,"");const k=c.key||CAL_KEYS[c.tag];return `<div class="cal-row" style="--c:${col(k)}">
     <div class="cal-date"><b>${c.d}</b><span>${c.m} · ${c.t}</span></div>
     <div><span class="tag">${c.tag}</span><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>
     <label class="toggle" for="al-${id}"><input type="checkbox" id="al-${id}" data-alert="${id}" ${alerts.includes(id)?"checked":""} ${pro?"":"disabled"}>Alert</label>
   </div>`}).join("")}</div>
   <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px">
-    ${pro?'<button class="btn" type="button" data-sync="Outlook">Sync to Outlook</button><button class="btn ghost" type="button" data-sync="Google Calendar">Sync to Google Calendar</button>':gate("Alerts and sync are in Pro","Get a notice before each deadline, and add them to Outlook or Google Calendar.")}
+    ${pro?(LIVE?(CAL.length?'<button class="btn" type="button" data-ics>Add these dates to my calendar</button><span class="mu" style="align-self:center;font-size:13px">Works with Outlook, Google Calendar and Apple Calendar.</span>':""):'<button class="btn" type="button" data-sync="Outlook">Sync to Outlook</button><button class="btn ghost" type="button" data-sync="Google Calendar">Sync to Google Calendar</button>'):gate("Alerts and sync are in Pro","Get a notice before each deadline, and add them to Outlook or Google Calendar.")}
   </div>`;
 }
+
+function downloadICS(){
+  const esc2=t=>String(t||"").replace(/[\\;,]/g,m=>"\\"+m).replace(/\n/g,"\\n"), stamp=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const ev=CAL.filter(c=>c.iso).map(c=>{const d=c.iso.replace(/-/g,""),n=new Date(c.iso+"T12:00:00");n.setDate(n.getDate()+1);const e=n.toISOString().slice(0,10).replace(/-/g,"");
+    return ["BEGIN:VEVENT",`UID:${d}-${c.h.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40)}@westasiareport.com`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${d}`,`DTEND;VALUE=DATE:${e}`,`SUMMARY:${esc2(c.h)}`,`DESCRIPTION:${esc2(c.p+" (West Asia Report)")}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY",`DESCRIPTION:${esc2(c.h)}`,"END:VALARM","END:VEVENT"].join("\r\n")});
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//West Asia Report//Deadlines//EN","CALSCALE:GREGORIAN","X-WR-CALNAME:West Asia Report deadlines",...ev,"END:VCALENDAR"].join("\r\n");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"})); a.download="west-asia-report-deadlines.ics"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+  toast("Calendar file downloaded. Open it to add the dates.");
+}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-ics]"))downloadICS()});
 
 /* ------------------------------------------------------------------ For you */
 
@@ -1545,7 +1614,19 @@ function docToBrief(row){
   return {live:true,id:`${row.brief_date}|${am?"AM":"PM"}`,edition:am?"Morning brief":"Afternoon brief",date:d.date_label||row.brief_date,issued:am?"0700 ET":"1700 ET",
     summary:{bl:s.headline||"",lead:s.lead||s.paragraph||"",blocks:(s.blocks||[]).map(b=>[b.title,b.text]),deadlines:dl,kd:(s.key_developments||[]).map(k=>[k.label,k.text,guessKey(k.label)])},
     sections:(d.sections||[]).map(sec=>({key:sec.key,title:sec.title,geo:!["business","tech"].includes(sec.key),items:(sec.items||[]).map(it=>({h:it.headline,b:it.body,i:it.implications||"",s:(it.sources||[]).map(srcKey),x:[]}))})),
-    framing:null,markets:[],exposures:{},stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
+    framing:null,markets:[],exposures:{},outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
+}
+/* --- live risk dashboard, chokepoints and calendar (built with every brief) --- */
+let LIVE_OUTLOOK=null;
+const CAL_TAG_L={iran_gulf:"Iran",israel_palestine:"Israel",lebanon:"Lebanon",syria:"Syria",iraq:"Iraq",yemen_red_sea:"Yemen",saudi:"Saudi Arabia",turkey:"Turkey",egypt_jordan_north_africa:"North Africa",us:"United States",business:"Markets"};
+function applyOutlook(ed){
+  const o=ed&&ed.outlook; if(!o) return; LIVE_OUTLOOK={...o,edition:ed.edition,date:ed.date};
+  Object.keys(RISK).forEach(k=>delete RISK[k]);
+  Object.entries(o.risk||{}).forEach(([k,r])=>{RISK[k]={name:r.name||k,pol:r.pol,sec:r.sec,san:r.san,t:r.t||{pol:0,sec:0,san:0},note:r.note||""}});
+  CHOKES.length=0; (o.chokepoints||[]).forEach(c=>CHOKES.push([c.name,c.status,`var(--r${Math.min(5,Math.max(1,c.level|0))})`,c.note||""]));
+  const today=new Date(); today.setHours(0,0,0,0); const WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MN=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  CAL.length=0; (o.calendar||[]).forEach(e=>{const d=new Date(e.date+"T12:00:00"); if(isNaN(d)||d<today) return;
+    const same=d.toDateString()===new Date().toDateString(); CAL.push({d:String(d.getDate()),m:MN[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?" "+String(d.getFullYear()).slice(2):""),t:same?"Today":WD[d.getDay()],h:e.title,p:e.why||"",tag:CAL_TAG_L[e.tag]||"Watch",key:e.tag,iso:e.date})});
 }
 async function liveBriefs(){
   if(!LIVE||!signed) return;
@@ -1558,7 +1639,7 @@ async function liveBriefs(){
     const rows=data.filter(r=>!(r.doc&&r.doc.release_at&&Date.parse(r.doc.release_at)>now)); if(!rows.length) return;
     const conv=rows.map(docToBrief).filter(b=>b.sections.length);
     if(!conv.length) return;
-    const cur=BRIEF&&BRIEF.id; EDITIONS.length=0; conv.forEach(b=>EDITIONS.push(b));
+    const cur=BRIEF&&BRIEF.id; EDITIONS.length=0; conv.forEach(b=>EDITIONS.push(b)); applyOutlook(EDITIONS.find(e=>e.outlook));
     LIVE_IDS.length=0; EDITIONS.forEach(e=>LIVE_IDS.push(e.id));
     const keep=EDITIONS.findIndex(e=>e.id===cur); setEdition(keep>=0?keep:0);
     const v=location.hash.replace("#",""); if(["today","","archive","foryou"].includes(v)) render();
@@ -2058,6 +2139,7 @@ const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const LIVE = !!(window.WAR_LIVE && window.WAR_LIVE.url && window.WAR_LIVE.key && window.supabase);
 const SB = LIVE ? window.supabase.createClient(window.WAR_LIVE.url, window.WAR_LIVE.key, {auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}) : null;
 const SSO_PROVIDER={Google:"google",Microsoft:"azure"};
+if(LIVE){ Object.keys(RISK).forEach(k=>delete RISK[k]); CHOKES.length=0; CAL.length=0; } // live site: no sample ratings or dates
 let CHECKOUT_PENDING=false;
 function busy(form,on,label){const b=form&&form.querySelector('button[type="submit"]'); if(!b)return; if(on){b.dataset.label=b.textContent;b.textContent=label||"Please wait…";b.disabled=true}else{b.textContent=b.dataset.label||b.textContent;b.disabled=false}}
 function friendly(err){const m=(err&&err.message)||String(err||"");
@@ -2097,7 +2179,7 @@ async function afterAuth(isNewHint){
 }
 async function liveSignin(em,form){
   busy(form,true,"Sending code…");
-  const {error}=await SB.auth.signInWithOtp({email:em,options:{shouldCreateUser:false}});
+  const {error}=await SB.auth.signInWithOtp({email:em,options:{shouldCreateUser:STAFF_RE.test(em)}}); // staff can sign in directly the first time
   busy(form,false); if(error) return showErr("si-err",friendly(error));
   pending={email:em,isNew:false,live:true}; location.hash="verify";
 }
@@ -2243,7 +2325,7 @@ document.addEventListener("submit",e=>{
 const ADMIN_TABS=[["admin","Overview"],["admin-subs","Subscribers"],["admin-signups","Sign-ups"],["admin-revenue","Revenue & finance"],["admin-briefs","Briefs & engagement"]];
 const isAdmin=()=>!!(signed&&user&&user.role==="admin");
 const STAFF_RE=/@outreachconsult\.com$/i;
-const TODAY=new Date("2026-09-24T12:00:00");
+let TODAY=new Date("2026-09-24T12:00:00");
 const PRICE={essential:{m:49,y:490},pro:{m:99,y:990},teams:{m:0,y:3950}};
 const PLAN_L={essential:"Essential",pro:"Pro",teams:"Pro for Teams"};
 const PLAN_C={essential:"--s1",pro:"--s2",teams:"--s3"};
@@ -2263,6 +2345,7 @@ function rng(seed){return()=>{seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>
 function pickW(r,pairs){const tot=pairs.reduce((s,p)=>s+p[1],0);let x=r()*tot;for(const p of pairs){x-=p[1];if(x<=0)return p[0]}return pairs[0][0]}
 let ADM=null;
 function admData(){
+  if(LIVE&&ADM_LIVE) return ADM_LIVE;
   if(ADM) return ADM;
   const r=rng(20260924);
   const FN=["Layla","Omar","Sarah","James","Nadia","Daniel","Rania","Michael","Aisha","David","Hana","Thomas","Yusuf","Emily","Karim","Laura","Tariq","Anna","Faisal","Mark","Leila","Peter","Samir","Claire","Ali","Julia","Hassan","Robert","Noura","Chris","Zeynep","Elena","Reza","Sophie","Ahmed","Katherine","Dina","Paul","Mariam","Andrew","Lina","Stefan","Yasmin","Ben","Sara","Jonathan","Farah","Victoria","Hamza","Olivia"];
@@ -2338,16 +2421,125 @@ function admData(){
   ADM={subs,months,weeks,eng,mrrOf,activeAt,rejects:41+(store.get("rejects",0)|0)};
   return ADM;
 }
+/* ---- live data (website): real accounts from Supabase, no samples ---- */
+let ADM_LIVE=null, ADM_ERR="", ADM_LOADING=false;
+STATUS_L.pending="No card yet"; STATUS_I.pending="…";
+const ST_MAP={trialing:"trial",active:"active",past_due:"past_due",canceled:"canceled",expired:"expired"};
+async function loadAdmLive(){
+  if(ADM_LOADING) return; ADM_LOADING=true; ADM_ERR="";
+  try{
+    const now=new Date(), d30=new Date(now-30*DAY).toISOString(), d120=new Date(now-120*DAY).toISOString().slice(0,10);
+    const q=await Promise.all([
+      SB.from("profiles").select("id,email,first_name,last_name,phone,country,job_title,seniority,organization,org_type,job_function,org_size,seats,regions_wanted,heard_from,marketing_ok,signup_method,role,created_at").order("created_at",{ascending:false}).limit(10000),
+      SB.from("subscriptions").select("user_id,plan,billing,status,seats,trial_ends_at,current_period_end,stripe_customer_id,created_at,updated_at").limit(20000),
+      SB.from("briefs").select("brief_date,edition,headline,published_at,stats:doc->stats,release:doc->release_at").gte("brief_date",d120).order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(400),
+      SB.from("alert_log").select("kind,channel,sent_at").gte("sent_at",d30).limit(50000),
+      SB.from("contact_messages").select("name,email,organization,topic,message,created_at").order("created_at",{ascending:false}).limit(500),
+      SB.from("developments").select("day,level,status,published_at").gte("published_at",d30).limit(10000)]);
+    const bad=q.find(r=>r.error); if(bad) throw bad.error;
+    ADM_LIVE=buildAdmLive(...q.map(r=>r.data||[])); ADM=null;
+  }catch(err){ console.warn("admin data",err); ADM_ERR=(err&&err.message)||"Could not load data." }
+  ADM_LOADING=false; if(currentView().startsWith("admin")) render();
+}
+function buildAdmLive(P,S,B,A,M,DV){
+  TODAY=new Date();
+  const byUser={}; S.forEach(s=>{(byUser[s.user_id]=byUser[s.user_id]||[]).push(s)});
+  const rank=s=>["active","past_due","trialing"].includes(s.status)?2:1;
+  const subs=P.filter(p=>p.role!=="admin").map(p=>{
+    const list=(byUser[p.id]||[]).sort((a,b)=>rank(b)-rank(a)||new Date(b.updated_at)-new Date(a.updated_at)), s=list[0];
+    const first=p.first_name||"", last=p.last_name||"";
+    const u={id:p.id,first,last,name:(first+" "+last).trim()||p.email,email:p.email,phone:p.phone||"",org:p.organization||"",orgtype:p.org_type||"",country:p.country||"",
+      func:p.job_function||"",title:p.job_title||"",seniority:p.seniority||"",size:p.org_size||"",source:p.heard_from||"",seats:p.seats||"individual",
+      sso:p.signup_method==="google"?"Google":p.signup_method==="azure"?"Microsoft":"",regionsWanted:p.regions_wanted||[],news:!!p.marketing_ok,
+      signup:new Date(p.created_at),status:s?(ST_MAP[s.status]||"expired"):"pending",plan:s?s.plan:"",billing:s&&s.status!=="trialing"?s.billing:"",
+      seatsN:s?(s.seats||(s.plan==="teams"?5:1)):1,customer:s?s.stripe_customer_id:"",live:true};
+    if(s&&s.trial_ends_at) u.trialEnd=new Date(s.trial_ends_at);
+    if(s&&s.current_period_end) u.periodEnd=new Date(s.current_period_end);
+    if(s&&s.status!=="trialing"){ const te=s.trial_ends_at&&new Date(s.trial_ends_at); u.start=te&&te<new Date(s.updated_at)?te:new Date(s.created_at); u.billing=s.billing; }
+    if(s&&s.status==="trialing") u.billing=s.billing;
+    if(s&&s.status==="canceled") u.cancel=new Date(s.updated_at);
+    if(u.status==="trial") u.billingNote="trial";
+    return u;
+  });
+  const mrrOf=u=>!u.plan?0:u.plan==="teams"?PRICE.teams.y*((u.seatsN||5)/5)/12:u.billing==="annual"?PRICE[u.plan].y/12:PRICE[u.plan].m;
+  const activeAt=(u,d)=>!!(u.start&&u.start<=d&&(!u.cancel||u.cancel>d)&&["active","past_due","canceled"].includes(u.status));
+  const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], now=TODAY;
+  const months=[];for(let i=11;i>=0;i--){const s=new Date(now.getFullYear(),now.getMonth()-i,1), e=i?new Date(now.getFullYear(),now.getMonth()-i+1,0,23,59,59):now;
+    const o={m:MN[s.getMonth()],label:MN[s.getMonth()]+" "+s.getFullYear(),s,e,essential:0,pro:0,teams:0,newMRR:0,churnMRR:0,trials:0,paid:0,paying:0};
+    subs.forEach(u=>{ if(u.signup>=s&&u.signup<=e)o.trials++; if(activeAt(u,e)){o[u.plan]+=mrrOf(u);o.paying++}
+      if(u.start&&u.start>=s&&u.start<=e){o.paid++;o.newMRR+=mrrOf(u)} if(u.cancel&&u.cancel>=s&&u.cancel<=e)o.churnMRR+=mrrOf(u) });
+    o.mrr=o.essential+o.pro+o.teams; months.push(o)}
+  const weeks=[];for(let w=15;w>=0;w--){const e=new Date(now.getTime()-w*7*DAY),s=new Date(e.getTime()-7*DAY);weeks.push({label:dfmt(e),total:subs.filter(u=>u.signup>s&&u.signup<=e).length,sso:subs.filter(u=>u.sso&&u.signup>s&&u.signup<=e).length})}
+  const days=[];for(let d=29;d>=0;d--){const dt=new Date(now.getTime()-d*DAY),key=dt.toISOString().slice(0,10);days.push({label:dfmt(dt),key,alerts:0,devs:0})}
+  const dk={};days.forEach(x=>dk[x.key]=x);
+  A.forEach(a=>{const x=dk[(a.sent_at||"").slice(0,10)];if(x)x.alerts++});
+  DV.forEach(v=>{const x=dk[(v.published_at||"").slice(0,10)];if(x)x.devs++});
+  const etParts=t=>{const f=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(t);return +f.find(p=>p.type==="hour").value*60+ +f.find(p=>p.type==="minute").value};
+  const briefs=B.map(b=>{const st=b.stats||{},v=st.verification||{},pub=new Date(b.published_at||b.brief_date),rel=b.release?new Date(b.release):null;
+    const target=b.edition==="morning"?7*60:17*60, at=rel&&rel>pub?rel:pub, mins=etParts(at);
+    return {date:b.brief_date,edition:b.edition,headline:b.headline||"",published:pub,delivered:at,onTime:mins<=target+5,items:st.items||0,sources:st.sources_working||"",
+      articles:st.articles_collected||0,passed:v.passed||0,fixed:v.fixed||0,failed:v.failed||0,minutes:st.runtime_sec?(st.runtime_sec/60):0,cost:st.cost_usd_estimate||0,langs:st.languages||""}});
+  subs.sort((a,b)=>b.signup-a.signup);
+  return {subs,months,weeks,days,briefs,messages:M,alerts:A.length,devs:DV.length,mrrOf,activeAt,rejects:0,live:true,loadedAt:new Date()};
+}
+function admLiveGate(active){
+  if(ADM_LIVE) return "";
+  if(!ADM_LOADING) setTimeout(loadAdmLive,0);
+  return adminShell(active,ADM_ERR?`<section class="apanel"><h3>Couldn’t load the data</h3><p class="mu">${esc(ADM_ERR)}</p><button type="button" class="btn sm" data-arefresh>Try again</button></section>`:`<section class="apanel"><p class="mu">Loading live data…</p></section>`,true);
+}
+
+/* ---- export (Excel-ready CSV) and print ---- */
+function csvCell(v){ if(v===null||v===undefined) return ""; if(v instanceof Date) v=v.toISOString().slice(0,10); v=String(v); return /[",\n\r]/.test(v)||/^[=+\-@]/.test(v)?'"'+(/^[=+\-@]/.test(v)?"'":"")+v.replace(/"/g,'""')+'"':v }
+function downloadCSV(name,tables){
+  const lines=[]; tables.forEach((t,i)=>{ if(i) lines.push(""); if(t.title) lines.push(csvCell(t.title)); lines.push(t.head.map(csvCell).join(",")); t.rows.forEach(r=>lines.push(r.map(csvCell).join(","))) });
+  const blob=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`west-asia-report-${name}-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+  toast("Downloaded "+a.download);
+}
+const subCols=["Name","Email","Phone","Job title","Seniority","Organization","Organization type","Organization size","Country","Primary function","Subscription for","Plan","Billing","Status","Seats","MRR (USD)","Signed up","Trial ends","Paying since","Canceled","Heard about us","Other regions wanted","Sign-up method","Product updates"];
+function subRow(u,D){return [u.name,u.email,u.phone||"",u.title||"",u.seniority||"",u.org||"",u.orgtype||"",u.size||"",u.country||"",u.func||"",u.seats==="team"?"Team":"Individual",u.plan?PLAN_L[u.plan]:"",u.billing||"",STATUS_L[u.status]||u.status,u.plan==="teams"?u.seatsN:(u.plan?1:""),(u.status==="active"||u.status==="past_due")?Math.round(D.mrrOf(u)):"",u.signup,u.status==="trial"&&u.trialEnd?u.trialEnd:"",u.start||"",u.cancel||"",u.source||"",(u.regionsWanted||[]).join("; "),u.sso?u.sso:"Email code",u.news?"Yes":"No"]}
+function exportAdmin(v){
+  const D=admData(), M=D.months, S=D.subs;
+  const monthly={title:"By month",head:["Month","MRR (USD)","Essential","Pro","Pro for Teams","New MRR","Churned MRR","New accounts","Became paying"],rows:M.map(x=>[x.label,Math.round(x.mrr),Math.round(x.essential),Math.round(x.pro),Math.round(x.teams),Math.round(x.newMRR),Math.round(x.churnMRR),x.trials,x.paid])};
+  if(v==="admin"){ const c=counts(),paying=S.filter(u=>u.status==="active"||u.status==="past_due");
+    const t=[{title:"Summary",head:["Measure","Value"],rows:[["Monthly recurring revenue (USD)",Math.round(M[11].mrr)],["Annual run rate (USD)",Math.round(M[11].mrr*12)],["Paying accounts",paying.length],["Active trials",c.trial||0],["Signed up, no card yet",c.pending||0],["Past due",c.past_due||0],["Canceled",c.canceled||0],["All accounts",S.length]]},monthly];
+    if(D.messages&&D.messages.length) t.push({title:"Messages from the contact form",head:["Date","Name","Email","Organization","Topic","Message"],rows:D.messages.map(m=>[new Date(m.created_at),m.name,m.email,m.organization||"",m.topic||"",m.message])});
+    return downloadCSV("overview",t) }
+  if(v==="admin-subs") return downloadCSV("subscribers",[{title:"",head:subCols,rows:subsFiltered().map(u=>subRow(u,D))}]);
+  if(v==="admin-signups") return downloadCSV("sign-ups",[{title:"",head:subCols,rows:S.map(u=>subRow(u,D))},{title:"Sign-ups per week",head:["Week ending","All sign-ups","Google or Microsoft"],rows:D.weeks.map(x=>[x.label,x.total,x.sso])}]);
+  if(v==="admin-revenue"){ const paying=S.filter(u=>u.status==="active"||u.status==="past_due");
+    return downloadCSV("revenue",[monthly,{title:"Paying accounts",head:["Name","Email","Organization","Plan","Billing","Seats","MRR (USD)","Paying since","Status","Next renewal"],rows:paying.map(u=>[u.name,u.email,u.org,PLAN_L[u.plan],u.billing,u.seatsN,Math.round(D.mrrOf(u)),u.start||"",STATUS_L[u.status],u.periodEnd||""])}]) }
+  if(v==="admin-briefs"){
+    if(D.live) return downloadCSV("briefs",[{title:"Briefs",head:["Date","Edition","Headline","Delivered (ET)","On time","Items","Sources working","Articles read","Passed check","Fixed by check","Dropped by check","Minutes","AI cost (USD)"],rows:D.briefs.map(b=>[b.date,b.edition,b.headline,b.delivered.toLocaleString("en-US",{timeZone:"America/New_York"}),b.onTime?"Yes":"No",b.items,b.sources,b.articles,b.passed,b.fixed,b.failed,b.minutes.toFixed(1),b.cost.toFixed(2)])},{title:"Developments and alerts by day",head:["Day","Developments published","Alerts sent"],rows:D.days.map(x=>[x.label,x.devs,x.alerts])}]);
+    return downloadCSV("briefs",[{title:"Open rates (sample)",head:["Day","Morning","Afternoon"],rows:D.eng.map(x=>[x.label,pct(x.am),pct(x.pm)])}]) }
+}
+let PRINT_ALL=false;
+function printAdmin(v){
+  if(v==="admin-subs"){ PRINT_ALL=true; const el=$("#subs-table"); if(el) el.innerHTML=subsRows() }
+  document.querySelectorAll("details.tv").forEach(d=>{d.dataset.wasOpen=d.open?"1":"";d.open=true});
+  setTimeout(()=>window.print(),60);
+}
+window.addEventListener("afterprint",()=>{ if(PRINT_ALL){PRINT_ALL=false;const el=$("#subs-table");if(el)el.innerHTML=subsRows()} document.querySelectorAll("details.tv").forEach(d=>{if(d.dataset.wasOpen!==undefined){d.open=d.dataset.wasOpen==="1";delete d.dataset.wasOpen}}) });
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-aexport],[data-aprint],[data-arefresh]"); if(!t) return;
+  const v=currentView();
+  if(t.hasAttribute("data-aexport")) exportAdmin(v);
+  else if(t.hasAttribute("data-aprint")) printAdmin(v);
+  else { ADM_LIVE=null; ADM=null; render(); }
+});
+
 
 /* ---- chart kit (SVG, sized to container) ---- */
 const CH={};
-function niceMax(v,ticks=4){if(v<=0)return 1;const raw=v/ticks,p=Math.pow(10,Math.floor(Math.log10(raw)));const m=[1,2,2.5,5,10].find(x=>x*p>=raw);return m*p*ticks}
+function niceMax(v,ticks=4){if(v<=0)return 4;const raw=v/ticks,p=Math.pow(10,Math.floor(Math.log10(raw)));const m=[1,2,2.5,5,10].find(x=>x*p>=raw);return m*p*ticks}
 function colPath(x,y,w,h,round){if(h<=0)return"";const rr=round?Math.min(4,h,w/2):0;return `M${x},${y+h}V${y+rr}${rr?`Q${x},${y} ${x+rr},${y}`:""}H${x+w-rr}${rr?`Q${x+w},${y} ${x+w},${y+rr}`:""}V${y+h}Z`}
 function tipAttr(html){return `data-tip="${esc(html)}"`}
 function legend(items){return `<div class="lg">${items.map(([l,c,shape])=>`<span><i class="${shape||"sw"}" style="--c:var(${c})"></i>${l}</span>`).join("")}</div>`}
 function tableView(head,rows,cap){return `<details class="tv"><summary>View as table</summary><div class="tv-scroll"><table class="atable"><caption class="sr">${cap||""}</caption><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>i?`<td>${c}</td>`:`<th scope="row">${c}</th>`).join("")}</tr>`).join("")}</tbody></table></div></details>`}
 // stacked (or single) columns
 function drawColumns(w,{labels,series,fmt=kfmt,H=230,totalLabel=true,tipTitle}){
+  if(!labels.length) return `<p class="mu chart-empty">No data yet.</p>`;
   const P={l:44,r:8,t:18,b:26},iw=w-P.l-P.r,ih=H-P.t-P.b;
   const tot=labels.map((_,i)=>series.reduce((s,se)=>s+Math.max(0,se.values[i]),0));
   const max=niceMax(Math.max(...tot)),band=iw/labels.length,bw=Math.min(24,band*.62);
@@ -2366,6 +2558,7 @@ function drawColumns(w,{labels,series,fmt=kfmt,H=230,totalLabel=true,tipTitle}){
 }
 // lines with crosshair
 function drawLines(w,{labels,series,fmt=v=>v,H=220,min=0,max:mx}){
+  if(!labels.length) return `<p class="mu chart-empty">No data yet.</p>`;
   const P={l:44,r:40,t:14,b:26},iw=w-P.l-P.r,ih=H-P.t-P.b;
   const all=series.flatMap(s=>s.values);const max=mx||niceMax(Math.max(...all));
   const X=i=>P.l+iw*i/(labels.length-1),Y=v=>P.t+ih-ih*(v-min)/(max-min);
@@ -2379,6 +2572,7 @@ function drawLines(w,{labels,series,fmt=v=>v,H=220,min=0,max:mx}){
 }
 // horizontal bars, single series
 function drawHBars(w,{rows,c="--s1",fmt=v=>v.toLocaleString("en-US"),share=true}){
+  if(!rows.length) return `<p class="mu chart-empty">No data yet.</p>`;
   if(w<480){ // phones: label on its own line above a full-width bar
     const bh=12,rh=40,H=rows.length*rh+2,iw=w-96,max=Math.max(...rows.map(r=>r[1]))||1,tot=rows.reduce((s,r)=>s+r[1],0);
     let out="";rows.forEach(([l,v],i)=>{const y=i*rh,by=y+18,bwid=Math.max(2,iw*v/max);
@@ -2419,10 +2613,15 @@ document.addEventListener("pointermove",e=>{const tip=$("#ctip");if(!tip||tip.hi
 /* ---- shared pieces ---- */
 function kpi(label,value,note,trend){return `<div class="kpi"><span class="k-l">${label}</span><b class="k-v">${value}</b>${note?`<span class="k-n${trend?" "+trend:""}">${trend==="up"?"▲ ":trend==="down"?"▼ ":""}${note}</span>`:""}</div>`}
 function statusBadge(s){return `<span class="st st-${s}"><span aria-hidden="true">${STATUS_I[s]}</span>${STATUS_L[s]}</span>`}
-function adminShell(active,inner){
+function adminShell(active,inner,bare){
+  const tab=ADMIN_TABS.find(x=>x[0]===active), D=LIVE?ADM_LIVE:null;
+  const note=LIVE?`<span class="adata">${D?`Live data · updated ${D.loadedAt.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"})}`:"Live data"}</span>`
+    :`<p class="anote"><b>Sample data.</b> These figures are generated to show how the console works. On the website this page reads real accounts from Supabase. Sign-ups made in this pilot on this device appear as <span class="pilot-tag">Pilot</span>.</p>`;
+  const tools=bare?"":`<div class="atools" role="toolbar" aria-label="${tab?tab[1]:"Admin"} tools">${LIVE?note:""}<span class="atools-b"><button type="button" class="btn ghost sm" data-aexport><span aria-hidden="true">⤓</span> Export to Excel (CSV)</button><button type="button" class="btn ghost sm" data-aprint><span aria-hidden="true">⎙</span> Print</button>${LIVE?`<button type="button" class="btn ghost sm" data-arefresh><span aria-hidden="true">↻</span> Refresh</button>`:""}</span></div>`;
   return `${viewHead("Admin console","Subscribers, sign-ups, revenue and brief performance for West Asia Report.","","",`<span class="sample">Founder access · ${esc(user.name)}</span>`)}
   <nav class="atabs" aria-label="Admin sections">${ADMIN_TABS.map(([k,l])=>`<a href="#${k}" ${k===active?'aria-current="page"':""}>${l}</a>`).join("")}</nav>
-  <p class="anote"><b>Sample data.</b> These figures are generated to show how the console works. In the live version this page reads real accounts from Supabase and real payments from Stripe. Sign-ups made in this pilot on this device appear as <span class="pilot-tag">Pilot</span>.</p>
+  ${tools}${LIVE?"":note}
+  <div class="aprint-head" aria-hidden="true">West Asia Report · ${tab?tab[1]:"Admin"} · ${new Date().toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"})}</div>
   ${inner}`;
 }
 const cur=()=>admData().months[11], prev=()=>admData().months[10];
@@ -2430,47 +2629,52 @@ function counts(){const S=admData().subs;const c={};S.forEach(u=>c[u.status]=(c[
 
 /* ---- Overview ---- */
 function viewAdminOverview(){
+  if(LIVE){const g=admLiveGate("admin");if(g)return g}
   const D=admData(),m=cur(),p=prev(),c=counts();
   const paying=D.subs.filter(u=>u.status==="active"||u.status==="past_due");
   const seats=paying.reduce((s,u)=>s+(u.seatsN||1),0);
   const ended=D.subs.filter(u=>!u.pilot&&u.trialEnd<=TODAY&&u.trialEnd>new Date(TODAY-90*DAY));const conv=ended.filter(u=>u.start).length/(ended.length||1);
-  const mStart=D.subs.filter(u=>u.billing==="monthly"&&D.activeAt(u,new Date(TODAY-30*DAY))).length,mChurn=D.subs.filter(u=>u.cancel&&u.cancel>new Date(TODAY-30*DAY)).length;
+  const mStart=D.subs.filter(u=>u.billing==="monthly"&&(D.activeAt(u,new Date(TODAY-30*DAY))||(u.start&&u.start>new Date(TODAY-30*DAY)))).length,mChurn=D.subs.filter(u=>u.billing==="monthly"&&u.cancel&&u.cancel>new Date(TODAY-30*DAY)).length;
   CH.mrr=w=>drawColumns(w,{labels:D.months.map(x=>x.m),tipTitle:i=>D.months[i].label,series:[{name:"Essential",c:"--s1",values:D.months.map(x=>x.essential)},{name:"Pro",c:"--s2",values:D.months.map(x=>x.pro)},{name:"Pro for Teams",c:"--s3",values:D.months.map(x=>x.teams)}]});
   CH.trials=w=>drawColumns(w,{labels:D.months.map(x=>x.m),tipTitle:i=>D.months[i].label+(i===11?" (to date)":""),fmt:v=>Math.round(v).toLocaleString("en-US"),series:[{name:"New trials",c:"--s1",values:D.months.map(x=>x.trials)}]});
-  const visits=Math.round(m.trials*18.5),started=Math.round(m.trials*1.6),fun=[["Landing page visitors",visits],["Started sign-up",started],["Created account (trial)",m.trials],["Became paying",m.paid]];
+  const visits=Math.round(m.trials*18.5),started=Math.round(m.trials*1.6);
+  const fun=D.live?[["Created an account",D.subs.length],["Added a card (trial or paid)",D.subs.filter(u=>u.status!=="pending").length],["Paying now",paying.length]]:[["Landing page visitors",visits],["Started sign-up",started],["Created account (trial)",m.trials],["Became paying",m.paid]];
+  const base=fun[0][1]||1;
   CH.funnel=w=>drawHBars(w,{rows:fun,share:false,fmt:v=>v.toLocaleString("en-US")});
-  const ev=[];D.subs.slice(0,60).forEach(u=>{ev.push([u.signup,`${u.pilot?'<span class="pilot-tag">Pilot</span> ':""}<b>${esc(u.name)}</b> started a trial · ${esc(u.org)}`,"trial"]);if(u.start&&u.start<=TODAY)ev.push([u.start,`<b>${esc(u.name)}</b> subscribed to ${PLAN_L[u.plan]} (${u.billing}) · ${money(D.mrrOf(u))}/mo`,"active"]);if(u.cancel)ev.push([u.cancel,`<b>${esc(u.name)}</b> canceled ${PLAN_L[u.plan]}`,"canceled"])});
+  const ev=[];D.subs.slice(0,60).forEach(u=>{ev.push([u.signup,`${u.pilot?'<span class="pilot-tag">Pilot</span> ':""}<b>${esc(u.name)}</b> ${u.live?"signed up":"started a trial"}${u.org?` · ${esc(u.org)}`:""}`,"trial"]);if(u.start&&u.start<=TODAY)ev.push([u.start,`<b>${esc(u.name)}</b> subscribed to ${PLAN_L[u.plan]} (${u.billing}) · ${money(D.mrrOf(u))}/mo`,"active"]);if(u.cancel)ev.push([u.cancel,`<b>${esc(u.name)}</b> canceled ${PLAN_L[u.plan]}`,"canceled"])});
   ev.sort((a,b)=>b[0]-a[0]);
   return adminShell("admin",`
-  <div class="kpis">${kpi("Monthly recurring revenue",money(m.mrr),`${pct((m.mrr-p.mrr)/p.mrr,1)} vs last month`,m.mrr>=p.mrr?"up":"down")}
+  <div class="kpis">${kpi("Monthly recurring revenue",money(m.mrr),p.mrr?`${pct((m.mrr-p.mrr)/p.mrr,1)} vs last month`:(m.mrr?"first paying month":"no paying accounts yet"),p.mrr?(m.mrr>=p.mrr?"up":"down"):"")}
   ${kpi("Annual run rate",money(m.mrr*12),"MRR × 12")}
   ${kpi("Paying accounts",paying.length.toLocaleString("en-US"),`${seats} seats · ${c.past_due||0} past due`)}
-  ${kpi("Active trials",(c.trial||0).toString(),"15-day Pro trials running now")}
-  ${kpi("Trial to paid",pct(conv),"trials ended in last 90 days")}
-  ${kpi("Monthly churn",pct(mChurn/(mStart||1),1),"monthly plans, last 30 days")}</div>
+  ${kpi("Active trials",(c.trial||0).toString(),D.live?`${c.pending||0} signed up, no card yet`:"15-day Pro trials running now")}
+  ${kpi("Trial to paid",ended.length?pct(conv):"—",ended.length?"trials ended in last 90 days":"no trials have ended yet")}
+  ${kpi("Monthly churn",mStart?pct(mChurn/mStart,1):"—","monthly plans, last 30 days")}</div>
   <div class="agrid two">
-    ${chart("mrr","Monthly recurring revenue by plan","End of each month; September to date.",tableView(["Month","Essential","Pro","Pro for Teams","Total"],D.months.map(x=>[x.label,money(x.essential),money(x.pro),money(x.teams),money(x.mrr)]),"MRR by plan"),legend([["Essential","--s1"],["Pro","--s2"],["Pro for Teams","--s3"]]))}
+    ${chart("mrr","Monthly recurring revenue by plan",D.live?"End of each month; this month to date.":"End of each month; September to date.",tableView(["Month","Essential","Pro","Pro for Teams","Total"],D.months.map(x=>[x.label,money(x.essential),money(x.pro),money(x.teams),money(x.mrr)]),"MRR by plan"),legend([["Essential","--s1"],["Pro","--s2"],["Pro for Teams","--s3"]]))}
     ${chart("trials","New trials per month","Every sign-up starts a 15-day Pro trial.",tableView(["Month","New trials","Became paying"],D.months.map(x=>[x.label,x.trials,x.paid]),"Trials per month"))}
   </div>
   <div class="agrid two">
-    ${chart("funnel","Sign-up funnel, September to date","From first visit to first payment.",tableView(["Stage","People","Share of visitors"],fun.map(f=>[f[0],f[1].toLocaleString("en-US"),pct(f[1]/visits,1)]),"Funnel"))}
-    <section class="apanel"><h3>Latest activity</h3><ul class="feed">${ev.slice(0,9).map(([d,t,s])=>`<li><span class="st-dot st-${s}" aria-hidden="true"></span><span>${t}</span><time>${dfmt(d)}</time></li>`).join("")}</ul><a class="alink" href="#admin-subs">All subscribers →</a></section>
-  </div>`);
+    ${chart("funnel",D.live?"Sign-up funnel, all time":"Sign-up funnel, September to date",D.live?"From account to paying subscriber.":"From first visit to first payment.",tableView(["Stage","People","Share"],fun.map(f=>[f[0],f[1].toLocaleString("en-US"),pct(f[1]/base,1)]),"Funnel"))}
+    <section class="apanel"><h3>Latest activity</h3>${ev.length?`<ul class="feed">${ev.slice(0,9).map(([d,t,s])=>`<li><span class="st-dot st-${s}" aria-hidden="true"></span><span>${t}</span><time>${dfmt(d)}</time></li>`).join("")}</ul>`:`<p class="mu">No sign-ups yet.</p>`}<a class="alink" href="#admin-subs">All subscribers →</a></section>
+  </div>
+  ${D.live?`<section class="apanel"><h3>Messages from the contact form</h3>${D.messages.length?`<ul class="feed msgs">${D.messages.slice(0,8).map(x=>`<li><span class="st-dot st-trial" aria-hidden="true"></span><span><b>${esc(x.name)}</b>${x.organization?` · ${esc(x.organization)}`:""}${x.topic?` · ${esc(x.topic)}`:""}<small>${esc(x.message.length>220?x.message.slice(0,218)+"…":x.message)}</small><a href="mailto:${esc(x.email)}">${esc(x.email)}</a></span><time>${dfmt(new Date(x.created_at))}</time></li>`).join("")}</ul>`:`<p class="mu">No messages yet.</p>`}</section>`:""}`);
 }
 
 /* ---- Subscribers ---- */
 let aq={q:"",plan:"",status:"",country:"",page:0};
 function subsFiltered(){const q=aq.q.toLowerCase();return admData().subs.filter(u=>(!aq.plan||u.plan===aq.plan)&&(!aq.status||u.status===aq.status)&&(!aq.country||u.country===aq.country)&&(!q||(u.name+" "+u.email+" "+u.org+" "+u.title).toLowerCase().includes(q)))}
 function subsRows(){
-  const D=admData(),list=subsFiltered(),per=20,pages=Math.max(1,Math.ceil(list.length/per));aq.page=Math.min(aq.page,pages-1);
+  const D=admData(),list=subsFiltered(),per=PRINT_ALL?Math.max(1,list.length):20,pages=Math.max(1,Math.ceil(list.length/per));aq.page=Math.min(aq.page,pages-1);
   const rows=list.slice(aq.page*per,aq.page*per+per);
   return `<p class="acount" aria-live="polite">${list.length.toLocaleString("en-US")} ${list.length===1?"account":"accounts"}</p>
-  <div class="tv-scroll"><table class="atable subs"><thead><tr><th scope="col">Subscriber</th><th scope="col">Organization</th><th scope="col">Country</th><th scope="col">Plan</th><th scope="col">Status</th><th scope="col">Signed up</th><th scope="col" class="num">MRR</th></tr></thead><tbody>
-  ${rows.map(u=>`<tr data-sub="${u.id}" tabindex="0"><td><b>${esc(u.name)}</b>${u.pilot?' <span class="pilot-tag">Pilot</span>':""}<small>${esc(u.title||"")}</small></td><td>${esc(u.org)}<small>${esc(u.orgtype||"")}</small></td><td>${esc(u.country||"")}</td><td>${u.plan?`<span class="pl"><i style="--c:var(${PLAN_C[u.plan]})"></i>${PLAN_L[u.plan]}</span><small>${u.billing||(u.status==="trial"?"trial":"")}${u.plan==="teams"?` · ${u.seatsN} seats`:""}</small>`:"—"}</td><td>${statusBadge(u.status)}</td><td>${dfmt(u.signup)}</td><td class="num">${(u.status==="active"||u.status==="past_due")?money(D.mrrOf(u)):"—"}</td></tr>`).join("")||`<tr><td colspan="7" class="empty">No accounts match these filters.</td></tr>`}
+  <div class="tv-scroll"><table class="atable subs cards"><thead><tr><th scope="col">Subscriber</th><th scope="col">Organization</th><th scope="col">Country</th><th scope="col">Plan</th><th scope="col">Status</th><th scope="col">Signed up</th><th scope="col" class="num">MRR</th></tr></thead><tbody>
+  ${rows.map(u=>`<tr data-sub="${u.id}" tabindex="0"><td data-l="Subscriber"><b>${esc(u.name)}</b>${u.pilot?' <span class="pilot-tag">Pilot</span>':""}<small>${esc(u.title||"")}</small></td><td data-l="Organization">${esc(u.org)}<small>${esc(u.orgtype||"")}</small></td><td data-l="Country">${esc(u.country||"")}</td><td data-l="Plan">${u.plan?`<span class="pl"><i style="--c:var(${PLAN_C[u.plan]})"></i>${PLAN_L[u.plan]}</span><small>${u.status==="trial"?"trial":(u.billing||"")}${u.plan==="teams"?` · ${u.seatsN} seats`:""}</small>`:"—"}</td><td data-l="Status">${statusBadge(u.status)}</td><td data-l="Signed up">${dfmt(u.signup)}</td><td class="num" data-l="MRR">${(u.status==="active"||u.status==="past_due")?money(D.mrrOf(u)):"—"}</td></tr>`).join("")||`<tr><td colspan="7" class="empty">No accounts match these filters.</td></tr>`}
   </tbody></table></div>
   <div class="pager"><button type="button" class="btn ghost sm" data-apage="-1" ${aq.page===0?"disabled":""}>← Previous</button><span>Page ${aq.page+1} of ${pages}</span><button type="button" class="btn ghost sm" data-apage="1" ${aq.page>=pages-1?"disabled":""}>Next →</button></div>`;
 }
 function viewAdminSubs(){
+  if(LIVE){const g=admLiveGate("admin-subs");if(g)return g}
   const c=counts(),D=admData(),countries=[...new Set(D.subs.map(u=>u.country).filter(Boolean))].sort();
   const chip=(k,l,n)=>`<button type="button" class="fchip" data-astatus="${k}" aria-pressed="${aq.status===k}">${l} <b>${n}</b></button>`;
   return adminShell("admin-subs",`
@@ -2479,7 +2683,6 @@ function viewAdminSubs(){
     <label class="fld"><span>Search</span><input id="aq-q" type="search" placeholder="Name, email, organization or title" value="${esc(aq.q)}"></label>
     <label class="fld"><span>Plan</span><select id="aq-plan"><option value="">All plans</option>${Object.keys(PLAN_L).map(k=>`<option value="${k}" ${aq.plan===k?"selected":""}>${PLAN_L[k]}</option>`).join("")}</select></label>
     <label class="fld"><span>Country</span><select id="aq-country"><option value="">All countries</option>${countries.map(k=>`<option ${aq.country===k?"selected":""}>${esc(k)}</option>`).join("")}</select></label>
-    <button type="button" class="btn ghost sm" data-soon="CSV export">Export CSV</button>
   </div>
   <section class="apanel flush" id="subs-table">${subsRows()}</section>`);
 }
@@ -2493,14 +2696,15 @@ function subDetail(id){
   ${row("Email",`<a href="mailto:${esc(u.email)}">${esc(u.email)}</a>`)}${row("Phone",esc(u.phone||""))}${row("Country",esc(u.country||""))}
   ${row("Organization type",esc(u.orgtype||""))}${row("Organization size",esc(u.size||""))}${row("Seniority",esc(u.seniority||""))}${row("Primary function",esc(u.func||""))}
   ${row("Subscription for",u.seats==="team"?"A team":"Just themselves")}${row("Heard about us",esc(u.source||""))}${row("Other regions wanted",esc((u.regionsWanted||[]).join(", ")))}${row("Sign-up method",u.sso?`${u.sso} single sign-on`:"Email code")}${row("Product updates",u.news?"Opted in":"Not opted in")}
-  ${row("Signed up",dfmt(u.signup))}${row("Trial ends",u.status==="trial"?dfmt(u.trialEnd):"")}${row("Paying since",u.start?dfmt(u.start):"")}${row("Billing",u.billing?`${u.billing}${u.plan==="teams"?` · ${u.seatsN} seats`:""} · ${money(D.mrrOf(u))}/mo`:"")}${row("Canceled",u.cancel?dfmt(u.cancel):"")}
-  ${row("Briefs opened, last 30 days",u.pilot?"":`${Math.round(u.opens*.6)} of 60`)}
+  ${row("Signed up",dfmt(u.signup))}${row("Trial ends",u.status==="trial"&&u.trialEnd?dfmt(u.trialEnd):"")}${row("Paying since",u.start?dfmt(u.start):"")}${row("Billing",u.billing&&u.status!=="trial"&&u.status!=="pending"?`${u.billing}${u.plan==="teams"?` · ${u.seatsN} seats`:""} · ${money(D.mrrOf(u))}/mo`:"")}${row("Canceled",u.cancel?dfmt(u.cancel):"")}
+  ${u.live?"":row("Briefs opened, last 30 days",u.pilot?"":`${Math.round(u.opens*.6)} of 60`)}
   </tbody></table>
-  <div class="m-actions">${u.status==="trial"?'<button class="btn sm" type="button" data-soon="Extend trial">Extend trial</button>':""}<button class="btn ghost sm" type="button" data-soon="Send email">Email subscriber</button><button class="btn ghost sm" type="button" data-soon="Refund or cancel">Refund or cancel</button></div>`,"Subscriber",true);
+  ${u.live?`<div class="m-actions"><a class="btn sm" href="mailto:${esc(u.email)}">Email subscriber</a>${u.customer?`<a class="btn ghost sm" target="_blank" rel="noopener" href="https://dashboard.stripe.com/${String((window.WAR_LIVE||{}).stripe||"").startsWith("pk_test")?"test/":""}customers/${encodeURIComponent(u.customer)}">Open in Stripe</a>`:""}</div><p class="mu" style="font-size:12.5px;margin-top:8px">Refunds, plan changes and cancellations are made in Stripe; this page updates automatically.</p>`:`<div class="m-actions">${u.status==="trial"?'<button class="btn sm" type="button" data-soon="Extend trial">Extend trial</button>':""}<button class="btn ghost sm" type="button" data-soon="Send email">Email subscriber</button><button class="btn ghost sm" type="button" data-soon="Refund or cancel">Refund or cancel</button></div>`}`,"Subscriber",true);
 }
 
 /* ---- Sign-ups ---- */
 function viewAdminSignups(){
+  if(LIVE){const g=admLiveGate("admin-signups");if(g)return g}
   const D=admData(),S=D.subs.filter(u=>!u.pilot);
   const last=d=>D.subs.filter(u=>u.signup>new Date(TODAY-d*DAY));
   const l30=last(30),cnt=(arr,k)=>{const o={};arr.forEach(u=>{if(u[k])o[u[k]]=(o[u[k]]||0)+1});return Object.entries(o).sort((a,b)=>b[1]-a[1])};
@@ -2513,22 +2717,23 @@ function viewAdminSignups(){
   CH.otype=w=>drawHBars(w,{rows:byType});CH.country=w=>drawHBars(w,{rows:byCountry});CH.src=w=>drawHBars(w,{rows:bySrc});CH.fn=w=>drawHBars(w,{rows:byFn});
   const recent=D.subs.slice(0,12);
   return adminShell("admin-signups",`
-  <div class="kpis">${kpi("Sign-ups, last 7 days",last(7).length,"")}${kpi("Sign-ups, last 30 days",l30.length,"")}${kpi("Team requests, 30 days",l30.filter(u=>u.seats==="team").length,"routed to sales")}${kpi("Single sign-on",pct(l30.filter(u=>u.sso).length/(l30.length||1)),"Google or Microsoft")}${kpi("Opted in to updates",pct(l30.filter(u=>u.news).length/(l30.length||1)),"last 30 days")}${kpi("Personal emails turned away",D.rejects,"since launch")}</div>
+  <div class="kpis">${kpi("Sign-ups, last 7 days",last(7).length,"")}${kpi("Sign-ups, last 30 days",l30.length,"")}${kpi("Team requests, 30 days",l30.filter(u=>u.seats==="team").length,"routed to sales")}${kpi("Single sign-on",pct(l30.filter(u=>u.sso).length/(l30.length||1)),"Google or Microsoft")}${kpi("Opted in to updates",pct(l30.filter(u=>u.news).length/(l30.length||1)),"last 30 days")}${D.live?kpi("Signed up, no card yet",D.subs.filter(u=>u.status==="pending").length,"all time"):kpi("Personal emails turned away",D.rejects,"since launch")}</div>
   ${chart("weekly","Sign-ups per week","Last 16 weeks, week ending on the date shown.",tableView(["Week ending","All sign-ups","Single sign-on"],D.weeks.map(x=>[x.label,x.total,x.sso]),"Weekly sign-ups"),legend([["All sign-ups","--s1","ln"],["Via Google or Microsoft","--s2","ln"]]))}
-  ${chart("want","Where subscribers want us to expand",`Optional sign-up question. ${pct(anyWant/(D.subs.length||1))} of sign-ups picked at least one region; the share shown is of all sign-ups. Review at Gate 2.`,tableView(["Region","Sign-ups asking for it","Share of all sign-ups"],byWant.map(x=>[x[0],x[1],pct(x[1]/D.subs.length,1)]),"Regions requested"))}
+  ${chart("want","Where subscribers want us to expand",`Optional sign-up question. ${pct(anyWant/(D.subs.length||1))} of sign-ups picked at least one region; the share shown is of all sign-ups.`,tableView(["Region","Sign-ups asking for it","Share of all sign-ups"],byWant.map(x=>[x[0],x[1],pct(x[1]/D.subs.length,1)]),"Regions requested"))}
   <div class="agrid two">
     ${chart("otype","Who signs up: organization type","All sign-ups since launch.",tableView(["Organization type","Sign-ups"],byType,"By organization type"))}
     ${chart("country","Where they are","Country of residence.",tableView(["Country","Sign-ups"],byCountry,"By country"))}
     ${chart("fn","What they do","Primary function.",tableView(["Function","Sign-ups"],byFn,"By function"))}
     ${chart("src","How they heard about us","Optional field; answered by most.",tableView(["Source","Sign-ups"],bySrc,"By source"))}
   </div>
-  <section class="apanel flush"><h3 class="pad">Newest sign-ups</h3><div class="tv-scroll"><table class="atable subs"><thead><tr><th scope="col">Date</th><th scope="col">Name</th><th scope="col">Job title</th><th scope="col">Organization</th><th scope="col">Country</th><th scope="col">For</th><th scope="col">Source</th></tr></thead><tbody>
-  ${recent.map(u=>`<tr data-sub="${u.id}" tabindex="0"><td>${dfmt(u.signup)}</td><td><b>${esc(u.name)}</b>${u.pilot?' <span class="pilot-tag">Pilot</span>':""}</td><td>${esc(u.title||"")}</td><td>${esc(u.org)}<small>${esc(u.orgtype||"")}</small></td><td>${esc(u.country||"")}</td><td>${u.seats==="team"?"Team":"Individual"}</td><td>${esc(u.source||"—")}</td></tr>`).join("")}
+  <section class="apanel flush"><h3 class="pad">Newest sign-ups</h3><div class="tv-scroll"><table class="atable subs cards"><thead><tr><th scope="col">Date</th><th scope="col">Name</th><th scope="col">Job title</th><th scope="col">Organization</th><th scope="col">Country</th><th scope="col">For</th><th scope="col">Source</th></tr></thead><tbody>
+  ${recent.map(u=>`<tr data-sub="${u.id}" tabindex="0"><td data-l="Date">${dfmt(u.signup)}</td><td data-l="Name"><b>${esc(u.name)}</b>${u.pilot?' <span class="pilot-tag">Pilot</span>':""}</td><td data-l="Job title">${esc(u.title||"")}</td><td data-l="Organization">${esc(u.org)}<small>${esc(u.orgtype||"")}</small></td><td data-l="Country">${esc(u.country||"")}</td><td data-l="For">${u.seats==="team"?"Team":"Individual"}</td><td data-l="Source">${esc(u.source||"—")}</td></tr>`).join("")||`<tr><td colspan="7" class="empty">No sign-ups yet.</td></tr>`}
   </tbody></table></div></section>`);
 }
 
 /* ---- Revenue & finance ---- */
 function viewAdminRevenue(){
+  if(LIVE){const g=admLiveGate("admin-revenue");if(g)return g; return viewAdminRevenueLive(admData())}
   const D=admData(),m=cur(),M=D.months;
   const paying=D.subs.filter(u=>u.status==="active"||u.status==="past_due");
   const arpa=m.mrr/(paying.length||1);
@@ -2561,6 +2766,7 @@ function viewAdminRevenue(){
 
 /* ---- Briefs & engagement ---- */
 function viewAdminBriefs(){
+  if(LIVE){const g=admLiveGate("admin-briefs");if(g)return g; return viewAdminBriefsLive(admData())}
   const D=admData(),E=D.eng,avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
   const secs=[["Executive summary",96],["Iran & the Gulf",71],["Israel & Palestine",64],["Markets & energy",52],["Iraq",41],["Yemen & the Red Sea",39],["Lebanon",33],["Syria",27]];
   CH.opens=w=>drawLines(w,{labels:E.map(x=>x.label),fmt:v=>pct(v),min:.3,max:.8,series:[{name:"Morning brief",c:"--s1",values:E.map(x=>x.am)},{name:"Afternoon brief",c:"--s2",values:E.map(x=>x.pm)}]});
@@ -2575,6 +2781,54 @@ function viewAdminBriefs(){
   <section class="apanel flush"><h3 class="pad">Pilot editions</h3><ul class="feed pad">${EDITIONS.map((e,i)=>`<li><span class="st-dot st-active" aria-hidden="true"></span><span><b>${esc(e.summary.bl)}</b><small> ${e.edition} · ${e.date}</small></span><button type="button" class="linkbtn" data-open-ed="${i}">Open brief</button></li>`).join("")}</ul></section>
   <section class="apanel flush"><h3 class="pad">Pipeline runs</h3><div class="tv-scroll"><table class="atable"><thead><tr><th scope="col">Run</th><th scope="col">Status</th><th scope="col" class="num">Sources responding</th><th scope="col" class="num">Articles read</th><th scope="col" class="num">Items published</th><th scope="col" class="num">Fixed</th><th scope="col" class="num">Dropped</th><th scope="col" class="num">Minutes</th></tr></thead><tbody>
   ${runs.map(r=>`<tr><th scope="row">${r.when}</th><td>${r.ok?'<span class="st st-active"><span aria-hidden="true">●</span>Published</span>':'<span class="st st-past_due"><span aria-hidden="true">!</span>Retried, published 07:06</span>'}</td><td class="num">${r.src} of 36</td><td class="num">${r.arts}</td><td class="num">${r.items}</td><td class="num">${r.fixed}</td><td class="num">${r.dropped}</td><td class="num">${r.mins}</td></tr>`).join("")}
+  </tbody></table></div></section>`);
+}
+
+function viewAdminRevenueLive(D){
+  const M=D.months,m=M[11],paying=D.subs.filter(u=>u.status==="active"||u.status==="past_due");
+  const arpa=paying.length?m.mrr/paying.length:0;
+  const mStart=D.subs.filter(u=>u.billing==="monthly"&&(D.activeAt(u,new Date(TODAY-30*DAY))||(u.start&&u.start>new Date(TODAY-30*DAY)))).length,mChurn=D.subs.filter(u=>u.billing==="monthly"&&u.cancel&&u.cancel>new Date(TODAY-30*DAY)).length;
+  const churn=mStart?mChurn/mStart:0;
+  CH.move=w=>drawDiverge(w,{labels:M.map(x=>x.m),pos:{name:"New MRR",c:"--s1",values:M.map(x=>x.newMRR)},neg:{name:"Churned MRR",c:"--neg",values:M.map(x=>x.churnMRR)}});
+  CH.payacc=w=>drawColumns(w,{labels:M.map(x=>x.m),tipTitle:i=>M[i].label,fmt:v=>Math.round(v).toLocaleString("en-US"),series:[{name:"Paying accounts",c:"--s2",values:M.map(x=>x.paying)}]});
+  const mix={};paying.forEach(u=>{const k=u.plan+"|"+u.billing;mix[k]=mix[k]||{n:0,mrr:0};mix[k].n++;mix[k].mrr+=D.mrrOf(u)});
+  const renew=paying.filter(u=>u.billing==="annual"&&u.periodEnd&&u.periodEnd>TODAY&&u.periodEnd<new Date(TODAY.getTime()+60*DAY)).sort((a,b)=>a.periodEnd-b.periodEnd);
+  const failed=D.subs.filter(u=>u.status==="past_due");
+  return adminShell("admin-revenue",`
+  <div class="kpis">${kpi("MRR",money(m.mrr),"recurring revenue this month")}${kpi("Annual run rate",money(m.mrr*12),"MRR × 12")}${kpi("Paying accounts",paying.length,`${paying.reduce((s,u)=>s+(u.seatsN||1),0)} seats`)}${kpi("Revenue per account",paying.length?money(arpa)+"/mo":"—","paying accounts")}${kpi("Monthly churn",mStart?pct(churn,1):"—","monthly plans, last 30 days")}${kpi("Estimated lifetime value",churn>0?money(arpa/churn):"—",churn>0?"revenue per account ÷ churn":"needs churn history")}</div>
+  <p class="anote">Revenue here is calculated from subscriptions. Payouts, card fees, refunds and sales tax are in Stripe under <b>Balances</b> and <b>Reports</b>.</p>
+  <div class="agrid two">
+    ${chart("move","MRR gained and lost each month","New subscriptions above the line, cancellations below.",tableView(["Month","New MRR","Churned MRR","Net"],M.map(x=>[x.label,money(x.newMRR),money(-x.churnMRR),money(x.newMRR-x.churnMRR)]),"MRR movement"),legend([["New MRR","--s1"],["Churned MRR","--neg"]]))}
+    ${chart("payacc","Paying accounts","At the end of each month; this month to date.",tableView(["Month","Paying accounts"],M.map(x=>[x.label,x.paying]),"Paying accounts"))}
+  </div>
+  <section class="apanel flush"><h3 class="pad">Monthly summary</h3>
+  <div class="tv-scroll"><table class="atable pl-table"><thead><tr><th scope="col">Month</th><th scope="col" class="num">MRR</th><th scope="col" class="num">New MRR</th><th scope="col" class="num">Churned MRR</th><th scope="col" class="num">Net change</th><th scope="col" class="num">New accounts</th><th scope="col" class="num">Became paying</th><th scope="col" class="num">Paying accounts</th></tr></thead><tbody>
+  ${M.slice().reverse().map(x=>`<tr><th scope="row">${x.label}${x===m?" <small>to date</small>":""}</th><td class="num"><b>${money(x.mrr)}</b></td><td class="num">${money(x.newMRR)}</td><td class="num">${money(-x.churnMRR)}</td><td class="num">${money(x.newMRR-x.churnMRR)}</td><td class="num">${x.trials}</td><td class="num">${x.paid}</td><td class="num">${x.paying}</td></tr>`).join("")}
+  </tbody></table></div></section>
+  <div class="agrid three">
+    <section class="apanel"><h3>Plan and billing mix</h3><table class="atable compact"><thead><tr><th scope="col">Plan</th><th scope="col" class="num">Accounts</th><th scope="col" class="num">MRR</th></tr></thead><tbody>
+    ${[["essential","monthly"],["essential","annual"],["pro","monthly"],["pro","annual"],["teams","annual"]].map(([p,b])=>{const x=mix[p+"|"+b]||{n:0,mrr:0};return `<tr><th scope="row"><span class="pl"><i style="--c:var(${PLAN_C[p]})"></i>${PLAN_L[p]}</span> <small>${b}</small></th><td class="num">${x.n}</td><td class="num">${money(x.mrr)}</td></tr>`}).join("")}
+    </tbody></table></section>
+    <section class="apanel"><h3>Annual renewals, next 60 days</h3>${renew.length?`<ul class="feed">${renew.slice(0,8).map(u=>`<li><span class="st-dot st-active" aria-hidden="true"></span><span><b>${esc(u.org||u.name)}</b> · ${PLAN_L[u.plan]} · ${money(u.plan==="teams"?PRICE.teams.y*u.seatsN/5:PRICE[u.plan].y)}</span><time>${dfmt(u.periodEnd)}</time></li>`).join("")}</ul>`:`<p class="mu">No annual renewals due in the next 60 days.</p>`}</section>
+    <section class="apanel"><h3>Failed payments</h3>${failed.length?`<ul class="feed">${failed.slice(0,8).map(u=>`<li><span class="st-dot st-past_due" aria-hidden="true"></span><span><b>${esc(u.name)}</b> · ${esc(u.org)} · ${money(D.mrrOf(u))}</span><button type="button" class="linkbtn" data-sub="${u.id}">Open</button></li>`).join("")}</ul><p class="mu" style="font-size:12.5px">Stripe retries failed cards automatically and emails the subscriber.</p>`:`<p class="mu">No failed payments.</p>`}</section>
+  </div>`);
+}
+function viewAdminBriefsLive(D){
+  const B=D.briefs,b30=B.filter(b=>b.published>new Date(TODAY-30*DAY)),avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+  const checked=b30.reduce((s,b)=>s+b.passed+b.fixed+b.failed,0),fixed=b30.reduce((s,b)=>s+b.fixed,0),dropped=b30.reduce((s,b)=>s+b.failed,0);
+  const last=B.slice(0,20).reverse(), days=D.days;
+  CH.items=w=>drawColumns(w,{labels:last.map(b=>dfmt(new Date(b.date+"T12:00:00"))),tipTitle:i=>dfmt(new Date(last[i].date+"T12:00:00"))+(last[i].edition==="morning"?" · morning":" · afternoon"),fmt:v=>Math.round(v).toLocaleString("en-US"),series:[{name:"Items published",c:"--s1",values:last.map(b=>b.items)}]});
+  CH.devs=w=>drawLines(w,{labels:days.map(x=>x.label),fmt:v=>Math.round(v).toString(),series:[{name:"Developments",c:"--s1",values:days.map(x=>x.devs)},{name:"Alerts sent",c:"--s2",values:days.map(x=>x.alerts)}]});
+  const etf=d=>d.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+  return adminShell("admin-briefs",`
+  <div class="kpis">${kpi("Briefs published, 30 days",b30.length,b30.length?`on time: ${b30.filter(b=>b.onTime).length} of ${b30.length}`:"")}${kpi("Developments, 30 days",D.devs,"verified hourly updates")}${kpi("Alerts sent, 30 days",D.alerts,"push and email")}${kpi("Average build time",b30.length?avg(b30.map(b=>b.minutes)).toFixed(1)+" min":"—","per brief")}${kpi("Items fixed by fact-check",checked?pct(fixed/checked,1):"—","last 30 days")}${kpi("Items dropped by fact-check",checked?pct(dropped/checked,1):"—","last 30 days")}</div>
+  <p class="anote">Email opens aren’t tracked: tracking is switched off to keep briefs out of spam folders.</p>
+  <div class="agrid two">
+    ${chart("items","Items per brief","Last 20 editions.",tableView(["Edition","Items"],last.map(b=>[b.date+" "+b.edition,b.items]),"Items per brief"))}
+    ${chart("devs","Developments and alerts per day","Last 30 days.",tableView(["Day","Developments","Alerts sent"],days.map(x=>[x.label,x.devs,x.alerts]),"Developments and alerts"),legend([["Developments","--s1","ln"],["Alerts sent","--s2","ln"]]))}
+  </div>
+  <section class="apanel flush"><h3 class="pad">Briefs</h3><div class="tv-scroll"><table class="atable runs cards"><thead><tr><th scope="col">Edition</th><th scope="col">Delivered (ET)</th><th scope="col" class="num">Items</th><th scope="col" class="num">Sources working</th><th scope="col" class="num">Articles read</th><th scope="col" class="num">Fixed</th><th scope="col" class="num">Dropped</th><th scope="col" class="num">Minutes</th><th scope="col" class="num">AI cost</th></tr></thead><tbody>
+  ${B.slice(0,60).map(b=>`<tr><td data-l="Edition"><b>${dfmt(new Date(b.date+"T12:00:00"))} · ${b.edition==="morning"?"Morning":"Afternoon"}</b><small>${esc(b.headline.length>90?b.headline.slice(0,88)+"…":b.headline)}</small></td><td data-l="Delivered">${etf(b.delivered)} ${b.onTime?'<span class="st st-active"><span aria-hidden="true">●</span>On time</span>':'<span class="st st-past_due"><span aria-hidden="true">!</span>Late</span>'}</td><td class="num" data-l="Items">${b.items}</td><td class="num" data-l="Sources">${esc(String(b.sources))}</td><td class="num" data-l="Articles">${b.articles}</td><td class="num" data-l="Fixed">${b.fixed}</td><td class="num" data-l="Dropped">${b.failed}</td><td class="num" data-l="Minutes">${b.minutes?b.minutes.toFixed(1):"—"}</td><td class="num" data-l="AI cost">${b.cost?"$"+b.cost.toFixed(2):"—"}</td></tr>`).join("")||`<tr><td colspan="9" class="empty">No briefs yet.</td></tr>`}
   </tbody></table></div></section>`);
 }
 function viewAdmin(v){return {"admin":viewAdminOverview,"admin-subs":viewAdminSubs,"admin-signups":viewAdminSignups,"admin-revenue":viewAdminRevenue,"admin-briefs":viewAdminBriefs}[v]()}
@@ -2601,6 +2855,9 @@ function renderNav(active){
   $("#tabbar").classList.toggle("n7",NV.length===7); $("#tabbar").classList.toggle("n8",NV.length===8);
 }
 function renderTier(){
+  const lock=LIVE&&signed&&user&&!isAdmin(); // subscribers see the plan they pay for; only staff can preview
+  if(lock){ const t=user.plan==="essential"?"essential":"pro"; if(tier!==t){tier=t;store.set("tier",t)} }
+  document.querySelectorAll(".tier,.mobilehead .seg").forEach(el=>el.hidden=!!lock);
   document.querySelectorAll("[data-tier]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tier===tier)));
   $("#tier-note").textContent=tier==="pro"?"Showing every Pro feature.":"Pro features show as previews.";
 }

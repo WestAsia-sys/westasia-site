@@ -2280,12 +2280,12 @@ function viewSignup(){
       ${fld("su-first","First name",`<input id="su-first" autocomplete="given-name" required value="${v("first")}">`,1)}
       ${fld("su-last","Last name",`<input id="su-last" autocomplete="family-name" required value="${v("last")}">`,1)}
       ${fld("su-email","Work email",`<input id="su-email" type="email" autocomplete="email" required placeholder="you@company.com" value="${v("email")}" ${sso?"readonly":""} aria-describedby="su-email-h">`,1,"Use your organization’s address. Personal email services can’t start a trial.",1)}
-      ${fld("su-phone","Phone",`<input id="su-phone" type="tel" autocomplete="tel" placeholder="+1 216 555 0100" value="${v("phone")}" aria-describedby="su-phone-h">`,0,"Include the country code. Used only for account and billing questions.")}
+      ${fld("su-phone","Phone",`<input id="su-phone" type="tel" autocomplete="tel" placeholder="+1 216 555 0100" value="${v("phone")}" required aria-describedby="su-phone-h">`,1,"Include the country code. Used only for account and billing questions.")}
       ${fld("su-country","Country of residence",`<select id="su-country" autocomplete="country-name" required>${sel(COUNTRIES,"Select a country",p.country)}</select>`,1)}
     </div></fieldset>
     <fieldset><legend>Your work</legend><div class="grid-f">
       ${fld("su-title","Job title",`<input id="su-title" autocomplete="organization-title" required value="${v("title")}">`,1)}
-      ${fld("su-seniority","Seniority",`<select id="su-seniority" required>${sel(SENIORITY,"Select",p.seniority)}</select>`,1)}
+      ${fld("su-seniority","Seniority",`<select id="su-seniority">${sel(SENIORITY,"Select",p.seniority)}</select>`,0)}
       ${fld("su-org","Organization",`<input id="su-org" autocomplete="organization" required value="${v("org")}">`,1)}
       ${fld("su-orgtype","Organization type",`<select id="su-orgtype" required>${sel(ORG_TYPES,"Select",p.orgtype)}</select>`,1)}
       ${fld("su-function","Primary function",`<select id="su-function" required>${sel(FUNCTIONS,"Select",p.func)}</select>`,1)}
@@ -2534,10 +2534,9 @@ document.addEventListener("submit",e=>{
     const em=val("su-email");
     if(!EMAIL_RE.test(em)) bad("su-email","Enter a valid email address, for example you@company.com.");
     else if(FREE_MAIL.test(em)) { store.set("rejects",(store.get("rejects",0)|0)+1); ADM=null; } if(EMAIL_RE.test(em)&&FREE_MAIL.test(em)) bad("su-email","Please use your work email. If your organization has none, contact us and we’ll set up your trial.");
-    const ph=val("su-phone"); if(ph && !/^\+?[\d\s().-]{7,20}$/.test(ph)) bad("su-phone","Enter a phone number with country code, for example +1 216 555 0100.");
+    const ph=val("su-phone"), phd=ph.replace(/\D/g,""); if(!ph) bad("su-phone","Enter your phone number, with country code."); else if(!/^\+?[\d\s().-]{7,24}$/.test(ph)||phd.length<8||phd.length>15) bad("su-phone","Enter a phone number with country code, for example +1 216 555 0100.");
     if(!val("su-country")) bad("su-country","Select your country.");
     if(!val("su-title")) bad("su-title","Enter your job title.");
-    if(!val("su-seniority")) bad("su-seniority","Select your seniority.");
     if(!val("su-org")) bad("su-org","Enter your organization.");
     if(!val("su-orgtype")) bad("su-orgtype","Select your organization type.");
     if(!val("su-function")) bad("su-function","Select your primary function.");

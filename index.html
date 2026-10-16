@@ -2014,7 +2014,7 @@ function viewSignin(){
     <button class="sso" type="button" data-sso="Google">${G_ICON}Continue with Google</button>
     <button class="sso" type="button" data-sso="Microsoft">${MS_ICON}Continue with Microsoft</button>
     <p class="auth-alt">New here? <a href="#signup">Start a free trial</a></p>
-    <p class="staff-note">Outreach Consult team: sign in with your @outreachconsult.com email to open the brief and the admin console.</p>
+    ${LIVE?"":`<p class="staff-note">Outreach Consult team: sign in with your @outreachconsult.com email to open the brief and the admin console.</p>`}
   </form>`, SIDE_IN);
 }
 const OC_URL="https://outreachconsult.com";

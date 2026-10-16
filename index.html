@@ -244,6 +244,7 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .note{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);border-top:3px solid var(--c)}
 .note h3{margin:0;font-size:15px;font-weight:800;padding:12px 16px 0}
 .note ul{margin:0;padding:10px 16px 16px 32px;display:grid;gap:8px;font-size:14.5px}
+.note .note-empty{margin:0;padding:10px 16px 16px;font-size:14px;line-height:1.5}
 .note li::marker{color:var(--c)}
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .plan{background:var(--surface);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);border:1px solid var(--line)}
@@ -324,6 +325,7 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .seg2{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
 .seg2 button{border:0;background:transparent;border-radius:7px;padding:7px 14px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
 .seg2 button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.arch-month{font:inherit;font-weight:700;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);max-width:100%}
 .arch-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:16px;align-items:start}
 .cal-month .wk,.cal-month .days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .cal-month .wk span{font-size:11px;font-weight:700;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.06em}
@@ -848,6 +850,44 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
   .atable.cards td::before{content:none!important}
   details.tv>*{display:block}
 }
+
+/* weekly report */
+.weekly-panel{margin-bottom:16px}
+.wk-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.wk-head h2{margin:0 0 4px}.wk-head p{margin:0 0 10px;font-size:14px}
+.pro-tag{flex:none;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:2px 9px}
+.wk-list{list-style:none;margin:0;padding:0}
+.wk-list button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:12px 2px;cursor:pointer;color:var(--ink);font:inherit;min-height:48px}
+.wk-list li:first-child button{border-top:0}
+.wk-list b{display:block;font-family:var(--serif);font-size:16px}.wk-list small{color:var(--muted);font-size:12.5px}
+.wk-list button:hover b{color:var(--accent)}
+.wk-item{padding:10px 0;border-top:1px solid var(--line);opacity:.7}.wk-item b{display:block;font-family:var(--serif)}.wk-item small{color:var(--muted)}
+.wk-bl{font-size:16px;line-height:1.55;border-left:3px solid var(--gold);padding:10px 14px;background:var(--gold-soft);border-radius:0 8px 8px 0;margin:10px 0}
+.wk-h{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:18px 0 6px}
+.wk-story h4{margin:10px 0 4px;font-family:var(--serif);font-size:16px}.wk-story p{margin:0 0 6px;line-height:1.55}
+.wk-why{color:var(--ink-2);font-size:14.5px}
+.wk-rc{list-style:none;margin:0;padding:0}.wk-rc li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14.5px;flex-wrap:wrap}
+.wk-rc .up{color:#B42318}.wk-rc .down{color:#1E6B3A}
+@media print{
+  body.print-modal #shell,body.print-modal .tabbar,body.print-modal .mobilehead{display:none!important}
+  body.print-modal #modal{display:block!important;position:static!important}
+  body.print-modal #modal .m-back,body.print-modal #modal .m-x,body.print-modal #modal .m-actions{display:none!important}
+  body.print-modal #modal .m-box{position:static!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;width:auto!important;max-width:none!important;transform:none!important}
+}
+
+/* rating history, archive search, extra framing note */
+.rhist{margin-top:16px}.rhist h2{margin:0 0 4px}.rhist .mu{margin:0 0 10px}
+.rh-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.sres{list-style:none;margin:0;padding:0}
+.sres button{width:100%;display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:11px 2px;cursor:pointer;color:var(--ink);font:inherit}
+.sres li:first-child button{border-top:0}
+.sres .rd b{display:block;font-size:13.5px}.sres .rd small{color:var(--muted);font-size:12px}
+.sres .rh b{display:block;font-family:var(--serif);font-size:15px;margin-bottom:3px}.sres .rh small{display:block;color:var(--ink-2);font-size:13px;line-height:1.45}
+.sres mark{background:var(--gold-soft);color:inherit;padding:0 2px;border-radius:3px}
+.sres button:hover .rh b{color:var(--accent)}
+@media (max-width:560px){.sres button{grid-template-columns:minmax(0,1fr)}}
+.fr-more{margin:-6px 0 16px}
+.frame .cap a{color:inherit}
 </style>
 
 <div id="public" hidden></div>
@@ -1336,14 +1376,17 @@ const VIEWS = [["today","Today"],["developments","Developments"],["archive","Arc
 const PRO_ONLY = {foryou:true,developments:true};
 const TAB_LABEL = {developments:"Updates"};
 
-const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https?:\/\//i.test(String(u||"").trim())?esc(String(u).trim()):"#";
+const tcls = t => /^[1-4]$/.test(String(t))?String(t):"";
 const $ = s => document.querySelector(s);
 function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
 
 const TIER_TIP={1:"Tier 1: wire service, major international outlet or official source",2:"Tier 2: established regional outlet with known ownership",3:"Tier 3: state-controlled, partisan or secondary source; cited for attributed positions only"};
 function srcChip(k){const s=SRC[k];const lab=[s.l, s.w!=="private"?s.w:null].filter(Boolean).join(" · ");
-  return `<a class="src" href="${s.u}" target="_blank" rel="noopener" title="${TIER_TIP[s.t]||""}">${s.t?`<b class="tr t${s.t}">T${s.t}</b>`:""}${esc(s.o)} <i>${esc(lab)}</i></a>`}
-function gate(title,body){return `<div class="gate"><b>${title}</b><p>${body}</p><button class="btn" type="button" data-go-pro>Preview as Pro</button></div>`}
+  return `<a class="src" href="${safeUrl(s.u)}" target="_blank" rel="noopener" title="${TIER_TIP[s.t]||""}">${tcls(s.t)?`<b class="tr t${tcls(s.t)}">T${tcls(s.t)}</b>`:""}${esc(s.o)} <i>${esc(lab)}</i></a>`}
+function upgradeMode(){return typeof LIVE!=="undefined"&&LIVE&&signed&&user&&user.role!=="admin"}
+function gate(title,body){return `<div class="gate"><b>${title}</b><p>${body}</p><button class="btn" type="button" data-go-pro>${upgradeMode()?"Upgrade to Pro":"Preview as Pro"}</button></div>`}
 function meter(n){return `<span class="meter" aria-label="${LEVELS[n]}">${[1,2,3,4,5].map(i=>`<i style="${i<=n?`background:var(--r${n})`:""}"></i>`).join("")}</span>`}
 function viewHead(title,sub,g1,g2,extra=""){return `<header class="view-head" style="--h1:${g1};--h2:${g2}"><h1>${title}</h1><p>${sub}</p>${extra}</header>`}
 
@@ -1383,25 +1426,26 @@ function viewToday(){
     return `${lab}<section class="theater" style="--c:${col(sec.key)}" aria-label="${esc(sec.title)}"><header><span class="badge">${CODE[sec.key]}</span><h3>${esc(sec.title)}</h3>${pill}</header>${items}</section>`;
   }).join("");
 
-  const f=BRIEF.framing;
-  const framing=!f||!f.sides||!f.sides.length?"":`<section class="panel framing" aria-labelledby="fr-h">
+  const FR_CYCLE=["--f-was","--f-teh","--f-doh","--f-ank"];
+  const allFr=(BRIEF.framings||(BRIEF.framing?[BRIEF.framing]:[])).filter(f=>f&&f.sides&&f.sides.length>=2);
+  const shownFr=tier==="pro"?allFr:allFr.slice(0,1);
+  const framing=shownFr.map((f,fi)=>`<section class="panel framing" aria-labelledby="fr-h${fi}">
     <h2>How each side frames it</h2>
-    <h3 id="fr-h">${esc(f.story)}</h3>
-    <p class="sub">The same event, as each capital’s officials present it. Quotes are attributed; the brief takes no side.</p>
-    <div class="frames">${f.sides.map(x=>`<div class="frame" style="--c:var(${FRAME_C[x.who]})"><div class="cap"><b>${x.who}</b><span>via ${SRC[x.src].o}</span></div><div class="body"><q>${esc(x.q)}</q><small>${esc(x.n)}</small></div></div>`).join("")}</div>
-    ${tier==="essential"?'<p class="sub" style="margin:12px 0 0">Essential shows the lead story. Pro adds this panel to every major story.</p>':""}
-  </section>`;
+    <h3 id="fr-h${fi}">${esc(f.story)}</h3>
+    ${fi===0?'<p class="sub">The same event, as each side’s officials present it, in their own words. Quotes are attributed; the brief takes no side.</p>':""}
+    <div class="frames">${f.sides.map((x,xi)=>{const via=x.outlet||(SRC[x.src]&&SRC[x.src].o)||"";return `<div class="frame" style="--c:var(${FRAME_C[x.who]||FR_CYCLE[xi%4]})"><div class="cap"><b>${esc(x.who)}</b>${via?`<span>via ${safeUrl(x.url)!=="#"?`<a href="${safeUrl(x.url)}" target="_blank" rel="noopener">${esc(via)}</a>`:esc(via)}${x.translated?" · translated":""}</span>`:""}</div><div class="body"><q>${esc(x.q)}</q>${x.n?`<small>${esc(x.n)}</small>`:""}</div></div>`}).join("")}</div>
+  </section>`).join("")+(()=>{const more=Math.max(allFr.length-1,BRIEF.framingMore|0);return tier!=="pro"&&more>0?`<p class="sub fr-more">Pro shows this panel for ${more===1?"one more major story":`${more} more major stories`} in this edition.</p>`:""})();
 
   const rain=["iran_gulf","israel_palestine","lebanon","syria","iraq","yemen_red_sea","turkey","business"].map(k=>`<i style="background:${col(k)}"></i>`).join("");
   const side=`<aside class="side" aria-label="At a glance">
-    ${CAL.length?`<section class="panel"><h2>What to watch</h2><ul class="watch">${CAL.slice(0,6).map(c=>`<li><div class="wdate" style="--c:${col(c.key||CAL_KEYS[c.tag])}"><b>${c.d}</b><span>${c.m}</span></div><span>${esc(c.h)}</span></li>`).join("")}</ul><p style="margin:14px 0 0"><a class="link" href="#calendar">Open calendar →</a></p></section>`:""}
-    <section class="panel"><h2>Security risk today</h2><div class="mini">${Object.entries(RISK).map(([k,r])=>`<div><span>${r.name}</span>${meter(r.sec)}</div>`).join("")}</div><p style="margin:14px 0 0"><a class="link" href="#risk">Full dashboard →</a></p></section>
-    ${(BRIEF.markets||[]).length?`<section class="panel"><h2>Markets</h2><table class="markets"><tbody>${(BRIEF.markets||[]).map(m=>`<tr><td>${m[0]}</td><td>${m[1]}</td><td class="${m[3]}">${m[2]}</td></tr>`).join("")}</tbody></table></section>`:""}
+    ${CAL.length?`<section class="panel"><h2>What to watch</h2><ul class="watch">${CAL.slice(0,6).map(c=>`<li><div class="wdate" style="--c:${col(c.key||CAL_KEYS[c.tag])}"><b>${esc(c.d)}</b><span>${esc(c.m)}</span></div><span>${esc(c.h)}</span></li>`).join("")}</ul><p style="margin:14px 0 0"><a class="link" href="#calendar">Open calendar →</a></p></section>`:""}
+    <section class="panel"><h2>Security risk today</h2><div class="mini">${Object.entries(RISK).map(([k,r])=>`<div><span>${esc(r.name)}</span>${meter(r.sec)}</div>`).join("")}</div><p style="margin:14px 0 0"><a class="link" href="#risk">Full dashboard →</a></p></section>
+    ${(BRIEF.markets||[]).length?`<section class="panel"><h2>Markets</h2><table class="markets"><tbody>${(BRIEF.markets||[]).map(m=>`<tr><td>${esc(m[0])}</td><td>${esc(m[1])}</td><td class="${m[3]==="up"||m[3]==="down"?m[3]:""}">${esc(m[2])}</td></tr>`).join("")}</tbody></table></section>`:""}
   </aside>`;
 
   return `<section class="hero">
-    <div class="hero-top"><div><div class="eyebrow">${BRIEF.edition} · ${BRIEF.issued} ${edIdx===0?'<span class="latest">Latest</span>':""}</div><h1>${BRIEF.date}</h1></div>${BRIEF.live?"":`<span class="sample">Pilot edition</span>`}</div>
-    <div class="hero-actions"><button type="button" class="hbtn" data-pdf>${tier==="pro"?"Download PDF":"Download PDF · Pro"}</button><a class="hbtn ghost" href="#archive">Archive</a>
+    <div class="hero-top"><div><div class="eyebrow">${esc(BRIEF.edition)} · ${esc(BRIEF.issued)} ${edIdx===0?'<span class="latest">Latest</span>':""}</div><h1>${esc(BRIEF.date)}</h1></div>${BRIEF.live?"":`<span class="sample">Pilot edition</span>`}</div>
+    <div class="hero-actions"><button type="button" class="hbtn" data-print-brief>Print or save as PDF</button><a class="hbtn ghost" href="#archive">Archive</a>
       <div class="ed-nav"><button type="button" data-ed="${edIdx+1}" ${edIdx>=EDITIONS.length-1?"disabled":""}>← Previous edition</button><button type="button" data-ed="${edIdx-1}" ${edIdx<=0?"disabled":""}>Next edition →</button></div></div>
   </section>
   <div class="grid"><div class="col">
@@ -1413,12 +1457,12 @@ function viewToday(){
       <div class="bl">${esc(s.bl)}</div>
       <p class="lead">${esc(s.lead)}</p>
       ${s.blocks.map(b=>`<h3 class="sb">${esc(b[0])}</h3><p>${esc(b[1])}</p>`).join("")}
-      <div class="deadlines">${s.deadlines.map(d=>{const [m,dd]=d[0].split(" ");return `<div class="deadline" style="--c:${col(DL_KEYS[d[1]])}"><div class="dl-date"><b>${dd}</b><span>${m}</span></div><p><b>${d[1]}:</b> ${esc(d[2])}</p></div>`}).join("")}</div>
+      <div class="deadlines">${s.deadlines.map(d=>{const [m,dd]=d[0].split(" ");return `<div class="deadline" style="--c:${col(DL_KEYS[d[1]])}"><div class="dl-date"><b>${esc(dd)}</b><span>${esc(m)}</span></div><p><b>${esc(d[1])}:</b> ${esc(d[2])}</p></div>`}).join("")}</div>
       <div class="kd-title">Key developments</div>
       <ul class="kd">${s.kd.map((k,i)=>`<li><span class="lab" style="--c:${col(k[2]||KD_KEYS[i])}">${esc(k[0])}</span><span>${esc(k[1])}</span></li>`).join("")}</ul>
     </section>
     ${framing}
-    <div class="filters" role="group" aria-label="Filter sections">${chips.map(c=>`<button type="button" class="chip" data-filter="${c[0]}" aria-pressed="${filter===c[0]}" style="--c:${c[2]?col(c[2]):"var(--ink)"}">${c[2]?'<span class="dot"></span>':""}${c[1]}</button>`).join("")}</div>
+    <div class="filters" role="group" aria-label="Filter sections">${chips.map(c=>`<button type="button" class="chip" data-filter="${esc(c[0])}" aria-pressed="${filter===c[0]}" style="--c:${c[2]?col(c[2]):"var(--ink)"}">${c[2]?'<span class="dot"></span>':""}${esc(c[1])}</button>`).join("")}</div>
     ${secHTML}
   </div>${side}</div>`;
 }
@@ -1428,44 +1472,85 @@ function viewRisk(){
   const pro=tier==="pro";
   const cell=(n,t)=>`<td class="cell" style="--rc:var(--r${n})">${LEVELS[n]}${pro?`<small>${t>0?"▲ rising":t<0?"▼ easing":"– steady"}</small>`:""}</td>`;
   const keyOf=Object.keys(RISK);
-  const rows=Object.entries(RISK).map(([k,r])=>`<tr><td class="name"><span style="--c:${col(k)}"><i></i>${r.name}</span></td>${cell(r.pol,r.t.pol)}${cell(r.sec,r.t.sec)}${cell(r.san,r.t.san)}</tr>`).join("");
-  const notes=Object.entries(RISK).map(([k,r])=>`<div class="rnote" style="--c:${col(k)}"><b>${r.name}</b>${esc(r.note)}</div>`).join("");
-  const chokes=CHOKES.map(c=>`<div class="choke" style="--c1:${c[2]}"><span>${c[1]}</span><b>${c[0]}</b><p>${esc(c[3])}</p></div>`).join("");
+  const rows=Object.entries(RISK).map(([k,r])=>`<tr><td class="name"><span style="--c:${col(k)}"><i></i>${esc(r.name)}</span></td>${cell(r.pol,r.t.pol)}${cell(r.sec,r.t.sec)}${cell(r.san,r.t.san)}</tr>`).join("");
+  const notes=Object.entries(RISK).map(([k,r])=>`<div class="rnote" style="--c:${col(k)}"><b>${esc(r.name)}</b>${esc(r.note)}</div>`).join("");
+  const chokes=CHOKES.map(c=>`<div class="choke" style="--c1:${/^[#a-z0-9(),.% -]+$/i.test(c[2]||"")?c[2]:"var(--ink)"}"><span>${esc(c[1])}</span><b>${esc(c[0])}</b><p>${esc(c[3])}</p></div>`).join("");
   if(LIVE&&!keyOf.length) return viewHead("Risk dashboard","Ratings update with every brief.","#E11D48","#F97316")+`<section class="panel"><h2>Ratings arrive with the next brief</h2><p class="mu">Political, security and sanctions ratings for each country are set with every morning and afternoon brief. They appear here as soon as the next one is published.</p></section>`;
   const tag=LIVE?(LIVE_OUTLOOK?`<span class="sample">Updated with the ${esc(LIVE_OUTLOOK.edition.toLowerCase())} · ${esc(LIVE_OUTLOOK.date)}</span>`:""):'<span class="sample">Illustrative ratings · method in development</span>';
-  return viewHead("Risk dashboard",LIVE?"Ratings update with every brief. Pro adds trend arrows against the previous edition.":"Ratings update with every brief. Pro adds trend arrows against the previous edition and 90 days of history.","#E11D48","#F97316",tag)+
+  return viewHead("Risk dashboard","Ratings update with every brief. Pro adds trend arrows against the previous edition and each country’s rating history.","#E11D48","#F97316",tag)+
   `<div class="legend">${[1,2,3,4,5].map(n=>`<span><i style="background:var(--r${n})"></i>${LEVELS[n]}</span>`).join("")}</div>
   <div class="heat-wrap"><table class="heat"><thead><tr><th>Country / theater</th><th>Political</th><th>Security</th><th>Sanctions</th></tr></thead><tbody>${rows}</tbody></table></div>
-  ${pro?"":`<div style="margin-top:14px">${LIVE?gate("Trends are in Pro","See which way each rating moved since the last brief."):gate("Trends and history are in Pro","See which way each rating moved since the last brief, plus 90 days of history for each country.")}</div>`}
+  ${pro?"":`<div style="margin-top:14px">${gate("Trends and history are in Pro","See which way each rating moved since the last brief, and how each country’s ratings have changed over time.")}</div>`}
+  ${pro?riskHistoryPanel():""}
   <div class="notes-grid">${notes}</div>
   ${chokes?`<h2 class="sub-title">Chokepoint monitor</h2>
   <div class="chokes">${chokes}</div>`:""}`;
 }
 
+
+/* ---- rating history (Pro): every brief's ratings, per country ---- */
+let RH=null, RH_LOADING=false, RH_KEY=null;
+async function loadRiskHistory(){
+  if(RH_LOADING||!LIVE||!signed) return; RH_LOADING=true;
+  try{
+    const since=new Date(Date.now()-180*864e5).toISOString().slice(0,10);
+    const {data,error}=await SB.from("brief_feed").select("brief_date,edition,published_at,risk:doc->outlook->risk,release:doc->release_at").gte("brief_date",since).order("brief_date",{ascending:true}).order("published_at",{ascending:true}).limit(500);
+    if(error) throw error; const now=Date.now();
+    RH=(data||[]).filter(r=>r.risk&&typeof r.risk==="object"&&!(r.release&&Date.parse(r.release)>now)).map(r=>({date:r.brief_date,ed:r.edition==="morning"?"AM":"PM",risk:r.risk}));
+  }catch(err){ console.warn("risk history",err); RH=RH||[] }
+  RH_LOADING=false; if(currentView()==="risk") render();
+}
+function demoHistory(){ // illustrative series for the pilot, built from the sample ratings
+  const out=[]; const keys=Object.keys(RISK);
+  for(let i=29;i>=0;i--){ const d=new Date(2026,9,10-Math.floor(i/2)); const risk={};
+    keys.forEach((k,n)=>{ const r=RISK[k], wob=v=>Math.max(1,Math.min(5,v-((i+n)%11>7&&i>4?1:0)+((i+n*3)%13>10&&i>8?1:0))); risk[k]={pol:wob(r.pol),sec:wob(r.sec),san:wob(r.san)}; });
+    out.push({date:d.toISOString().slice(0,10),ed:i%2?"AM":"PM",risk}); }
+  return out;
+}
+function riskHistoryPanel(){
+  if(LIVE&&RH===null){ setTimeout(loadRiskHistory,0); return `<section class="panel rhist"><h2>Rating history</h2><p class="mu">Loading…</p></section>`; }
+  const H=LIVE?RH:demoHistory(), keys=Object.keys(RISK).filter(k=>H.some(p=>p.risk[k]));
+  if(!keys.length||H.length<2) return `<section class="panel rhist"><h2>Rating history</h2><p class="mu">History builds up with every brief. ${H.length?`Ratings have been recorded since ${new Date(H[0].date+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric"})}; the chart appears after the next brief.`:"It starts with the next brief."}</p></section>`;
+  if(!RH_KEY||!keys.includes(RH_KEY)) RH_KEY=keys[0];
+  return `<section class="panel rhist"><h2>Rating history</h2><p class="mu">Each country’s ratings at every brief${LIVE?"":" (illustrative)"}. Pick a country.</p>
+    <div class="rh-chips" role="group" aria-label="Country">${keys.map(k=>`<button type="button" class="chip" data-rhkey="${k}" aria-pressed="${k===RH_KEY}" style="--c:${col(k)}">${esc(RISK[k].name)}</button>`).join("")}</div>
+    <div class="chart" id="rh-chart"></div>
+    <div class="lg"><span><i class="ln" style="--c:var(--s1)"></i>Political</span><span><i class="ln" style="--c:var(--neg)"></i>Security</span><span><i class="ln" style="--c:var(--s2)"></i>Sanctions</span></div>
+  </section>`;
+}
+const rv=v=>Math.min(5,Math.max(1,Math.round(Number(v))||1));
+function drawRiskHistory(){
+  const el=$("#rh-chart"); if(!el) return; const H=LIVE?(RH||[]):demoHistory();
+  const pts=H.filter(p=>p.risk[RH_KEY]); if(pts.length<2){ el.innerHTML=""; return }
+  const w=Math.max(260,Math.floor(el.clientWidth));
+  el.innerHTML=drawLines(w,{labels:pts.map(p=>dfmt(new Date(p.date+"T12:00:00"))+" "+p.ed),min:1,max:5,H:230,padL:70,padR:70,
+    fmt:v=>LEVELS[Math.round(v)]||"",series:[{name:"Political",c:"--s1",values:pts.map(p=>rv(p.risk[RH_KEY].pol))},{name:"Security",c:"--neg",values:pts.map(p=>rv(p.risk[RH_KEY].sec))},{name:"Sanctions",c:"--s2",values:pts.map(p=>rv(p.risk[RH_KEY].san))}]});
+}
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-rhkey]");if(t){RH_KEY=t.dataset.rhkey;render()}});
 /* ------------------------------------------------------------------ Calendar */
 function viewCalendar(){
   const pro=tier==="pro";
-  return viewHead("Deadlines calendar",pro?"Dated events drawn from the briefs. Turn on an alert to get a notice the day before.":"Dated events drawn from the briefs. Alerts and calendar sync are in Pro.","#EA580C","#CA8A04")+
+  return viewHead("Deadlines calendar",pro?"Dated events drawn from the briefs, soonest first. Add them to your own calendar.":"Dated events drawn from the briefs, soonest first. Adding them to your calendar is in Pro.","#EA580C","#CA8A04")+
   (CAL.length?"":`<section class="panel"><h2>No dated events yet</h2><p class="mu">Elections, deadlines and meetings named in the briefs appear here with their dates, soonest first.</p></section>`)+
   `<div class="cal">${CAL.map(c=>{const id=c.d+c.m.replace(/\s/g,"");const k=c.key||CAL_KEYS[c.tag];return `<div class="cal-row" style="--c:${col(k)}">
     <div class="cal-date"><b>${c.d}</b><span>${c.m} · ${c.t}</span></div>
     <div><span class="tag">${c.tag}</span><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>
-    <label class="toggle" for="al-${id}"><input type="checkbox" id="al-${id}" data-alert="${id}" ${alerts.includes(id)?"checked":""} ${pro?"":"disabled"}>Alert</label>
   </div>`}).join("")}</div>
   <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px">
-    ${pro?(LIVE?(CAL.length?'<button class="btn" type="button" data-ics>Add these dates to my calendar</button><span class="mu" style="align-self:center;font-size:13px">Works with Outlook, Google Calendar and Apple Calendar.</span>':""):'<button class="btn" type="button" data-sync="Outlook">Sync to Outlook</button><button class="btn ghost" type="button" data-sync="Google Calendar">Sync to Google Calendar</button>'):gate("Alerts and sync are in Pro","Get a notice before each deadline, and add them to Outlook or Google Calendar.")}
+    ${pro?(CAL.length?'<button class="btn" type="button" data-ics>Add these dates to my calendar</button><span class="mu" style="align-self:center;font-size:13px">Works with Outlook, Google Calendar and Apple Calendar, with a reminder the day before.</span>':""):gate("Adding dates to your calendar is in Pro","Add every deadline to Outlook, Google or Apple Calendar, with a reminder the day before.")}
   </div>`;
 }
 
 function downloadICS(){
   const esc2=t=>String(t||"").replace(/[\\;,]/g,m=>"\\"+m).replace(/\n/g,"\\n"), stamp=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
-  const ev=CAL.filter(c=>c.iso).map(c=>{const d=c.iso.replace(/-/g,""),n=new Date(c.iso+"T12:00:00");n.setDate(n.getDate()+1);const e=n.toISOString().slice(0,10).replace(/-/g,"");
+  if(!LIVE){ toast("Calendar downloads work on the website."); return }
+  const ev=CAL.filter(c=>c.iso).map(c=>{const d=c.iso.replace(/-/g,""),n=new Date(c.iso+"T00:00:00Z");n.setUTCDate(n.getUTCDate()+1);const e=n.toISOString().slice(0,10).replace(/-/g,"");
     return ["BEGIN:VEVENT",`UID:${d}-${c.h.toLowerCase().replace(/[^a-z0-9]+/g,"-").slice(0,40)}@westasiareport.com`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${d}`,`DTEND;VALUE=DATE:${e}`,`SUMMARY:${esc2(c.h)}`,`DESCRIPTION:${esc2(c.p+" (West Asia Report)")}`,"BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY",`DESCRIPTION:${esc2(c.h)}`,"END:VALARM","END:VEVENT"].join("\r\n")});
   const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//West Asia Report//Deadlines//EN","CALSCALE:GREGORIAN","X-WR-CALNAME:West Asia Report deadlines",...ev,"END:VCALENDAR"].join("\r\n");
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"})); a.download="west-asia-report-deadlines.ics"; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
   toast("Calendar file downloaded. Open it to add the dates.");
 }
-document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-ics]"))downloadICS()});
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-ics]"))downloadICS();if(e.target.closest&&e.target.closest("[data-print-brief]"))window.print()});
 
 /* ------------------------------------------------------------------ For you */
 
@@ -1484,9 +1569,11 @@ function devModel(){
     const groups={}; (LIVE_DEV.rows||[]).forEach((r,i)=>{const k=ETF(r.published_at);(groups[k]=groups[k]||[]).push(items[i])});
     return {live:true,checks:Object.keys(groups).sort().map(k=>({t:k,items:groups[k]})),all:items,last:null,next:ETF(nx.toISOString()),day:new Date().toLocaleDateString("en-US",{timeZone:"America/New_York",weekday:"long",month:"long",day:"numeric"}),teaser:LIVE_DEV.teaser};
   }
+  if(LIVE){ const nx=new Date(); nx.setMinutes(17,0,0); if(nx<=new Date()) nx.setHours(nx.getHours()+1);
+    return {live:true,checks:[],all:[],last:null,next:ETF(nx.toISOString()),day:new Date().toLocaleDateString("en-US",{timeZone:"America/New_York",weekday:"long",month:"long",day:"numeric"}),teaser:null}; }
   return {live:false,checks:DEV_CHECKS,all:DEV_ALL,last:DEV_CHECKS[DEV_CHECKS.length-1].t,next:DEV_NEXT,day:DEV_DAY};
 }
-function srcObjChip(x){return `<a class="src" href="${esc(x.url||"#")}" target="_blank" rel="noopener" title="${TIER_TIP[x.tier]||""}">${x.tier?`<b class="tr t${x.tier}">T${x.tier}</b>`:""}${esc(x.outlet)}</a>`}
+function srcObjChip(x){return `<a class="src" href="${safeUrl(x.url)}" target="_blank" rel="noopener" title="${TIER_TIP[x.tier]||""}">${tcls(x.tier)?`<b class="tr t${tcls(x.tier)}">T${tcls(x.tier)}</b>`:""}${esc(x.outlet)}</a>`}
 function devBadge(st){const d=DEV_STATUS[st]||DEV_STATUS.developing;return `<span class="dv-st dv-${st}" title="${d[1]}">${st==="developing"?'<i aria-hidden="true"></i>':""}${d[0]}</span>`}
 function devRegion(k){return `<span class="dv-reg" style="--c:${col(k)}"><i></i>${esc((RISK[k]&&RISK[k].name)||k)}</span>`}
 function devCard(raw,compact){
@@ -1507,7 +1594,7 @@ function devStrip(){
     <div class="dv-head"><h2><span class="dv-pulse" aria-hidden="true"></span>Developments since this brief</h2><span class="lock">PRO</span></div>
     <p class="dv-lockp"><b>${n} verified ${n===1?"update":"updates"} today</b>${mj?`, including ${mj} major ${mj===1?"event":"events"}`:""}. Pro checks every hour between briefs and alerts you to major events.</p>
     ${items.length?`<div class="dv-blur" aria-hidden="true">${items.slice(0,2).map(x=>`<div><b>${devCur(x).t} ET</b> ${esc(devCur(x).h)}</div>`).join("")}</div>`:""}
-    <button class="btn" type="button" data-go-pro>${LIVE?"See Pro plans":"Preview as Pro"}</button></section>`; }
+    <button class="btn" type="button" data-go-pro>${upgradeMode()?"See Pro plans":"Preview as Pro"}</button></section>`; }
   if(!items.length) return `<section class="dv-strip" aria-label="Developments since this brief"><div class="dv-head"><h2><span class="dv-pulse" aria-hidden="true"></span>Developments since this brief</h2><span class="dv-chk">Next check ${M.next} ET</span></div><p class="dv-lockp">No major developments since this brief.</p></section>`;
   return `<section class="dv-strip" aria-label="Developments since this brief">
     <div class="dv-head"><h2><span class="dv-pulse" aria-hidden="true"></span>Developments since this brief</h2><span class="dv-chk">${M.last?`Checked ${M.last} ET · `:""}next ${M.next}</span></div>
@@ -1614,7 +1701,8 @@ function docToBrief(row){
   return {live:true,id:`${row.brief_date}|${am?"AM":"PM"}`,edition:am?"Morning brief":"Afternoon brief",date:d.date_label||row.brief_date,issued:am?"0700 ET":"1700 ET",
     summary:{bl:s.headline||"",lead:s.lead||s.paragraph||"",blocks:(s.blocks||[]).map(b=>[b.title,b.text]),deadlines:dl,kd:(s.key_developments||[]).map(k=>[k.label,k.text,guessKey(k.label)])},
     sections:(d.sections||[]).map(sec=>({key:sec.key,title:sec.title,geo:!["business","tech"].includes(sec.key),items:(sec.items||[]).map(it=>({h:it.headline,b:it.body,i:it.implications||"",s:(it.sources||[]).map(srcKey),x:[]}))})),
-    framing:null,markets:[],exposures:{},outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
+    framings:(Array.isArray(d.framing)?d.framing:[]).map(f=>({story:f.story||"",sides:(f.sides||[]).map(x=>({who:x.who||"",q:x.quote||"",n:x.note||"",outlet:x.outlet||"",url:x.url||"",translated:!!x.translated}))})).filter(f=>f.sides.length>=2),
+    framing:null,framingMore:Math.max(0,d.framing_more|0),markets:[],exposures:(d.exposures&&typeof d.exposures==="object")?d.exposures:{},hasExposures:!!(d.exposures&&typeof d.exposures==="object"),outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
 }
 /* --- live risk dashboard, chokepoints and calendar (built with every brief) --- */
 let LIVE_OUTLOOK=null;
@@ -1622,16 +1710,17 @@ const CAL_TAG_L={iran_gulf:"Iran",israel_palestine:"Israel",lebanon:"Lebanon",sy
 function applyOutlook(ed){
   const o=ed&&ed.outlook; if(!o) return; LIVE_OUTLOOK={...o,edition:ed.edition,date:ed.date};
   Object.keys(RISK).forEach(k=>delete RISK[k]);
-  Object.entries(o.risk||{}).forEach(([k,r])=>{RISK[k]={name:r.name||k,pol:r.pol,sec:r.sec,san:r.san,t:r.t||{pol:0,sec:0,san:0},note:r.note||""}});
-  CHOKES.length=0; (o.chokepoints||[]).forEach(c=>CHOKES.push([c.name,c.status,`var(--r${Math.min(5,Math.max(1,c.level|0))})`,c.note||""]));
+  const lv=v=>Math.min(5,Math.max(1,Math.round(Number(v))||1)), tr=v=>Math.sign(Number(v)||0), okKey=k=>/^[a-z_]{1,40}$/.test(k);
+  Object.entries(o.risk||{}).forEach(([k,r])=>{if(!okKey(k)||!r||typeof r!=="object")return; const t=r.t||{}; RISK[k]={name:String(r.name||k),pol:lv(r.pol),sec:lv(r.sec),san:lv(r.san),t:{pol:tr(t.pol),sec:tr(t.sec),san:tr(t.san)},note:String(r.note||"")}});
+  CHOKES.length=0; (o.chokepoints||[]).forEach(c=>c&&CHOKES.push([String(c.name||""),String(c.status||""),`var(--r${Math.min(5,Math.max(1,c.level|0))})`,c.note||""]));
   const today=new Date(); today.setHours(0,0,0,0); const WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MN=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
   CAL.length=0; (o.calendar||[]).forEach(e=>{const d=new Date(e.date+"T12:00:00"); if(isNaN(d)||d<today) return;
-    const same=d.toDateString()===new Date().toDateString(); CAL.push({d:String(d.getDate()),m:MN[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?" "+String(d.getFullYear()).slice(2):""),t:same?"Today":WD[d.getDay()],h:e.title,p:e.why||"",tag:CAL_TAG_L[e.tag]||"Watch",key:e.tag,iso:e.date})});
+    const same=d.toDateString()===new Date().toDateString(); CAL.push({d:String(d.getDate()),m:MN[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?" "+String(d.getFullYear()).slice(2):""),t:same?"Today":WD[d.getDay()],h:String(e.title||""),p:String(e.why||""),tag:CAL_TAG_L[e.tag]||"Watch",key:okKey(e.tag)?e.tag:null,iso:/^\d{4}-\d{2}-\d{2}$/.test(e.date)?e.date:null})});
 }
 async function liveBriefs(){
   if(!LIVE||!signed) return;
   try{
-    const {data,error}=await SB.from("briefs").select("brief_date,edition,headline,doc,published_at").order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(20);
+    const {data,error}=await SB.from("brief_feed").select("brief_date,edition,headline,doc,published_at").order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(20);
     if(error) throw error; if(!data||!data.length) return;          // keep the samples until the first real brief exists
     // A brief finished early is held until 07:00 / 17:00 ET (doc.release_at); show it then.
     const now=Date.now(), held=data.map(r=>r.doc&&r.doc.release_at?Date.parse(r.doc.release_at):0).filter(t=>t>now);
@@ -1639,9 +1728,15 @@ async function liveBriefs(){
     const rows=data.filter(r=>!(r.doc&&r.doc.release_at&&Date.parse(r.doc.release_at)>now)); if(!rows.length) return;
     const conv=rows.map(docToBrief).filter(b=>b.sections.length);
     if(!conv.length) return;
-    const cur=BRIEF&&BRIEF.id; EDITIONS.length=0; conv.forEach(b=>EDITIONS.push(b)); applyOutlook(EDITIONS.find(e=>e.outlook));
+    // stay on an older edition the reader chose; otherwise show the latest
+    const sig=rows.map(r=>r.brief_date+r.edition+r.published_at).join(",");
+    if(sig===liveBriefs._sig&&BRIEF&&BRIEF.live) return;           // nothing new since the last check
+    liveBriefs._sig=sig;
+    const curB=BRIEF&&BRIEF.live&&edIdx>0?BRIEF:null, f=filter;
+    EDITIONS.length=0; conv.forEach(b=>EDITIONS.push(b)); applyOutlook(EDITIONS.find(e=>e.outlook));
+    if(curB&&!EDITIONS.some(e=>e.id===curB.id)) insertEdition(curB); // an older brief opened from the archive
     LIVE_IDS.length=0; EDITIONS.forEach(e=>LIVE_IDS.push(e.id));
-    const keep=EDITIONS.findIndex(e=>e.id===cur); setEdition(keep>=0?keep:0);
+    const keep=curB?EDITIONS.findIndex(e=>e.id===curB.id):-1; setEdition(keep>=0?keep:0); if(keep>=0) filter=f;
     const v=location.hash.replace("#",""); if(["today","","archive","foryou"].includes(v)) render();
   }catch(err){ console.warn("briefs",err) }
 }
@@ -1666,10 +1761,11 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-dv-push-off]")){devPushOff();return}
   const a=e.target.closest("[data-dv]"); if(!a) return; const id=a.dataset.dv; setTimeout(()=>{const el=document.getElementById("dv-"+id); if(el){el.scrollIntoView({block:"center"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1600)}},120);});
 function viewForYou(){
-  const head=viewHead("What this means for you","Choose your exposures. Every brief then adds notes drawn from that edition’s verified items.","#DB2777","#7C3AED",tier==="pro"?`<span class="sample">Notes for the ${BRIEF.edition.toLowerCase()}, ${BRIEF.date.replace(/, 2026$/,"")}</span>`:"");
+  const head=viewHead("What this means for you","Choose your exposures. Every brief then adds notes drawn from that edition’s verified items.","#DB2777","#7C3AED",tier==="pro"?`<span class="sample">Notes for the ${esc(BRIEF.edition.toLowerCase())}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}</span>`:"");
   if(tier!=="pro") return head+gate("This is a Pro feature","Tell us where you have exposure, such as operations in Iraq or Red Sea shipping, and each brief adds a section on what the news means for you.");
   const boxes=Object.entries(EXPOSURES).map(([k,e])=>`<label for="ex-${k}" style="--c:var(${EXPO_C[k][0]})"><input type="checkbox" id="ex-${k}" data-expo="${k}" ${expo.includes(k)?"checked":""}><span class="xi">${EXPO_C[k][1]}</span><span><b>${e.t}</b><small>${e.d}</small></span><span class="tick" aria-hidden="true">${expo.includes(k)?"✓":""}</span></label>`).join("");
-  const notes=expo.length?expo.map(k=>`<article class="note" style="--c:var(${EXPO_C[k][0]})"><h3>${EXPOSURES[k].t}</h3><ul>${((BRIEF.exposures||{})[k]||EXPOSURES[k].notes).map(n=>`<li>${esc(n)}</li>`).join("")}</ul></article>`).join(""):`<div class="gate"><b>Pick at least one exposure</b><p>Your personalized notes appear here and in each brief.</p></div>`;
+  const noteList=k=>BRIEF.live?(((BRIEF.exposures||{})[k])||[]):(((BRIEF.exposures||{})[k])||EXPOSURES[k].notes);
+  const notes=expo.length?expo.map(k=>{const L=noteList(k);return `<article class="note" style="--c:var(${EXPO_C[k][0]})"><h3>${EXPOSURES[k].t}</h3>${L.length?`<ul>${L.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:`<p class="mu note-empty">${BRIEF.live&&!BRIEF.hasExposures?"Notes start with the next brief.":"Nothing in this edition bears directly on this exposure."}</p>`}</article>`}).join(""):`<div class="gate"><b>Pick at least one exposure</b><p>Your personalized notes appear here and in each brief.</p></div>`;
   return head+`<div class="expo" role="group" aria-label="Your exposures">${boxes}</div>
   <h2 class="sub-title">Today’s notes</h2><div class="notes">${notes}</div>`;
 }
@@ -1677,7 +1773,7 @@ function viewForYou(){
 /* ------------------------------------------------------------------ Plans */
 function viewPlans(){
   const pro=tier==="pro";
-  const ch=[["email","Email"],["push","Push notifications"],["slack","Slack"],["teams","Microsoft Teams"],["whatsapp","WhatsApp"]];
+  const ch=[["email","Email (briefs and the weekly report)"],["push","Push notifications"]];
   return viewHead("Plans and delivery",user&&user.plan?"Manage your plan and how briefs reach you.":(LIVE?"Choose a plan to keep your access after the trial.":"Choose a plan to keep your access after the trial. The preview links switch what you see in this pilot."))+
   `${stripeOn()&&user&&user.hasStripe?`<p style="margin:0 0 14px"><button class="btn ghost" type="button" data-portal>Manage billing, card and invoices</button></p>`:""}`+
   `${user&&user.plan?`<div class="trial"><b>You’re subscribed</b><span>${PLANS.find(x=>x.k===user.plan).name}, billed ${user.billing==="annual"?"yearly":"monthly"}. Change or cancel anytime.</span></div>`:(user&&user.trial&&user.trialPlan?`<div class="trial"><b>Free trial until ${trialEndDate()}</b><span>Then ${PLANS.find(x=>x.k===user.trialPlan).name} starts at ${money(planAmount({plan:user.trialPlan,billing:user.trialBilling}))} ${user.trialPlan==="teams"||user.trialBilling==="annual"?"a year":"a month"}. Change your plan below or cancel anytime before then.</span></div>`:`<div class="trial"><b>15-day free trial</b><span>Every new account gets full Pro access for 15 days. A card is required; the first charge comes when the trial ends.</span></div>`)}
@@ -1685,7 +1781,7 @@ function viewPlans(){
   ${planCards("app")}
   <h2 class="sub-title">Delivery</h2>
   <div class="delivery">${ch.map(([k,l])=>{const locked=!pro&&["slack","teams","whatsapp"].includes(k);return `<label class="toggle" for="dl-${k}"><span>${l}</span><input type="checkbox" id="dl-${k}" data-deliv="${k}" ${delivery[k]&&!locked?"checked":""} ${locked?"disabled":""}></label>`}).join("")}</div>
-  <p class="foot">${LIVE?"":"Prototype: nothing is charged or sent."}${pro?"":" Slack, Teams and WhatsApp delivery are in Pro."}</p>`;
+  <p class="foot">${LIVE?"":"Prototype: nothing is charged or sent."}</p>`;
 }
 
 /* ------------------------------------------------------------------ Archive */
@@ -1696,7 +1792,154 @@ function edsFor(ym,d){
   if(ym==="2026-10"){ if(d<10) return ["AM","PM"]; if(d===10) return ["AM"]; return []; }
   return ["AM","PM"];
 }
+
+/* ---- live archive: every published brief, by month (loaded as a light index) ---- */
+let ARCH_INDEX=null, ARCH_LOADING=false, archMonthLive=null;
+async function loadArchIndex(){
+  if(ARCH_LOADING||!LIVE||!signed) return; ARCH_LOADING=true;
+  try{
+    const {data,error}=await fetchAll(()=>SB.from("brief_feed").select("brief_date,edition,headline,release:doc->release_at").order("brief_date",{ascending:false}).order("published_at",{ascending:false}),5000);
+    if(error) throw error; const now=Date.now();
+    ARCH_INDEX=(data||[]).filter(r=>!(r.release&&Date.parse(r.release)>now)).map(r=>({date:r.brief_date,ed:r.edition==="morning"?"AM":"PM",headline:r.headline||""}));
+  }catch(err){ console.warn("archive",err); ARCH_INDEX=ARCH_INDEX||[] }
+  ARCH_LOADING=false; if(currentView()==="archive") render();
+}
+// Keep editions newest first, so Previous / Next edition step through them in order.
+function edKey(b){const [d,e]=String(b.id).split("|");return d+(e==="PM"?"2":"1")}
+function insertEdition(b){
+  let i=EDITIONS.findIndex(e=>e.live&&edKey(e)<edKey(b)); if(i<0) i=EDITIONS.length;
+  EDITIONS.splice(i,0,b); LIVE_IDS.length=0; EDITIONS.forEach(e=>{if(e.live)LIVE_IDS.push(e.id)}); return i;
+}
+async function openArchived(d,ed){
+  const li=LIVE_IDS.indexOf(d+"|"+ed);
+  if(li>=0){closeModal();setEdition(li); if(location.hash==="#today") render(); else location.hash="today"; window.scrollTo(0,0); return}
+  try{
+    const {data,error}=await SB.from("brief_feed").select("brief_date,edition,headline,doc,published_at").eq("brief_date",d).eq("edition",ed==="AM"?"morning":"afternoon").maybeSingle();
+    if(error||!data) throw error||new Error("missing");
+    const b=docToBrief(data); setEdition(insertEdition(b));
+    if(location.hash==="#today") render(); else location.hash="today"; window.scrollTo(0,0);
+  }catch(err){ toast("That brief couldn’t be opened. Please try again.") }
+}
+function viewArchiveLive(){
+  const pro=tier==="pro";
+  if(!ARCH_INDEX){ setTimeout(loadArchIndex,0); return viewHead("Archive","Every brief, by date and edition.")+weeklyPanel()+`<section class="panel"><p class="mu">Loading the archive…</p></section>`; }
+  const now=new Date(), ym=d=>d.slice(0,7), MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const cur=now.toLocaleDateString("en-CA",{timeZone:"America/New_York"});
+  const months=[...new Set([ym(cur),...ARCH_INDEX.map(r=>ym(r.date))])].sort().reverse().slice(0,pro?24:2);
+  if(!archMonthLive||!months.includes(archMonthLive)) archMonthLive=months[0];
+  const [Y,Mo]=archMonthLive.split("-").map(Number), days=new Date(Y,Mo,0).getDate(), first=new Date(Y,Mo-1,1).getDay();
+  const byDay={}; ARCH_INDEX.forEach(r=>{(byDay[r.date]=byDay[r.date]||[]).push(r)});
+  const cells=[]; for(let i=0;i<first;i++) cells.push('<div class="day empty"></div>');
+  for(let d=1;d<=days;d++){
+    const ds=`${archMonthLive}-${String(d).padStart(2,"0")}`, age=(new Date(cur+"T12:00:00")-new Date(ds+"T12:00:00"))/864e5, locked=!pro&&age>30;
+    const eds=(byDay[ds]||[]).map(r=>r.ed).sort();
+    cells.push(`<div class="day${eds.length?"":" none"}${ds===cur?" is-today":""}"><span class="dn">${d}</span><div class="eds">${eds.map(e=>`<button type="button" class="ed live${locked?" locked":""}" data-arch="${ds}|${e}" ${locked?'aria-disabled="true"':""} title="${e==="AM"?"Morning brief, 07:00 ET":"Afternoon brief, 17:00 ET"}">${e==="AM"?"07:00":"17:00"}</button>`).join("")}</div></div>`);
+  }
+  const recent=ARCH_INDEX.slice(0,10);
+  const label=m=>{const [y,mm]=m.split("-").map(Number);return MN[mm-1]+" "+y};
+  return viewHead("Archive","Every brief, by date and edition. Pick a date to open that day’s morning or afternoon brief.")+weeklyPanel()+
+  `<div class="arch-tools"><label class="search" for="arch-ql"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="arch-ql" type="search" autocomplete="off" placeholder="${pro?"Search every brief: Hormuz, Kataib Hezbollah, OPEC…":"Search the last 30 days of briefs"}" value="${esc(ARCH_Q)}" aria-describedby="arch-ql-n"></label>${months.length>6?`<label class="sr" for="arch-month">Month</label><select id="arch-month" class="arch-month" data-monthsel>${months.map(m=>`<option value="${m}" ${m===archMonthLive?"selected":""}>${label(m)}</option>`).join("")}</select>`:`<div class="seg2" role="group" aria-label="Month">${months.map(m=>`<button type="button" data-monthl="${m}" aria-pressed="${m===archMonthLive}">${label(m).split(" ")[0]}${m.slice(0,4)!==cur.slice(0,4)?" "+m.slice(0,4):""}</button>`).join("")}</div>`}</div>
+   <div class="arch-grid">
+     <section class="panel cal-month"><h2>${label(archMonthLive)}</h2>
+       <div class="wk">${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(w=>`<span>${w}</span>`).join("")}</div>
+       <div class="days">${cells.join("")}</div>
+       <p class="arch-note">${pro?"Pro: every brief since launch.":"Essential: the last 30 days. Older briefs are in Pro."}</p>
+     </section>
+     <section class="panel recent" id="arch-side" aria-live="polite">${ARCH_Q.trim().length>1?archResultsHTML():`<h2>Recent briefs</h2>
+       ${recent.length?`<ul>${recent.map(r=>{const dt=new Date(r.date+"T12:00:00");return `<li><button type="button" data-arch="${r.date}|${r.ed}"><span class="rd"><b>${dt.toLocaleDateString("en-US",{weekday:"short",day:"numeric",month:"short"})}</b><small>${r.ed==="AM"?"Morning · 07:00 ET":"Afternoon · 17:00 ET"}</small></span><span class="rh">${esc(r.headline||"Open brief")}</span><span class="ra" aria-hidden="true">→</span></button></li>`}).join("")}</ul>`:`<p class="mu">No briefs yet.</p>`}`}
+     </section>
+   </div>`;
+}
+let ARCH_Q="", ARCH_RES=null, ARCH_SEQ=0, _aqT;
+function markSnippet(t){ return esc(t||"").replace(/&lt;&lt;/g,"<mark>").replace(/&gt;&gt;/g,"</mark>") }
+function archResultsHTML(){
+  if(ARCH_RES===null) return `<h2>Search</h2><p class="mu" id="arch-ql-n">Searching…</p>`;
+  if(ARCH_RES.error) return `<h2>Search</h2><p class="mu" id="arch-ql-n">Search isn’t available right now. Please try again.</p>`;
+  if(!ARCH_RES.length) return `<h2>Search</h2><p class="mu" id="arch-ql-n">No briefs match “${esc(ARCH_Q)}”${tier==="pro"?"":" in the last 30 days"}.</p>`;
+  return `<h2>Search results</h2><p class="mu" id="arch-ql-n" style="margin-top:-4px">${ARCH_RES.length===30?"Top 30 matches":ARCH_RES.length+(ARCH_RES.length===1?" match":" matches")}${tier==="pro"?"":" in the last 30 days"}</p><ul class="sres">${ARCH_RES.map(r=>{const dt=new Date(r.brief_date+"T12:00:00");const ed=r.edition==="morning"?"AM":"PM";return `<li><button type="button" data-arch="${r.brief_date}|${ed}"><span class="rd"><b>${dt.toLocaleDateString("en-US",{weekday:"short",day:"numeric",month:"short",year:dt.getFullYear()!==new Date().getFullYear()?"numeric":undefined})}</b><small>${ed==="AM"?"Morning":"Afternoon"}</small></span><span class="rh"><b>${esc(r.headline||"")}</b><small>${markSnippet(r.snippet)}</small></span></button></li>`}).join("")}</ul>`;
+}
+// Pilot: search the sample editions in the browser (the website searches the database).
+function demoSearch(q){
+  const words=q.toLowerCase().split(/\s+/).filter(w=>w.length>1); if(!words.length) return [];
+  return EDITIONS.map(e=>{
+    const txt=[e.summary.bl,e.summary.lead,...e.sections.flatMap(x=>x.items.flatMap(it=>[it.h,it.b]))].join(" ").replace(/\s+/g," ");
+    const low=txt.toLowerCase(); if(!words.every(w=>low.includes(w))) return null;
+    const at=low.indexOf(words[0]), a=Math.max(0,txt.lastIndexOf(" ",Math.max(0,at-50))), b=txt.indexOf(" ",Math.min(txt.length,at+words[0].length+80));
+    let snip=(a>0?"… ":"")+txt.slice(a,b<0?txt.length:b).trim()+(b>0?" …":"");
+    words.forEach(w=>{snip=snip.replace(new RegExp("("+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"),"<<$1>>")});
+    const [d,ed]=String(e.id).split("|");
+    return {brief_date:d,edition:ed==="AM"?"morning":"afternoon",headline:e.summary.bl,snippet:snip,rank:words.reduce((n,w)=>n+low.split(w).length-1,0)};
+  }).filter(Boolean).sort((x,y)=>y.rank-x.rank);
+}
+async function runArchSearch(){
+  const q=ARCH_Q.trim(), seq=++ARCH_SEQ, el=()=>$("#arch-side");
+  if(q.length<2){ ARCH_RES=null; render(); const i=$("#arch-ql"); if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)} return }
+  ARCH_RES=null; if(el()) el().innerHTML=archResultsHTML();
+  if(!LIVE){ ARCH_RES=demoSearch(q); if(el()) el().innerHTML=archResultsHTML(); return }
+  try{ const {data,error}=await SB.rpc("search_briefs",{q}); if(seq!==ARCH_SEQ) return; if(error) throw error; ARCH_RES=data||[] }
+  catch(err){ if(seq!==ARCH_SEQ) return; console.warn("search",err); ARCH_RES={error:true} }
+  if(el()) el().innerHTML=archResultsHTML();
+}
+document.addEventListener("input",e=>{ if(e.target.id==="arch-ql"){ ARCH_Q=e.target.value; clearTimeout(_aqT); _aqT=setTimeout(runArchSearch,350) } });
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-monthl]");if(t){archMonthLive=t.dataset.monthl;render()}});
+document.addEventListener("change",e=>{if(e.target.matches&&e.target.matches("[data-monthsel]")){archMonthLive=e.target.value;render()}});
+
+/* ---- weekly report (Pro): Friday 21:00 ET, on the site and as a PDF ---- */
+let WEEKLIES=null, WEEKLY_TEASE=null, WEEKLY_LOADING=false, WEEKLY_AUTO=false;
+const DEMO_WEEKLY={week_start:"2026-10-03",week_end:"2026-10-09",range_label:"October 3–9, 2026",headline:"Hormuz pressure rises as Israel heads to the polls",
+  bottom_line:"The week turned on the Strait of Hormuz. Ships were struck near the strait and insurers raised war-risk premiums, while Washington kept its blockade of Iranian ports and ruled out strikes before the November 3 midterms. In Israel, polls show neither bloc reaching a majority before the October 27 election. For business, the main risk is a further rise in Gulf shipping costs and disruption to energy flows if attacks spread to the western Gulf.",
+  top_stories:[{title:"Ships struck near Hormuz",what:"Eleven ships were struck near the Strait of Hormuz in October, and a tanker was hit off Qatar’s north coast on October 7.",why:"War-risk premiums and freight rates rise again; energy importers face higher costs."},{title:"Israel’s election stays deadlocked",what:"Polls show neither bloc reaching 61 seats before the October 27 vote.",why:"Coalition talks could delay decisions on Gaza and Lebanon."},{title:"Ansar Allah strikes Riyadh’s airport",what:"Ansar Allah (widely known as the Houthis) struck King Khalid International Airport on October 8.",why:"Raises aviation and site-security risk for operations in Saudi Arabia."}],
+  risk_changes:[{theater:"Saudi Arabia",dimension:"Security",from:"Elevated",to:"High",up:true}],risk_note:"Saudi security risk rose after the airport strike.",
+  week_ahead:[{date:"2026-10-27",title:"Israel national election",why:"Makeup of the next government"},{date:"2026-11-03",title:"US midterm elections",why:"Washington’s line on Iran"}],
+  theaters:[{title:"Iran, the US and the Gulf",text:"Iran held its line on Hormuz while talks with Washington stalled; the US blockade of Iranian ports continues."},{title:"Israel and Palestine",text:"Campaigning intensified before the October 27 vote; President Abbas postponed Palestinian elections to September 2027."}],
+  markets:"Gulf freight and insurance costs climbed on the attacks near Hormuz.",briefs_count:14,demo:true};
+async function loadWeeklies(){
+  if(WEEKLY_LOADING) return; WEEKLY_LOADING=true;
+  try{
+    if(tier==="pro"){ const {data,error}=await SB.from("weeklies").select("week_start,week_end,headline,doc,pdf_path,published_at").order("week_end",{ascending:false}).limit(52); if(error) throw error;
+      const now=Date.now(); WEEKLIES=(data||[]).filter(r=>!(r.doc&&r.doc.release_at&&Date.parse(r.doc.release_at)>now)); }
+    else { const {data,error}=await SB.rpc("weeklies_teaser"); if(error) throw error; WEEKLY_TEASE=data||[]; }
+  }catch(err){ console.warn("weekly",err); if(tier==="pro") WEEKLIES=WEEKLIES||[]; else WEEKLY_TEASE=WEEKLY_TEASE||[] }
+  WEEKLY_LOADING=false; if(currentView()==="archive") render();
+}
+function weeklyList(){ return LIVE?(WEEKLIES||[]).map(r=>({...r.doc,pdf_path:r.pdf_path})):[DEMO_WEEKLY] }
+function weeklyPanel(){
+  const pro=tier==="pro";
+  if(LIVE&&((pro&&WEEKLIES===null)||(!pro&&WEEKLY_TEASE===null))) setTimeout(loadWeeklies,0);
+  const head=`<div class="wk-head"><div><h2>Weekly report</h2><p class="mu">The week’s top stories, rating changes and the week ahead. Every Friday at 21:00 ET, on the site and as a PDF.</p></div><span class="pro-tag">Pro</span></div>`;
+  if(!pro){ const list=LIVE?(WEEKLY_TEASE||[]):[DEMO_WEEKLY];
+    return `<section class="panel weekly-panel" id="weekly">${head}${list.slice(0,3).map(w=>`<div class="wk-item locked"><b>${esc(w.headline||"")}</b><small>${esc(w.range_label||rangeLabel(w.week_start,w.week_end))}</small></div>`).join("")}${gate("The weekly report is in Pro","A board-ready summary of the week, with rating changes and the week ahead, plus a PDF to forward or print.")}</section>`; }
+  const list=weeklyList();
+  return `<section class="panel weekly-panel" id="weekly">${head}${list.length?`<ul class="wk-list">${list.slice(0,8).map((w,i)=>`<li><button type="button" data-weekly="${i}"><span><b>${esc(w.headline||"")}</b><small>${esc(w.range_label||"")}</small></span><span class="ra" aria-hidden="true">→</span></button></li>`).join("")}</ul>`:`<p class="mu">The first weekly report arrives on Friday at 21:00 ET.</p>`}</section>`;
+}
+function rangeLabel(a,b){const s=new Date(a+"T12:00:00"),e=new Date(b+"T12:00:00");const f=d=>d.toLocaleDateString("en-US",{month:"long",day:"numeric"});return `${f(s)}–${s.getMonth()===e.getMonth()?e.getDate():f(e)}, ${e.getFullYear()}`}
+function openWeekly(i){
+  const w=weeklyList()[i]; if(!w) return; const LV=["","Low","Moderate","Elevated","High","Critical"];
+  modal(`<p class="pub-eyebrow" style="margin:0 0 4px">Weekly report · ${esc(w.range_label||"")}</p><h2>${esc(w.headline||"")}</h2>
+  <p class="wk-bl">${esc(w.bottom_line||"")}</p>
+  <div class="m-actions" style="margin:6px 0 14px"><button class="btn" type="button" data-weekly-pdf="${i}">Download PDF</button><button class="btn ghost" type="button" data-weekly-print>Print</button></div>
+  <h3 class="wk-h">The week’s top stories</h3>${(w.top_stories||[]).map((s,n)=>`<div class="wk-story"><h4>${n+1}. ${esc(s.title)}</h4><p>${esc(s.what||"")}</p><p class="wk-why"><b>Why it matters:</b> ${esc(s.why||"")}</p></div>`).join("")}
+  ${(w.risk_changes||[]).length?`<h3 class="wk-h">Risk ratings that moved</h3><ul class="wk-rc">${w.risk_changes.map(c=>`<li><span><b>${esc(c.theater)}</b> · ${esc(c.dimension)}</span><span class="${c.up?"up":"down"}">${c.up?"▲":"▼"} ${esc(c.from)} → <b>${esc(c.to)}</b></span></li>`).join("")}</ul>${w.risk_note?`<p>${esc(w.risk_note)}</p>`:""}`:""}
+  ${(w.week_ahead||[]).length?`<h3 class="wk-h">The week ahead</h3><ul class="wk-rc">${w.week_ahead.map(e=>{const d=new Date(e.date+"T12:00:00");return `<li><span><b>${d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}</b></span><span>${esc(e.title)}${e.why?` · <span class="mu">${esc(e.why)}</span>`:""}</span></li>`}).join("")}</ul>`:""}
+  ${(w.theaters||[]).length?`<h3 class="wk-h">Country by country</h3>${w.theaters.map(t=>`<div class="wk-story"><h4>${esc(t.title||"")}</h4><p>${esc(t.text||"")}</p></div>`).join("")}`:""}
+  ${w.markets?`<h3 class="wk-h">Markets, energy and shipping</h3><p>${esc(w.markets)}</p>`:""}
+  <p class="mu" style="font-size:12.5px;margin-top:14px">Drawn from ${w.briefs_count||0} briefs published ${esc(w.range_label||"")}.</p>`,"Weekly report",true);
+}
+async function weeklyPDF(i){
+  const w=weeklyList()[i]; if(!w) return;
+  if(!LIVE||!w.pdf_path){ toast("PDF downloads work on the website for Pro subscribers."); return }
+  const {data,error}=await SB.storage.from("weekly").createSignedUrl(w.pdf_path,300,{download:w.pdf_path});
+  if(error||!data){ toast("The PDF couldn’t be downloaded. Please try again."); return }
+  location.href=data.signedUrl;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest&&e.target.closest("[data-weekly],[data-weekly-pdf],[data-weekly-print]"); if(!t) return;
+  if(t.dataset.weekly!==undefined) openWeekly(+t.dataset.weekly);
+  else if(t.dataset.weeklyPdf!==undefined) weeklyPDF(+t.dataset.weeklyPdf);
+  else { document.body.classList.add("print-modal"); setTimeout(()=>{window.print();document.body.classList.remove("print-modal")},50) }
+});
 function viewArchive(){
+  if(LIVE) return viewArchiveLive();
   const pro=tier==="pro";
   const M=MONTHS[archMonth];
   const today=new Date(2026,9,10);
@@ -1713,19 +1956,19 @@ function viewArchive(){
   const recent=[];
   for(let d=10; d>=6; d--){ edsFor("2026-10",d).slice().reverse().forEach(e=>recent.push([d,e])); }
   const dow=d=>["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date(2026,9,d).getDay()];
-  return viewHead("Archive","Every brief, by date and edition. Pick a date to open that day’s morning or afternoon brief.")+
+  return viewHead("Archive","Every brief, by date and edition. Pick a date to open that day’s morning or afternoon brief.")+weeklyPanel()+
   `<div class="arch-tools">
-     <label class="search" for="arch-q"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="arch-q" type="search" placeholder="${pro?"Search all briefs: Hormuz, Kataib Hezbollah, OPEC…":"Search is in Pro"}" ${pro?"":"disabled"}></label>
+     <label class="search" for="arch-ql"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="arch-ql" type="search" autocomplete="off" placeholder="${pro?"Search every brief: Hormuz, Kataib Hezbollah, OPEC…":"Search the last 30 days of briefs"}" value="${esc(ARCH_Q)}" aria-describedby="arch-ql-n"></label>
      <div class="seg2" role="group" aria-label="Month">${Object.entries(MONTHS).map(([k,v])=>`<button type="button" data-month="${k}" aria-pressed="${k===archMonth}">${v.label.split(" ")[0]}</button>`).join("")}</div>
    </div>
    <div class="arch-grid">
      <section class="panel cal-month"><h2>${M.label}</h2>
        <div class="wk">${["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(w=>`<span>${w}</span>`).join("")}</div>
        <div class="days">${cells.join("")}</div>
-       <p class="arch-note">${pro?"Pro: unlimited archive. Every brief since launch, fully searchable.":"Essential: the last 30 days. Older briefs and search are in Pro."}</p>
+       <p class="arch-note">${pro?"Pro: every brief since launch.":"Essential: the last 30 days. Older briefs are in Pro."}</p>
      </section>
-     <section class="panel recent"><h2>Recent briefs</h2>
-       <ul>${recent.map(([d,e])=>{const ds=`2026-10-${String(d).padStart(2,"0")}`;const li=LIVE_IDS.indexOf(ds+"|"+e);const live=li>=0;return `<li><button type="button" data-arch="${ds}|${e}"><span class="rd"><b>${dow(d)} ${d} Oct</b><small>${e==="AM"?"Morning · 07:00 ET":"Afternoon · 17:00 ET"}</small></span><span class="rh">${live?esc(EDITIONS[li].summary.bl):"Open brief"}</span><span class="go">→</span></button></li>`}).join("")}</ul>
+     <section class="panel recent" id="arch-side" aria-live="polite">${ARCH_Q.trim().length>1?archResultsHTML():`<h2>Recent briefs</h2>
+       <ul>${recent.map(([d,e])=>{const ds=`2026-10-${String(d).padStart(2,"0")}`;const li=LIVE_IDS.indexOf(ds+"|"+e);const live=li>=0;return `<li><button type="button" data-arch="${ds}|${e}"><span class="rd"><b>${dow(d)} ${d} Oct</b><small>${e==="AM"?"Morning · 07:00 ET":"Afternoon · 17:00 ET"}</small></span><span class="rh">${live?esc(EDITIONS[li].summary.bl):"Open brief"}</span><span class="go">→</span></button></li>`}).join("")}</ul>`}
      </section>
    </div>`;
 }
@@ -1782,7 +2025,7 @@ function contactForm(){
   </form>`,"Contact us");
 }
 function pdfPreview(){
-  if(tier!=="pro"){ modal(`<h2>PDF download is a Pro feature</h2><p class="m-sub">Pro subscribers can download any brief as a formatted PDF for board packs and client briefings.</p><button class="btn" type="button" data-go-pro>Preview as Pro</button>`,"PDF download"); return; }
+  if(tier!=="pro"){ modal(`<h2>PDF download is a Pro feature</h2><p class="m-sub">Pro subscribers can download any brief as a formatted PDF for board packs and client briefings.</p><button class="btn" type="button" data-go-pro>${upgradeMode()?"Upgrade to Pro":"Preview as Pro"}</button>`,"PDF download"); return; }
   modal(`<h2>Download PDF</h2><p class="m-sub">Each PDF is stamped with the subscriber’s name and organization, which discourages sharing outside the license.</p>
     <div class="pdf">
       <div class="pdf-page">
@@ -1818,29 +2061,25 @@ function footerHTML(){const f=document.querySelector(".site-foot");return f?f.ou
 
 /* ---- plans (single source for landing page and in-app Plans) ---- */
 const PLANS=[
- {k:"essential",name:"Essential",m:49,y:490,feat:["Morning and afternoon briefs with executive summary","Web, app and email; push when a brief is published","Risk dashboard (current ratings)","“How each side frames it” on the lead story","Deadlines calendar (view)","Archive of the last 30 days","-Personalized “What this means for you”","-Hourly Developments and alerts, sanctions layer, Slack/Teams/WhatsApp"]},
- {k:"pro",name:"Pro",m:99,y:990,feat:["Everything in Essential","“What this means for you” for your exposures","Framing panel on every major story","Risk trends and history","Sanctions and compliance layer","Developments: verified updates every hour between briefs, with instant alerts","Calendar alerts and Outlook/Google sync","Slack, Teams and WhatsApp delivery","Weekly strategic outlook","PDF and slide export, stamped with your name","Unlimited archive: every brief since launch, with search"]},
- {k:"teams",name:"Pro for Teams",y:3950,feat:["Pro for all 5 seats","Shared exposure profiles","Team admin: invite and reassign seats","One invoice; card or bank transfer","Custom quote for larger organizations"]}
+ {k:"essential",name:"Essential",m:49,y:490,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
+ {k:"pro",name:"Pro",m:99,y:990,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
+ {k:"teams",name:"Pro for Teams",y:3950,feat:["Pro for 5 people","Each colleague signs up; we link them to your team within one business day","One annual payment","Custom quote for larger organizations"]}
 ];
 const PUBLIC_COMPACT=false;   // set to false to show the full feature lists on the landing page
-const SHORT_FEAT={essential:["Morning and afternoon briefs with executive summary","Web, app and email; push when a brief is published","Risk dashboard (current ratings)","“How each side frames it” on the lead story","Archive of the last 30 days"],
-  pro:["Everything in Essential","Developments: verified updates every hour, with alerts","“What this means for you” for your exposures","Framing panel on every major story","Unlimited archive, with search","PDF and slide export, stamped with your name"],
-  teams:["Pro for all 5 seats","Shared exposure profiles","Team admin: invite and reassign seats","One invoice; card or bank transfer"]};
+const SHORT_FEAT={essential:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Archive of the last 30 days"],
+  pro:["Everything in Essential","“What this means for you” for your exposures","Developments: verified updates every hour, with alerts","Weekly report every Friday, with a PDF","Unlimited archive, with search"],
+  teams:["Pro for 5 people","One annual payment"]};
 const COMPARE=[
   ["Morning and afternoon briefs with executive summary","✓","✓","✓"],
-  ["Web, app and email; push when a brief is published","✓","✓","✓"],
-  ["Risk dashboard","Current ratings","Ratings, trends and history","Ratings, trends and history"],
+  ["Web and email delivery","✓","✓","✓"],
   ["“How each side frames it”","Lead story","Every major story","Every major story"],
-  ["Deadlines calendar","View","Alerts, Outlook and Google sync","Alerts, Outlook and Google sync"],
-  ["Archive","Last 30 days","Every brief since launch, with search","Every brief since launch, with search"],
-  ["“What this means for you”","—","✓","✓ with shared team profiles"],
-  ["Sanctions and compliance layer","—","✓","✓"],
+  ["Risk dashboard","Current ratings","Ratings, trend arrows and history","Ratings, trend arrows and history"],
+  ["Deadlines calendar","View","View and add to your calendar","View and add to your calendar"],
+  ["Archive, with search","Last 30 days","Every brief since launch","Every brief since launch"],
+  ["“What this means for you”","—","✓","✓"],
   ["Developments: verified updates every hour, with alerts","—","✓","✓"],
-  ["Slack, Teams and WhatsApp delivery","—","✓","✓"],
-  ["Weekly strategic outlook","—","✓","✓"],
-  ["PDF and slide export, stamped with your name","—","✓","✓"],
-  ["Seats","1","1","5 (more on request)"],
-  ["Team admin and one invoice","—","—","✓"],
+  ["Weekly report every Friday, with a PDF","—","✓","✓"],
+  ["People","1","1","5 (more on request)"],
   ["Price","$49/mo or $490/yr","$99/mo or $990/yr","$3,950/yr"]];
 function compareModal(){
   modal(`<h2>Compare plans</h2><p class="m-sub">Every plan starts with a 15-day Pro trial. A card is required; nothing is charged until the trial ends.</p>
@@ -1947,7 +2186,7 @@ function viewHome(){
 <figure class="demo hero-demo">
       
       <div class="demo-frame">
-        <video id="demo-vid" muted playsinline loop preload="metadata" poster="demo-poster.jpg" aria-label="Short silent demo of a sample edition: executive summary, how each side frames it, the risk dashboard, notes for your exposures and the PDF export"><source src="demo.webm" type="video/webm"><source src="demo.mp4" type="video/mp4"></video>
+        <video id="demo-vid" muted playsinline loop preload="metadata" poster="demo-poster.jpg?v=3" aria-label="Short silent demo of a sample edition: the summary, how each side frames it, risk ratings and history, notes for your exposures, archive search and the weekly report"><source src="demo.webm?v=3" type="video/webm"><source src="demo.mp4?v=3" type="video/mp4"></video>
         <button type="button" class="demo-toggle" data-demo-toggle aria-label="Pause demo">❚❚</button>
       </div>
     </figure>
@@ -1958,10 +2197,10 @@ function viewHome(){
     <div class="feat">
       ${fcard("--t-israel","sum","Executive summary, then country by country","The bottom line first, then Iran and the Gulf, Israel and Palestine, Lebanon, Syria, Iraq, Yemen and the Red Sea, Turkey, Egypt, Jordan and North Africa, plus markets.")}
       ${fcard("--gold","pulse","Developments, every hour","Between the two briefs, every hour: verified updates on anything significant, labeled Developing until a second independent source confirms. Instant alerts for major events.",true)}
-      ${fcard("--f-doh","frames","How each side frames it","The same event as each government presents it, side by side and attributed. No editorializing.")}
       ${fcard("--t-syria","risk","Risk dashboard","Political, security and sanctions ratings for every country, and a monitor for Hormuz, the Bab el-Mandeb and Gulf export routes.")}
+      ${fcard("--f-doh","frames","How each side frames it","For major stories, each government and party in its own words, quoted and attributed side by side. No editorializing.")}
       ${fcard("--t-tech","you","What this means for you","Set your exposures, from operations in Iraq to Red Sea shipping, and each brief adds notes written for them.",true)}
-      ${fcard("--t-iraq","arch","Archive and PDF","Every brief since launch by date and edition, fully searchable, with licensed PDF exports for board packs.",true)}
+      ${fcard("--t-iraq","sum","Weekly report","Every Friday at 21:00 ET: the week’s top stories, the ratings that moved and the week ahead, with a PDF to forward or print.",true)}
     </div>
   </div></section>
 
@@ -1988,10 +2227,10 @@ function viewHome(){
     <div class="sec-head"><div class="pub-eyebrow">Questions</div><h2>Frequently asked</h2></div>
     <div class="faq">
       <details><summary>Who is the brief for?</summary><p>Executives, investors, risk and security teams, government-affairs professionals, diplomats, researchers and journalists who need a reliable read on the region every morning and afternoon.</p></details>
-      <details><summary>How is it different from a news site?</summary><p>It filters hundreds of reports into what matters, connects developments across countries, shows how each side frames major events and explains the implications, with every point linked to its sources.</p></details>
+      <details><summary>How is it different from a news site?</summary><p>It filters hundreds of reports into what matters, connects developments across countries, shows how each side frames major events in its own words and explains the implications, with every point linked to its sources.</p></details>
       <details><summary>Where does the reporting come from?</summary><p>From vetted regional and international outlets and official sources in five languages. Each outlet is tiered by reliability and labeled with its ownership. Read the full standards in the footer.</p></details>
-      <details><summary>What happens after the free trial?</summary><p>A card is required to start the trial, but you are not charged for 15 days. You choose your plan when you start, and we email you three days before the trial ends. Cancel anytime before then and you will not be charged.</p></details>
-      <details><summary>Can my team share one subscription?</summary><p>Each subscription is for one person. Pro for Teams covers five seats with shared settings and one invoice; larger organizations get a custom quote.</p></details>
+      <details><summary>What happens after the free trial?</summary><p>A card is required to start the trial, but you are not charged for 15 days. You choose your plan when you start, and we email you a reminder before the trial ends. Cancel anytime before then and you will not be charged.</p></details>
+      <details><summary>Can my team share one subscription?</summary><p>Each subscription is for one person. Pro for Teams covers five people for one annual payment; larger organizations get a custom quote.</p></details>
     </div>
   </div></section>
 
@@ -2001,8 +2240,8 @@ function viewHome(){
 function authShell(inner, side){
   return `<div class="auth"><aside class="auth-side">${brandHTML()}<h2>${side.h}</h2><ul>${side.li.map(x=>`<li>${x}</li>`).join("")}</ul><a href="#home" style="color:#C9D4E2;font-size:13px">← Back to the site</a><div class="auth-by"><span class="oc-by">Built and powered by</span>${ocLogo()}</div></aside><main class="auth-main"><a class="auth-mlogo" href="#home" aria-label="West Asia Report, go to the home page"><img src="${WA_LOCK_L}" alt="West Asia Report. Risk, decoded."></a>${inner}</main></div>`;
 }
-const SIDE_IN={h:"Welcome back.",li:["Today’s briefs at 07:00 and 17:00 ET","Your exposures and alerts, where you left them","Every past brief in your archive"]};
-const SIDE_UP={h:"15 days of Pro, on us.",li:["Both daily briefs with the full executive summary","“What this means for you” for your exposures","Risk dashboard, alerts and the full archive","No charge for 15 days; cancel anytime before"]};
+const SIDE_IN={h:"Welcome back.",li:["Today’s briefs at 07:00 and 17:00 ET","Your exposures, alerts and settings, where you left them","Every past brief in your archive"]};
+const SIDE_UP={h:"15 days of Pro, on us.",li:["Both daily briefs with the full executive summary","“What this means for you” for your exposures","Hourly Developments and the Friday weekly report","Risk dashboard, alerts and the full archive","No charge for 15 days; cancel anytime before"]};
 
 function viewSignin(){
   return authShell(`<form class="auth-card" id="signin-form" novalidate>
@@ -2130,7 +2369,10 @@ function renderAcct(){
   a.innerHTML = user ? `<b>${esc(user.name)}</b><small>${esc([user.title,user.org].filter(Boolean).join(", ")||user.email)}</small>${user.role==="admin"?'<span class="trialb">Founder access</span>':user.plan?`<span class="trialb">${PLANS.find(x=>x.k===user.plan).name} · ${user.billing}</span>`:user.trial?`<span class="trialb">Pro trial · ends ${trialEndDate().replace(/, \d{4}$/,"")}</span><a class="acct-sub" href="#plans">Manage plan</a>`:""}<button type="button" data-signout>Sign out</button>` : "";
 }
 function signIn(u){ user=u; signed=true; store.set("user",u); store.set("signed",true); }
-function signOut(){ if(LIVE&&SB) SB.auth.signOut().catch(()=>{}); signed=false; user=null; store.set("signed",false); store.set("user",null); location.hash="home"; }
+function signOut(){ signed=false; user=null; store.set("signed",false); store.set("user",null);
+  // Live: reload so nothing from this account stays in memory for the next person on this device.
+  if(LIVE&&SB){ const go=()=>{try{history.replaceState(null,"",location.pathname+"#home")}catch(_){} location.reload()}; SB.auth.signOut().then(go,go); return }
+  location.hash="home"; }
 function showErr(id,msg){const e=$("#"+id); e.textContent=msg; e.hidden=false;}
 const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -2154,6 +2396,8 @@ function profileToUser(p,subs){
   const u={id:p.id,name,first:p.first_name||"",last:p.last_name||"",email:p.email,phone:p.phone||"",country:p.country||"",title:p.job_title||"",seniority:p.seniority||"",org:p.organization||"",orgtype:p.org_type||"",func:p.job_function||"",size:p.org_size||"",seats:p.seats||"individual",role:p.role==="admin"?"admin":undefined,trialStart:p.trial_started_at};
   if(p.role==="admin"){u.title=u.title||"Founder";u.org=u.org||"Outreach Consult";u.trial=false;return u}
   u.hasStripe=(subs||[]).some(x=>x.stripe_customer_id);
+  if(Array.isArray(p.exposures)&&p.exposures.length){expo=p.exposures.filter(k=>EXPOSURES[k]);store.set("expo",expo)}
+  if(p.delivery&&typeof p.delivery==="object"){delivery={...delivery,email:p.delivery.email!==false,push:p.delivery.push!==false};store.set("delivery",delivery)}
   if(s&&s.status!=="trialing"){u.plan=s.plan;u.billing=s.billing;u.trial=false;u.cardOnFile=true}
   else {u.trial=true; if(s){u.cardOnFile=true;u.trialPlan=s.plan;u.trialBilling=s.billing;if(s.trial_ends_at)u.trialEnds=s.trial_ends_at}
     else if(CHECKOUT_PENDING){u.cardOnFile=true}
@@ -2243,7 +2487,9 @@ async function checkoutReturn(){
   CHECKOUT_PENDING=true;
   for(let k=0;k<12;k++){ // wait for Stripe to confirm (usually a few seconds)
     const me=await loadMe().catch(()=>null); const ok=me&&me.subs.some(x=>["trialing","active","past_due"].includes(x.status)&&x.stripe_customer_id);
-    if(ok){ CHECKOUT_PENDING=false; const u=profileToUser(me.p,me.subs); signIn(u); if(u.plan){tier=u.plan==="essential"?"essential":"pro";store.set("tier",tier)} render(); toast(u.plan?`Subscribed to ${PLANS.find(x=>x.k===u.plan).name}`:"Card added. Your trial has started."); return }
+    if(ok){ CHECKOUT_PENDING=false; const u=profileToUser(me.p,me.subs); signIn(u); if(u.plan){tier=u.plan==="essential"?"essential":"pro";store.set("tier",tier)}
+      // the plan may have changed what this account can read: fetch again
+      liveBriefs._sig=null; RH=null; ARCH_INDEX=null; WEEKLIES=null; WEEKLY_TEASE=null; devLoad(); render(); toast(u.plan?`Subscribed to ${PLANS.find(x=>x.k===u.plan).name}`:"Card added. Your trial has started."); return }
     await new Promise(r=>setTimeout(r,2000));
   }
   CHECKOUT_PENDING=false; toast("Payment received. Your account will update in a minute.");
@@ -2425,17 +2671,23 @@ function admData(){
 let ADM_LIVE=null, ADM_ERR="", ADM_LOADING=false;
 STATUS_L.pending="No card yet"; STATUS_I.pending="…";
 const ST_MAP={trialing:"trial",active:"active",past_due:"past_due",canceled:"canceled",expired:"expired"};
+// Supabase returns at most 1,000 rows per request; page through to get them all.
+async function fetchAll(mk,max=100000){ let out=[];
+  for(let from=0;from<max;from+=1000){ const {data,error}=await mk().range(from,from+999); if(error) return {data:null,error};
+    out=out.concat(data||[]); if(!data||data.length<1000) break; }
+  return {data:out,error:null}; }
+const num=v=>Number.isFinite(Number(v))?Number(v):0;
 async function loadAdmLive(){
   if(ADM_LOADING) return; ADM_LOADING=true; ADM_ERR="";
   try{
     const now=new Date(), d30=new Date(now-30*DAY).toISOString(), d120=new Date(now-120*DAY).toISOString().slice(0,10);
     const q=await Promise.all([
-      SB.from("profiles").select("id,email,first_name,last_name,phone,country,job_title,seniority,organization,org_type,job_function,org_size,seats,regions_wanted,heard_from,marketing_ok,signup_method,role,created_at").order("created_at",{ascending:false}).limit(10000),
-      SB.from("subscriptions").select("user_id,plan,billing,status,seats,trial_ends_at,current_period_end,stripe_customer_id,created_at,updated_at").limit(20000),
-      SB.from("briefs").select("brief_date,edition,headline,published_at,stats:doc->stats,release:doc->release_at").gte("brief_date",d120).order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(400),
-      SB.from("alert_log").select("kind,channel,sent_at").gte("sent_at",d30).limit(50000),
+      fetchAll(()=>SB.from("profiles").select("id,email,first_name,last_name,phone,country,job_title,seniority,organization,org_type,job_function,org_size,seats,regions_wanted,heard_from,marketing_ok,signup_method,role,created_at").order("created_at",{ascending:false}).order("id")),
+      fetchAll(()=>SB.from("subscriptions").select("user_id,plan,billing,status,seats,trial_ends_at,current_period_end,stripe_customer_id,created_at,updated_at").order("created_at").order("user_id")),
+      SB.from("brief_feed").select("brief_date,edition,headline,published_at,stats:doc->stats,release:doc->release_at").gte("brief_date",d120).order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(400),
+      fetchAll(()=>SB.from("alert_log").select("kind,channel,sent_at").gte("sent_at",d30).order("sent_at")),
       SB.from("contact_messages").select("name,email,organization,topic,message,created_at").order("created_at",{ascending:false}).limit(500),
-      SB.from("developments").select("day,level,status,published_at").gte("published_at",d30).limit(10000)]);
+      fetchAll(()=>SB.from("developments").select("day,level,status,published_at").gte("published_at",d30).order("published_at"))]);
     const bad=q.find(r=>r.error); if(bad) throw bad.error;
     ADM_LIVE=buildAdmLive(...q.map(r=>r.data||[])); ADM=null;
   }catch(err){ console.warn("admin data",err); ADM_ERR=(err&&err.message)||"Could not load data." }
@@ -2477,8 +2729,8 @@ function buildAdmLive(P,S,B,A,M,DV){
   const etParts=t=>{const f=new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(t);return +f.find(p=>p.type==="hour").value*60+ +f.find(p=>p.type==="minute").value};
   const briefs=B.map(b=>{const st=b.stats||{},v=st.verification||{},pub=new Date(b.published_at||b.brief_date),rel=b.release?new Date(b.release):null;
     const target=b.edition==="morning"?7*60:17*60, at=rel&&rel>pub?rel:pub, mins=etParts(at);
-    return {date:b.brief_date,edition:b.edition,headline:b.headline||"",published:pub,delivered:at,onTime:mins<=target+5,items:st.items||0,sources:st.sources_working||"",
-      articles:st.articles_collected||0,passed:v.passed||0,fixed:v.fixed||0,failed:v.failed||0,minutes:st.runtime_sec?(st.runtime_sec/60):0,cost:st.cost_usd_estimate||0,langs:st.languages||""}});
+    return {date:b.brief_date,edition:b.edition,headline:b.headline||"",published:pub,delivered:at,onTime:mins<=target+5,items:num(st.items),sources:String(st.sources_working||""),
+      articles:num(st.articles_collected),passed:num(v.passed),fixed:num(v.fixed),failed:num(v.failed),minutes:num(st.runtime_sec)/60,cost:num(st.cost_usd_estimate),langs:String(st.languages||"")}});
   subs.sort((a,b)=>b.signup-a.signup);
   return {subs,months,weeks,days,briefs,messages:M,alerts:A.length,devs:DV.length,mrrOf,activeAt,rejects:0,live:true,loadedAt:new Date()};
 }
@@ -2489,7 +2741,7 @@ function admLiveGate(active){
 }
 
 /* ---- export (Excel-ready CSV) and print ---- */
-function csvCell(v){ if(v===null||v===undefined) return ""; if(v instanceof Date) v=v.toISOString().slice(0,10); v=String(v); return /[",\n\r]/.test(v)||/^[=+\-@]/.test(v)?'"'+(/^[=+\-@]/.test(v)?"'":"")+v.replace(/"/g,'""')+'"':v }
+function csvCell(v){ if(v===null||v===undefined) return ""; if(v instanceof Date) v=v.toISOString().slice(0,10); v=String(v); return /[",\n\r]/.test(v)||/^[=+\-@\t\r]/.test(v)?'"'+(/^[=+\-@\t\r]/.test(v)?"'":"")+v.replace(/"/g,'""')+'"':v }
 function downloadCSV(name,tables){
   const lines=[]; tables.forEach((t,i)=>{ if(i) lines.push(""); if(t.title) lines.push(csvCell(t.title)); lines.push(t.head.map(csvCell).join(",")); t.rows.forEach(r=>lines.push(r.map(csvCell).join(","))) });
   const blob=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});
@@ -2536,7 +2788,7 @@ function niceMax(v,ticks=4){if(v<=0)return 4;const raw=v/ticks,p=Math.pow(10,Mat
 function colPath(x,y,w,h,round){if(h<=0)return"";const rr=round?Math.min(4,h,w/2):0;return `M${x},${y+h}V${y+rr}${rr?`Q${x},${y} ${x+rr},${y}`:""}H${x+w-rr}${rr?`Q${x+w},${y} ${x+w},${y+rr}`:""}V${y+h}Z`}
 function tipAttr(html){return `data-tip="${esc(html)}"`}
 function legend(items){return `<div class="lg">${items.map(([l,c,shape])=>`<span><i class="${shape||"sw"}" style="--c:var(${c})"></i>${l}</span>`).join("")}</div>`}
-function tableView(head,rows,cap){return `<details class="tv"><summary>View as table</summary><div class="tv-scroll"><table class="atable"><caption class="sr">${cap||""}</caption><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>i?`<td>${c}</td>`:`<th scope="row">${c}</th>`).join("")}</tr>`).join("")}</tbody></table></div></details>`}
+function tableView(head,rows,cap){return `<details class="tv"><summary>View as table</summary><div class="tv-scroll"><table class="atable"><caption class="sr">${cap||""}</caption><thead><tr>${head.map(h=>`<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>i?`<td>${esc(c)}</td>`:`<th scope="row">${esc(c)}</th>`).join("")}</tr>`).join("")}</tbody></table></div></details>`}
 // stacked (or single) columns
 function drawColumns(w,{labels,series,fmt=kfmt,H=230,totalLabel=true,tipTitle}){
   if(!labels.length) return `<p class="mu chart-empty">No data yet.</p>`;
@@ -2557,9 +2809,9 @@ function drawColumns(w,{labels,series,fmt=kfmt,H=230,totalLabel=true,tipTitle}){
   return `<svg width="${w}" height="${H}" role="img">${g}<line class="base" x1="${P.l}" x2="${w-P.r}" y1="${P.t+ih}" y2="${P.t+ih}"/>${bars}${lab}</svg>`;
 }
 // lines with crosshair
-function drawLines(w,{labels,series,fmt=v=>v,H=220,min=0,max:mx}){
+function drawLines(w,{labels,series,fmt=v=>v,H=220,min=0,max:mx,padL=44,padR=40}){
   if(!labels.length) return `<p class="mu chart-empty">No data yet.</p>`;
-  const P={l:44,r:40,t:14,b:26},iw=w-P.l-P.r,ih=H-P.t-P.b;
+  const P={l:padL,r:padR,t:14,b:26},iw=w-P.l-P.r,ih=H-P.t-P.b;
   const all=series.flatMap(s=>s.values);const max=mx||niceMax(Math.max(...all));
   const X=i=>P.l+iw*i/(labels.length-1),Y=v=>P.t+ih-ih*(v-min)/(max-min);
   let g="";for(let k=0;k<=4;k++){const v=min+(max-min)*k/4,y=Y(v);g+=`<line class="gl" x1="${P.l}" x2="${w-P.r}" y1="${y}" y2="${y}"/><text class="ax" x="${P.l-6}" y="${y+4}" text-anchor="end">${fmt(v)}</text>`}
@@ -2601,7 +2853,7 @@ function drawDiverge(w,{labels,pos,neg,H=230}){
 }
 function chart(id,title,sub,body,extra=""){return `<figure class="apanel chart-card"><figcaption><h3>${title}</h3>${sub?`<p>${sub}</p>`:""}</figcaption>${extra}<div class="chart" data-chart="${id}"></div>${body||""}</figure>`}
 function drawCharts(){document.querySelectorAll("[data-chart]").forEach(el=>{const f=CH[el.dataset.chart];if(!f)return;const w=Math.max(260,Math.floor(el.clientWidth));el.innerHTML=f(w)})}
-let _rz;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(currentView().startsWith("admin"))drawCharts()},150)});
+let _rz;window.addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{const v=currentView();if(v.startsWith("admin"))drawCharts();else if(v==="risk")drawRiskHistory()},150)});
 // tooltip + crosshair
 document.addEventListener("pointerover",e=>{const t=e.target.closest&&e.target.closest("[data-tip]");const tip=$("#ctip");if(!tip)return;
   if(!t){tip.hidden=true;document.querySelectorAll(".cross").forEach(c=>c.setAttribute("visibility","hidden"));return}
@@ -2846,7 +3098,7 @@ document.addEventListener("input",e=>{if(e.target.id==="aq-q"){aq.q=e.target.val
 document.addEventListener("change",e=>{if(e.target.id==="aq-plan"||e.target.id==="aq-country"){aq[e.target.id.slice(3)]=e.target.value;aq.page=0;$("#subs-table").innerHTML=subsRows()}});
 
 /* ------------------------------------------------------------------ shell */
-function currentView(){const h=location.hash.replace("#","");if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
+function currentView(){let h=location.hash.replace("#","");if(h==="weekly")h="archive";if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
 function renderNav(active){
   const NV=isAdmin()?[...VIEWS,["admin","Admin"]]:VIEWS;
   const link=k=>{const l=NV.find(v=>v[0]===k)[1];return `<a href="#${k}" style="--c:var(${NAV_C[k]})" ${k===active?'aria-current="page"':""}><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg></span><span>${l}</span>${PRO_ONLY[k]&&tier!=="pro"?'<span class="lock">PRO</span>':""}</a>`};
@@ -2873,6 +3125,8 @@ function render(){setMarks();
   document.body.classList.toggle("is-admin",adm);
   if(adm){$("#view").innerHTML=viewAdmin(v);drawCharts();const n=$(".atabs"),a=n&&n.querySelector("[aria-current]");if(a&&n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;return}
   $("#view").innerHTML={today:viewToday,developments:viewDevelopments,archive:viewArchive,risk:viewRisk,calendar:viewCalendar,foryou:viewForYou,plans:viewPlans}[v]();
+  if(v==="risk") requestAnimationFrame(drawRiskHistory);
+  if(v==="archive"&&location.hash==="#weekly"){ if(tier==="pro"&&weeklyList().length&&!WEEKLY_AUTO){WEEKLY_AUTO=true;setTimeout(()=>openWeekly(0),30)} else if(tier!=="pro"){const el=$("#weekly");if(el)el.scrollIntoView({block:"start"})} }
   if(v==="plans"&&user){const d=document.createElement("div");d.className="acct acct-m";d.innerHTML=$("#acct").innerHTML;$("#view").prepend(d)}
 }
 function setTier(t){tier=t;store.set("tier",t);render();toast(t==="pro"?"Previewing Pro":"Previewing Essential")}
@@ -2897,8 +3151,9 @@ document.addEventListener("click",e=>{
   if(t.hasAttribute("data-soon")){toast(t.dataset.soon+" page comes with the live site");return}
   if(t.dataset.month){archMonth=t.dataset.month;render();return}
   if(t.dataset.arch){
-    if(t.classList.contains("locked")){modal(`<h2>Older briefs are in Pro</h2><p class="m-sub">Essential includes the last 30 days. Pro opens every brief since launch, with full search.</p><button class="btn" type="button" data-go-pro>Preview as Pro</button>`,"Archive");return}
+    if(t.classList.contains("locked")){modal(`<h2>Older briefs are in Pro</h2><p class="m-sub">Essential includes the last 30 days. Pro opens every brief since launch, with full search.</p><button class="btn" type="button" data-go-pro>${upgradeMode()?"Upgrade to Pro":"Preview as Pro"}</button>`,"Archive");return}
     const [d,ed]=t.dataset.arch.split("|");
+    if(LIVE){ openArchived(d,ed); return }
     const li=LIVE_IDS.indexOf(d+"|"+ed);
     if(li>=0){closeModal();setEdition(li); if(location.hash==="#today") render(); else location.hash="today"; window.scrollTo(0,0); return}
     const dt=new Date(d+"T12:00:00");
@@ -2906,15 +3161,15 @@ document.addEventListener("click",e=>{
   if(t.hasAttribute("data-go-pro")) closeModal();
   if(t.dataset.tier)setTier(t.dataset.tier);
   else if(t.dataset.tierPick)setTier(t.dataset.tierPick);
-  else if(t.hasAttribute("data-go-pro"))setTier("pro");
+  else if(t.hasAttribute("data-go-pro")){ if(upgradeMode()){ intent={plan:"pro",mode:"buy",billing}; store.set("intent",intent); location.hash="plans"; } else setTier("pro"); }
   else if(t.dataset.filter){filter=t.dataset.filter;render()}
   else if(t.dataset.sync)toast(`${t.dataset.sync} sync connects in the live app`);
 });
 document.addEventListener("change",e=>{
   const t=e.target;
-  if(t.dataset.expo){expo=t.checked?[...new Set([...expo,t.dataset.expo])]:expo.filter(x=>x!==t.dataset.expo);store.set("expo",expo);render()}
+  if(t.dataset.expo){expo=t.checked?[...new Set([...expo,t.dataset.expo])]:expo.filter(x=>x!==t.dataset.expo);store.set("expo",expo);if(LIVE)liveSavePrefs({exposures:expo});render()}
   else if(t.dataset.alert){alerts=t.checked?[...alerts,t.dataset.alert]:alerts.filter(x=>x!==t.dataset.alert);store.set("alerts",alerts);toast(t.checked?"Alert on":"Alert off")}
-  else if(t.dataset.deliv){delivery[t.dataset.deliv]=t.checked;store.set("delivery",delivery);toast("Delivery updated")}
+  else if(t.dataset.deliv){delivery[t.dataset.deliv]=t.checked;store.set("delivery",delivery);if(LIVE)liveSavePrefs({delivery:{email:delivery.email!==false,push:delivery.push!==false}});toast("Delivery updated")}
 });
 window.addEventListener("hashchange",()=>{render();window.scrollTo(0,0)});
 document.addEventListener("keydown",e=>{ if(e.key==="Escape" && !$("#modal").hidden) closeModal(); });

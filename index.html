@@ -244,6 +244,16 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .note{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);border-top:3px solid var(--c)}
 .note h3{margin:0;font-size:15px;font-weight:800;padding:12px 16px 0}
 .note ul{margin:0;padding:10px 16px 16px 32px;display:grid;gap:8px;font-size:14.5px}
+.op-voices{margin:14px 0 14px;font-size:14px;color:var(--muted)}
+.op-voices b{color:var(--ink)}
+.op-list{display:grid;gap:14px}
+.op-card{padding:18px 20px}
+.op-eb{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.op-card h3{font-family:var(--serif);font-size:21px;line-height:1.25;margin:6px 0 4px}
+.op-by{margin:0 0 10px;font-size:13.5px;color:var(--muted)}
+.op-sum{margin:0 0 12px;font-size:15.5px;line-height:1.55}
+.op-q{margin:0 0 12px;padding:6px 14px;border-left:3px solid var(--gold);font-family:var(--serif);font-style:italic;font-size:16px}
+.apreview{margin:-4px 0 12px;font-size:14px}
 .note .note-empty{margin:0;padding:10px 16px 16px;font-size:14px;line-height:1.5}
 .note li::marker{color:var(--c)}
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
@@ -1702,7 +1712,7 @@ function docToBrief(row){
     summary:{bl:s.headline||"",lead:s.lead||s.paragraph||"",blocks:(s.blocks||[]).map(b=>[b.title,b.text]),deadlines:dl,kd:(s.key_developments||[]).map(k=>[k.label,k.text,guessKey(k.label)])},
     sections:(d.sections||[]).map(sec=>({key:sec.key,title:sec.title,geo:!["business","tech"].includes(sec.key),items:(sec.items||[]).map(it=>({h:it.headline,b:it.body,i:it.implications||"",s:(it.sources||[]).map(srcKey),x:[]}))})),
     framings:(Array.isArray(d.framing)?d.framing:[]).map(f=>({story:f.story||"",sides:(f.sides||[]).map(x=>({who:x.who||"",q:x.quote||"",n:x.note||"",outlet:x.outlet||"",url:x.url||"",translated:!!x.translated}))})).filter(f=>f.sides.length>=2),
-    framing:null,framingMore:Math.max(0,d.framing_more|0),markets:[],exposures:(d.exposures&&typeof d.exposures==="object")?d.exposures:{},hasExposures:!!(d.exposures&&typeof d.exposures==="object"),outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
+    commentary:(Array.isArray(d.commentary)?d.commentary:[]).filter(c=>c&&typeof c==="object"&&c.headline&&c.summary).map(c=>({h:String(c.headline),s:String(c.summary),q:String(c.quote||""),by:String(c.author||""),outlet:String(c.outlet||""),country:String(c.country||""),lang:String(c.lang||"en"),translated:!!c.translated,url:String(c.url||"")})),hasCommentary:Array.isArray(d.commentary),framing:null,framingMore:Math.max(0,d.framing_more|0),markets:[],exposures:(d.exposures&&typeof d.exposures==="object")?d.exposures:{},hasExposures:!!(d.exposures&&typeof d.exposures==="object"),outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
 }
 /* --- live risk dashboard, chokepoints and calendar (built with every brief) --- */
 let LIVE_OUTLOOK=null;
@@ -1760,6 +1770,24 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-dv-push-on]")){devPushOn();return}
   if(e.target.closest("[data-dv-push-off]")){devPushOff();return}
   const a=e.target.closest("[data-dv]"); if(!a) return; const id=a.dataset.dv; setTimeout(()=>{const el=document.getElementById("dv-"+id); if(el){el.scrollIntoView({block:"center"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1600)}},120);});
+/* ------------------------------------------------------------------ Commentary */
+// Hidden until launch: only staff can open #commentary. Set to true to show it to subscribers
+// (then add ["commentary","Commentary"] to VIEWS so it appears in the menu).
+const COMMENTARY_PUBLIC=false;
+function viewCommentary(){
+  const list=(BRIEF&&BRIEF.commentary)||[];
+  const when=`${esc(BRIEF.edition)}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}`;
+  const head=viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1",`<span class="sample">${when}</span>`);
+  const hidden=COMMENTARY_PUBLIC?"":`<div class="notice"><b>Hidden</b><span>Only staff can see this page. Subscribers won’t see it until it launches.</span></div>`;
+  if(!list.length) return head+hidden+`<section class="panel"><h2>No commentary in this edition</h2><p class="mu">${BRIEF.live&&!BRIEF.hasCommentary?"The digest starts with the next brief.":"No significant opinion pieces were found in this edition’s window."}</p></section>`;
+  const countries=[...new Set(list.map(c=>c.country).filter(Boolean))];
+  return head+hidden+`<p class="op-voices"><b>Voices in this edition:</b> ${countries.map(esc).join(" · ")}</p><div class="op-list">${list.map(c=>`<article class="panel op-card">
+    <div class="op-eb">Opinion · ${esc(c.outlet)}${c.country?` · ${esc(c.country)}`:""}${c.translated?` · translated from ${esc(LANG_N[c.lang]||c.lang)}`:""}</div>
+    <h3>${esc(c.h)}</h3>${c.by?`<p class="op-by">By ${esc(c.by)}</p>`:""}
+    <p class="op-sum">${esc(c.s)}</p>${c.q?`<blockquote class="op-q">“${esc(c.q)}”</blockquote>`:""}
+    ${safeUrl(c.url)!=="#"?`<a class="link" href="${safeUrl(c.url)}" target="_blank" rel="noopener">Read the original at ${esc(c.outlet)} ↗</a>`:""}
+  </article>`).join("")}</div>`;
+}
 function viewForYou(){
   const head=viewHead("What this means for you","Choose your exposures. Every brief then adds notes drawn from that edition’s verified items.","#DB2777","#7C3AED",tier==="pro"?`<span class="sample">Notes for the ${esc(BRIEF.edition.toLowerCase())}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}</span>`:"");
   if(tier!=="pro") return head+gate("This is a Pro feature","Tell us where you have exposure, such as operations in Iraq or Red Sea shipping, and each brief adds a section on what the news means for you.");
@@ -2871,6 +2899,7 @@ function adminShell(active,inner,bare){
   const tools=bare?"":`<div class="atools" role="toolbar" aria-label="${tab?tab[1]:"Admin"} tools">${LIVE?note:""}<span class="atools-b"><button type="button" class="btn ghost sm" data-aexport><span aria-hidden="true">⤓</span> Export to Excel (CSV)</button><button type="button" class="btn ghost sm" data-aprint><span aria-hidden="true">⎙</span> Print</button>${LIVE?`<button type="button" class="btn ghost sm" data-arefresh><span aria-hidden="true">↻</span> Refresh</button>`:""}</span></div>`;
   return `${viewHead("Admin console","Subscribers, sign-ups, revenue and brief performance for West Asia Report.","","",`<span class="sample">Founder access · ${esc(user.name)}</span>`)}
   <nav class="atabs" aria-label="Admin sections">${ADMIN_TABS.map(([k,l])=>`<a href="#${k}" ${k===active?'aria-current="page"':""}>${l}</a>`).join("")}</nav>
+  ${COMMENTARY_PUBLIC?"":`<p class="apreview"><a class="link" href="#commentary">Preview Commentary, hidden from subscribers →</a></p>`}
   ${tools}${LIVE?"":note}
   <div class="aprint-head" aria-hidden="true">West Asia Report · ${tab?tab[1]:"Admin"} · ${new Date().toLocaleString("en-US",{dateStyle:"medium",timeStyle:"short"})}</div>
   ${inner}`;
@@ -3097,7 +3126,7 @@ document.addEventListener("input",e=>{if(e.target.id==="aq-q"){aq.q=e.target.val
 document.addEventListener("change",e=>{if(e.target.id==="aq-plan"||e.target.id==="aq-country"){aq[e.target.id.slice(3)]=e.target.value;aq.page=0;$("#subs-table").innerHTML=subsRows()}});
 
 /* ------------------------------------------------------------------ shell */
-function currentView(){let h=location.hash.replace("#","");if(h==="weekly")h="archive";if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
+function currentView(){let h=location.hash.replace("#","");if(h==="weekly")h="archive";if(h==="commentary"&&signed&&user&&!(user.trial&&!user.cardOnFile&&user.role!=="admin"))return (COMMENTARY_PUBLIC||isAdmin())?"commentary":"today";if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
 function renderNav(active){
   const NV=isAdmin()?[...VIEWS,["admin","Admin"]]:VIEWS;
   const link=k=>{const l=NV.find(v=>v[0]===k)[1];return `<a href="#${k}" style="--c:var(${NAV_C[k]})" ${k===active?'aria-current="page"':""}><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg></span><span>${l}</span>${PRO_ONLY[k]&&tier!=="pro"?'<span class="lock">PRO</span>':""}</a>`};
@@ -3123,7 +3152,7 @@ function render(){setMarks();
   renderNav(adm?"admin":v);renderTier();renderAcct();
   document.body.classList.toggle("is-admin",adm);
   if(adm){$("#view").innerHTML=viewAdmin(v);drawCharts();const n=$(".atabs"),a=n&&n.querySelector("[aria-current]");if(a&&n.scrollWidth>n.clientWidth)n.scrollLeft=a.offsetLeft-(n.clientWidth-a.offsetWidth)/2;return}
-  $("#view").innerHTML={today:viewToday,developments:viewDevelopments,archive:viewArchive,risk:viewRisk,calendar:viewCalendar,foryou:viewForYou,plans:viewPlans}[v]();
+  $("#view").innerHTML={today:viewToday,developments:viewDevelopments,archive:viewArchive,risk:viewRisk,calendar:viewCalendar,foryou:viewForYou,plans:viewPlans,commentary:viewCommentary}[v]();
   if(v==="risk") requestAnimationFrame(drawRiskHistory);
   if(v==="archive"&&location.hash==="#weekly"){ if(tier==="pro"&&weeklyList().length&&!WEEKLY_AUTO){WEEKLY_AUTO=true;setTimeout(()=>openWeekly(0),30)} else if(tier!=="pro"){const el=$("#weekly");if(el)el.scrollIntoView({block:"start"})} }
   if(v==="plans"&&user){const d=document.createElement("div");d.className="acct acct-m";d.innerHTML=$("#acct").innerHTML;$("#view").prepend(d)}

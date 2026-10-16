@@ -709,6 +709,9 @@ a.brand:focus-visible,.sf-brand:focus-visible{outline:2px solid var(--gold);outl
 
 /* ---- Developments (Pro) ---- */
 .tabbar.n8{grid-template-columns:repeat(8,1fr)!important}.tabbar.n8 a{font-size:9.5px}
+.tabbar.n9{grid-template-columns:repeat(9,1fr)!important;padding-left:2px;padding-right:2px}
+.tabbar.n9 a{font-size:8.5px;letter-spacing:-.01em}
+.tabbar.n9 svg{width:17px;height:17px}
 .dv-pulse{display:inline-block;width:9px;height:9px;border-radius:50%;background:#D4B46A;box-shadow:0 0 0 0 rgba(212,180,106,.6);animation:dvp 2s infinite;flex:none}
 @keyframes dvp{0%{box-shadow:0 0 0 0 rgba(212,180,106,.55)}70%{box-shadow:0 0 0 8px rgba(212,180,106,0)}100%{box-shadow:0 0 0 0 rgba(212,180,106,0)}}
 @media (prefers-reduced-motion:reduce){.dv-pulse{animation:none}}
@@ -1355,7 +1358,7 @@ const DL_KEYS = {Iraq:"iraq",Israel:"israel_palestine",Palestine:"israel_palesti
 const CAL_KEYS = {"Iran":"iran_gulf","Israel":"israel_palestine","Palestine":"israel_palestine","Iraq":"iraq","US–Iran":"us"};
 const FRAME_C = {Washington:"--f-was",Tehran:"--f-teh",Doha:"--f-doh",Ankara:"--f-ank","United States":"--f-was",Iran:"--f-teh",Israel:"--t-israel",Russia:"--f-doh"};
 const EXPO_C = {iraq_ops:["--t-iraq","IQ"],shipping:["--t-turkey","SH"],gulf_inv:["--t-iran","GI"],sanctions:["--t-syria","SC"],energy:["--t-business","EN"]};
-const NAV_C = {developments:"--gold",archive:"--t-iran",today:"--t-israel",risk:"--t-syria",calendar:"--t-iraq",foryou:"--t-tech",plans:"--brand",admin:"--gold"};
+const NAV_C = {developments:"--gold",archive:"--t-iran",today:"--t-israel",risk:"--t-syria",calendar:"--t-iraq",foryou:"--t-tech",commentary:"--t-turkey",plans:"--brand",admin:"--gold"};
 
 /* ------------------------------------------------------------------ state */
 const store = {
@@ -1379,6 +1382,7 @@ const ICONS = {
   risk:'<path d="M3 20h18"/><path d="M6 16v-5M11 16V7M16 16v-8M21 16v-3"/>',
   calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
   foryou:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/>',
+  commentary:'<path d="M4 5h16v11H10l-6 4z"/><path d="M8 9h8M8 12.5h5"/>',
   archive:'<path d="M3 5h18v4H3z"/><path d="M5 9v10h14V9M10 13h4"/>',
   plans:'<path d="M12 3l2.6 5.4 5.9.9-4.3 4.1 1 5.8L12 16.6 6.8 19.2l1-5.8L3.5 9.3l5.9-.9z"/>',
   admin:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
@@ -1386,7 +1390,7 @@ const ICONS = {
 };
 const VIEWS = [["today","Today"],["developments","Developments"],["archive","Archive"],["risk","Risk"],["calendar","Calendar"],["foryou","For you"],["plans","Plans"]];
 const PRO_ONLY = {foryou:true,developments:true,commentary:true};
-const TAB_LABEL = {developments:"Updates"};
+const TAB_LABEL = {developments:"Updates",commentary:"Opinion"};
 
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https?:\/\//i.test(String(u||"").trim())?esc(String(u).trim()):"#";
@@ -1773,8 +1777,8 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-dv-push-off]")){devPushOff();return}
   const a=e.target.closest("[data-dv]"); if(!a) return; const id=a.dataset.dv; setTimeout(()=>{const el=document.getElementById("dv-"+id); if(el){el.scrollIntoView({block:"center"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1600)}},120);});
 /* ------------------------------------------------------------------ Commentary */
-// Hidden until launch: only staff can open #commentary. Set to true to show it to subscribers
-// (then add ["commentary","Commentary"] to VIEWS so it appears in the menu).
+// Hidden until launch: only staff see it in the menu and can open #commentary. Set to true to
+// launch it: it then appears in every subscriber's menu (Pro content; Essential sees an upgrade prompt).
 const COMMENTARY_PUBLIC=false;
 function viewCommentary(){
   const list=(BRIEF&&BRIEF.commentary)||[];
@@ -3131,11 +3135,13 @@ document.addEventListener("change",e=>{if(e.target.id==="aq-plan"||e.target.id==
 /* ------------------------------------------------------------------ shell */
 function currentView(){let h=location.hash.replace("#","");if(h==="weekly")h="archive";if(h==="commentary"&&signed&&user&&!(user.trial&&!user.cardOnFile&&user.role!=="admin"))return (COMMENTARY_PUBLIC||isAdmin())?"commentary":"today";if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
 function renderNav(active){
-  const NV=isAdmin()?[...VIEWS,["admin","Admin"]]:VIEWS;
+  // Commentary: in the menu for staff while it is hidden; for everyone once COMMENTARY_PUBLIC is true
+  const base=(COMMENTARY_PUBLIC||isAdmin())?VIEWS.flatMap(v=>v[0]==="foryou"?[v,["commentary","Commentary"]]:[v]):VIEWS;
+  const NV=isAdmin()?[...base,["admin","Admin"]]:base;
   const link=k=>{const l=NV.find(v=>v[0]===k)[1];return `<a href="#${k}" style="--c:var(${NAV_C[k]})" ${k===active?'aria-current="page"':""}><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg></span><span>${l}</span>${PRO_ONLY[k]&&tier!=="pro"?'<span class="lock">PRO</span>':""}</a>`};
   $("#nav").innerHTML=NV.map(v=>link(v[0])).join("");
-  $("#tabbar").innerHTML=NV.map(v=>link(v[0])).join("").replace(/<span>Developments<\/span>/,"<span>"+TAB_LABEL.developments+"</span>");
-  $("#tabbar").classList.toggle("n7",NV.length===7); $("#tabbar").classList.toggle("n8",NV.length===8);
+  $("#tabbar").innerHTML=NV.map(v=>link(v[0])).join("").replace(/<span>Developments<\/span>/,"<span>"+TAB_LABEL.developments+"</span>").replace(/<span>Commentary<\/span>/,"<span>"+TAB_LABEL.commentary+"</span>");
+  $("#tabbar").classList.toggle("n7",NV.length===7); $("#tabbar").classList.toggle("n8",NV.length===8); $("#tabbar").classList.toggle("n9",NV.length===9);
 }
 function renderTier(){
   const lock=LIVE&&signed&&user&&!isAdmin(); // subscribers see the plan they pay for; only staff can preview

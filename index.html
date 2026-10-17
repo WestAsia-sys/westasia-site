@@ -249,6 +249,11 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .op-voices b{color:var(--ink)}
 .op-list{display:grid;gap:14px}
 .op-card{padding:18px 20px}
+.op-ednav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 16px}
+.op-ednav .op-old{font-weight:700;color:var(--navy)}
+.op-ednav .latest-ok{color:var(--muted);font-weight:600}
+.op-ednav .op-arrows{margin-left:auto;display:flex;gap:8px}
+@media (max-width:640px){.op-ednav .op-arrows{margin-left:0}}
 .op-on{margin-top:6px;font-size:13px;font-weight:700;color:var(--navy);border-left:3px solid var(--gold);padding-left:8px}
 .op-eb{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .op-card h3{font-family:var(--serif);font-size:21px;line-height:1.25;margin:6px 0 4px}
@@ -1934,11 +1939,12 @@ function viewCommentary(){
   const when=`${esc(BRIEF.edition)}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}`;
   const head=viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1",`<span class="sample">${when}</span>`);
   const hidden=COMMENTARY_PUBLIC?"":`<div class="notice"><b>Hidden</b><span>Only staff can see this page. Subscribers won’t see it until it launches.</span></div>`;
+  const ednav=`<div class="op-ednav">${edIdx>0?`<span class="op-old">You’re viewing an earlier edition.</span><button type="button" class="btn sm" data-ed="0">Show the latest commentary</button>`:`<span class="op-old latest-ok">Latest edition</span>`}<span class="op-arrows"><button type="button" class="btn ghost sm" data-ed="${edIdx+1}" ${edIdx>=EDITIONS.length-1?"disabled":""}>← Previous edition</button><button type="button" class="btn ghost sm" data-ed="${edIdx-1}" ${edIdx<=0?"disabled":""}>Next edition →</button></span></div>`;
   if(tier!=="pro"){ const n=BRIEF.commentaryCount||list.length; return head+hidden+gate("Commentary is a Pro feature",`${n?`${n} opinion ${n===1?"piece":"pieces"} from the region’s press in this edition. `:""}Pro summarizes what influential writers in each country are arguing, with the key points of every piece, including those written in Arabic, Hebrew, Persian and Turkish.`); }
   if(!LIVE&&!list.length) return head+`<section class="panel"><h2>How Commentary works</h2><p class="mu">In the live app, every brief adds up to eight significant opinion pieces from the region’s press, one country at a time and one piece per outlet, so no single voice dominates. Each comes with the writer’s argument, three to five key points and a link to the original. Pieces written in Arabic, Hebrew, Persian and Turkish are summarized in English, and every summary is checked against the piece before it is published.</p></section>`;
-  if(!list.length) return head+hidden+`<section class="panel"><h2>No commentary in this edition</h2><p class="mu">${BRIEF.live&&!BRIEF.hasCommentary?"The digest starts with the next brief.":"No significant opinion pieces were found in this edition’s window."}</p></section>`;
+  if(!list.length) return head+hidden+ednav+`<section class="panel"><h2>No commentary in this edition</h2><p class="mu">${BRIEF.live&&!BRIEF.hasCommentary?"The digest starts with the next brief.":"No significant opinion pieces were found in this edition’s window."}</p></section>`;
   const countries=[...new Set(list.map(c=>c.country).filter(Boolean))];
-  return head+hidden+`<p class="op-voices"><b>Voices in this edition:</b> ${countries.map(esc).join(" · ")}</p><div class="op-list">${list.map(c=>`<article class="panel op-card">
+  return head+hidden+ednav+`<p class="op-voices"><b>Voices in this edition:</b> ${countries.map(esc).join(" · ")}</p><div class="op-list">${list.map(c=>`<article class="panel op-card">
     <div class="op-eb">Opinion · ${esc(c.outlet)}${c.country?` · ${esc(c.country)}`:""}${c.translated?` · translated from ${esc(LANG_N[c.lang]||c.lang)}`:""}</div>${c.on?`<div class="op-on">On today’s story: ${esc(c.on)}</div>`:""}
     <h3>${esc(c.h)}</h3>${c.by?`<p class="op-by">By ${esc(c.by)}${c.role?`, ${esc(c.role)}`:""}</p>`:""}
     <p class="op-sum">${esc(c.s)}</p>${c.kp.length?`<div class="op-kp-t">Key points</div><ul class="op-kp">${c.kp.map(k=>`<li>${esc(k)}</li>`).join("")}</ul>`:""}${c.q?`<blockquote class="op-q">“${esc(c.q)}”</blockquote>`:""}

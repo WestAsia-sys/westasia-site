@@ -1417,12 +1417,12 @@ let expo = store.get("expo",["iraq_ops","shipping"]);
 let alerts = store.get("alerts",["30SEP","27OCT"]);
 let delivery = store.get("delivery",{email:true,push:true,slack:false,teams:false,whatsapp:false});
 let filter = "all";
-let edIdx = Math.min(Math.max(0, store.get("ed",0)|0), EDITIONS.length-1);
+let edIdx = 0;   // always open on the latest edition; an older one is chosen per visit
 let BRIEF = EDITIONS[edIdx];
 let signed = store.get("signed", false);
 let user = store.get("user", null);
 let pending = null;   // sign-in/sign-up in progress
-function setEdition(i){ edIdx=i; BRIEF=EDITIONS[i]; store.set("ed",i); filter="all"; }
+function setEdition(i){ edIdx=Math.min(Math.max(0,i|0),EDITIONS.length-1); BRIEF=EDITIONS[edIdx]; filter="all"; }
 
 const ICONS = {
   today:'<path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
@@ -1800,7 +1800,7 @@ async function liveBriefs(){
     if(curB&&!EDITIONS.some(e=>e.id===curB.id)) insertEdition(curB); // an older brief opened from the archive
     LIVE_IDS.length=0; EDITIONS.forEach(e=>LIVE_IDS.push(e.id));
     const keep=curB?EDITIONS.findIndex(e=>e.id===curB.id):-1; setEdition(keep>=0?keep:0); if(keep>=0) filter=f;
-    const v=location.hash.replace("#",""); if(["today","","archive","foryou"].includes(v)) render();
+    const v=location.hash.replace("#",""); if(["today","","archive","foryou","commentary","risk","calendar"].includes(v)) render();
   }catch(err){ console.warn("briefs",err) }
 }
 async function devLoad(){
@@ -1935,6 +1935,7 @@ document.addEventListener("submit",async e=>{
 // launch it: it then appears in every subscriber's menu (Pro content; Essential sees an upgrade prompt).
 const COMMENTARY_PUBLIC=true;
 function viewCommentary(){
+  if(LIVE&&signed&&!(BRIEF&&BRIEF.live)) return viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1","")+`<section class="panel"><p class="mu">Loading the latest edition…</p></section>`;
   const list=(BRIEF&&BRIEF.commentary)||[];
   const when=`${esc(BRIEF.edition)}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}`;
   const head=viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1",`<span class="sample">${when}</span>`);

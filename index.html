@@ -244,6 +244,7 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .note{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);border-top:3px solid var(--c)}
 .note h3{margin:0;font-size:15px;font-weight:800;padding:12px 16px 0}
 .note ul{margin:0;padding:10px 16px 16px 32px;display:grid;gap:8px;font-size:14.5px}
+.cf-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .op-voices{margin:14px 0 14px;font-size:14px;color:var(--muted)}
 .op-voices b{color:var(--ink)}
 .op-list{display:grid;gap:14px}
@@ -938,7 +939,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
           <div class="sf-cta"><button type="button" class="btn gold" data-contact>Contact us</button><a class="sf-web" href="mailto:editor@westasiareport.com">editor@westasiareport.com</a></div></div>
         <div class="sf-col"><h3>Product</h3><ul><li><a href="#today">Today’s brief</a></li><li><a href="#archive">Archive</a></li><li><a href="#risk">Risk dashboard</a></li><li><a href="#plans">Plans and pricing</a></li></ul></div>
         <div class="sf-col"><h3>Trust</h3><ul><li><button type="button" data-page="standards">Editorial standards</button></li><li><button type="button" data-page="method">How briefs are made</button></li><li><button type="button" data-page="sources">Sources and ownership</button></li><li><button type="button" data-page="corrections">Corrections log</button></li></ul></div>
-        <div class="sf-col"><h3>Company</h3><ul><li><button type="button" data-page="about">About</button></li><li><a href="https://outreachconsult.com" target="_blank" rel="noopener">Outreach Consult ↗</a></li><li><button type="button" data-contact>Contact</button></li><li><button type="button" data-soon="Privacy policy">Privacy policy</button></li><li><button type="button" data-soon="Terms of service">Terms of service</button></li></ul></div>
+        <div class="sf-col"><h3>Company</h3><ul><li><button type="button" data-page="about">About</button></li><li><a href="https://outreachconsult.com" target="_blank" rel="noopener">Outreach Consult ↗</a></li><li><button type="button" data-contact>Contact</button></li><li><button type="button" data-page="privacy">Privacy policy</button></li><li><button type="button" data-page="terms">Terms of service</button></li></ul></div>
       </div>
       <div class="sf-bottom"><span>© 2026 <a href="https://outreachconsult.com" target="_blank" rel="noopener">Outreach Consult LLC</a>. All rights reserved.</span><a class="sf-by" href="https://outreachconsult.com" target="_blank" rel="noopener" aria-label="Built and powered by Outreach Consult (opens in a new tab)"><span>Built and powered by</span><span class="oc-logo sf-logo"></span></a></div>
     </footer>
@@ -2046,10 +2047,89 @@ PAGES.sources=["Source policy",`<h2>Source policy</h2>
   <h3 style="margin-top:18px">Monitored outlets (${REGISTRY.filter(r=>r[4]).length})</h3>
   <div style="overflow-x:auto"><table class="reg"><thead><tr><th>Outlet</th><th>Base</th><th>Language</th><th>Ownership</th><th>Tier</th></tr></thead>
   <tbody>${REGISTRY.filter(r=>r[4]).sort((a,b)=>a[4]-b[4]||a[0].localeCompare(b[0])).map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td><b class="tr t${r[4]}">T${r[4]}</b></td></tr>`).join("")}</tbody></table></div>`,true];
+PAGES.privacy=["Privacy policy",`<h2>Privacy policy</h2>
+  <p class="m-sub">Last updated October 16, 2026. This policy explains what West Asia Report collects, why, and the choices you have. West Asia Report is operated by Outreach Consult LLC, Ohio, United States (“we”, “us”).</p>
+  <h3>What we collect</h3>
+  <ul><li><b>Account details you give us:</b> name, work email, phone, country, job title, seniority, organization and its type and size, primary function, regions of interest, how you heard about us, and your marketing preference.</li>
+  <li><b>Reading preferences:</b> the exposures you choose for “What this means for you”, your delivery and alert settings, and the countries you follow.</li>
+  <li><b>Subscription records:</b> your plan, billing period, trial and renewal dates and payment status. Card details are entered on Stripe’s secure page and never reach our servers.</li>
+  <li><b>Alerts:</b> if you turn on notifications, your browser gives us a delivery address for that device. We use it only to send the alerts you chose.</li>
+  <li><b>Messages:</b> what you send through the contact form, plus the network address it came from, kept to stop spam.</li>
+  <li><b>Email delivery:</b> whether our emails were delivered and, where your email app allows, opened, so we can fix delivery problems and improve the briefs.</li></ul>
+  <h3>How we use it</h3>
+  <ul><li>To provide the service: sign-in, the briefs, your plan’s features, alerts and the weekly report.</li>
+  <li>To manage billing, trials, renewals and receipts.</li>
+  <li>To answer your messages and send service notices, such as trial reminders and changes to these terms.</li>
+  <li>To understand, in aggregate, who uses the service and how, so we can improve coverage.</li>
+  <li>To send occasional news about West Asia Report, only if you opted in. You can opt out at any time.</li>
+  <li>To keep the service secure and meet legal obligations.</li></ul>
+  <p>We do not sell or rent your personal information, we do not use it for third-party advertising, and the site carries no advertising trackers.</p>
+  <h3>Who processes it for us</h3>
+  <p>We use a small number of service providers, each bound to use your data only to provide their service to us: Supabase (accounts and database), Stripe (payments; Stripe may act as the seller of record for tax purposes and processes payment data under its own privacy policy), Resend (email delivery), Hostinger (website hosting), and the push services built into your browser (Google, Apple, Mozilla or Microsoft) for alerts. The site loads its typefaces from Google Fonts, which receives your network address when a page loads.</p>
+  <p>We may disclose information if required by law, to protect our rights or users, or as part of a sale or reorganization of the business, in which case this policy continues to apply.</p>
+  <h3>Where it is stored</h3>
+  <p>Our providers store data in the United States and other countries. Where data protection law requires it, transfers rely on appropriate safeguards such as standard contractual clauses.</p>
+  <h3>How long we keep it</h3>
+  <p>Account and preference data: while your account is open and up to 12 months after it closes. Billing records: as long as tax and accounting law requires, usually 7 years. Contact messages: up to 24 months. Alert addresses: until you turn alerts off or the browser withdraws them.</p>
+  <h3>Your choices and rights</h3>
+  <ul><li>Change your preferences, delivery and alerts in the app at any time; turn off email delivery under Plans.</li>
+  <li>Ask us for a copy of your data, to correct it, or to delete your account, by emailing <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a>. We reply within 30 days.</li>
+  <li>Depending on where you live, laws such as the EU and UK GDPR, US state privacy laws, and the data protection laws of Saudi Arabia, the UAE, Qatar and Bahrain give you further rights, including to object to or restrict processing and to complain to your local data protection authority. Where the GDPR applies, we rely on performing our contract with you, our legitimate interest in running and securing the service, your consent for marketing, and legal obligations.</li></ul>
+  <h3>Cookies and local storage</h3>
+  <p>We use only what the service needs to work: storage in your browser that keeps you signed in and remembers your settings. We use no advertising or cross-site tracking cookies.</p>
+  <h3>Security</h3>
+  <p>Data is encrypted in transit, access is restricted to named staff, and database rules limit each account to its own data. No system is perfectly secure; we will notify you and the authorities of a breach where the law requires.</p>
+  <h3>Children</h3>
+  <p>The service is for professionals and is not directed to anyone under 18. We do not knowingly collect their data.</p>
+  <h3>Changes</h3>
+  <p>We will post any change here with a new date, and email subscribers about material changes before they take effect.</p>
+  <h3>Contact</h3>
+  <p>Outreach Consult LLC, Ohio, United States · <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a></p>`,true];
+PAGES.terms=["Terms of service",`<h2>Terms of service</h2>
+  <p class="m-sub">Last updated October 16, 2026. These terms are an agreement between you and Outreach Consult LLC, an Ohio limited liability company (“we”, “us”), for the use of West Asia Report (the “service”). By creating an account or subscribing, you accept them. If you accept on behalf of an organization, you confirm you may bind it.</p>
+  <h3>1. The service</h3>
+  <p>West Asia Report provides briefs, alerts, risk ratings, commentary summaries, weekly reports and related content on the politics, security and markets of West Asia and North Africa. Features differ by plan, as described on the Plans page. We may improve, change or retire features; if we remove a core feature of your paid plan, we will tell you and you may cancel for a pro rata refund of any prepaid period.</p>
+  <h3>2. Information only, not advice</h3>
+  <p>The content is general information for professionals. It is not investment, financial, legal, tax, security, travel or other professional advice, and it is not a recommendation to buy, sell or hold any asset or to take or avoid any action. Risk ratings, outlooks and “What this means for you” notes are our assessments, not predictions or guarantees. Make your own decisions, and seek qualified advice where it matters, including for personal safety and security planning.</p>
+  <h3>3. Accuracy and timeliness</h3>
+  <p>Events in the region move fast and early reports are often wrong. We source, cross-check and correct openly, but content may be incomplete, out of date or inaccurate, and summaries and translations of third-party reporting and opinion may not capture every nuance. Developing stories are labeled as such. Commentary summarizes the views of outside writers, which are their own and not ours. Links to other sites are provided for reference; we are not responsible for their content.</p>
+  <h3>4. Your account</h3>
+  <p>Give accurate information, keep your sign-in secure, and tell us promptly of any unauthorized use. Each account is for one named person; sharing sign-ins is not allowed. You must be at least 18.</p>
+  <h3>5. Trials, subscriptions and billing</h3>
+  <ul><li><b>Free trial:</b> new subscribers get one 15-day trial with full Pro access. A card is required; you are not charged if you cancel before the trial ends. We email a reminder before it ends.</li>
+  <li><b>Renewal:</b> subscriptions renew automatically each month or year at the then-current price until cancelled. You authorize us and our payment provider, Stripe, to charge your payment method, including applicable taxes.</li>
+  <li><b>Cancelling:</b> cancel anytime under Plans, Manage billing. Access continues to the end of the paid period. Fees already paid are non-refundable except where these terms or the law say otherwise.</li>
+  <li><b>Price changes:</b> we will give at least 30 days’ notice of a price change, effective at your next renewal.</li>
+  <li><b>Failed payments:</b> if a payment fails and is not fixed within a reasonable period, we may suspend or downgrade your access.</li></ul>
+  <h3>6. Pro for Teams</h3>
+  <p>A Pro for Teams license covers up to five named people in the subscribing organization, each with their own account, for one annual fee. Seats may be reassigned when someone leaves. Larger licenses are available by agreement.</p>
+  <h3>7. How you may use the content</h3>
+  <p>We grant you a personal, non-exclusive, non-transferable license to read and use the content for your own work, and, for Pro for Teams, for your organization’s internal use. You may quote short excerpts with attribution to West Asia Report, and share the weekly report internally or with a client in the normal course of advising them. You may not:</p>
+  <ul><li>republish, resell, syndicate or systematically redistribute the content, or make it available to people without a subscription;</li>
+  <li>scrape, bulk-download or harvest the service by automated means, or use the content to train or develop machine-learning models or other automated systems;</li>
+  <li>remove attributions or notices, or present the content as your own;</li>
+  <li>interfere with the service, test its security without permission, or get around plan limits.</li></ul>
+  <p>The service, its content and its brand are owned by us or our licensors. Third-party reporting and opinion remain the property of their publishers.</p>
+  <h3>8. Sanctions and lawful use</h3>
+  <p>You confirm that you are not located in, organized in or ordinarily resident in a country or region subject to comprehensive US sanctions, and that you are not named on, or owned or controlled by anyone named on, a US, UN, EU or UK sanctions list. You are responsible for your own compliance with sanctions, export control and other laws that apply to you, and you will not use the service for any unlawful purpose.</p>
+  <h3>9. Feedback and corrections</h3>
+  <p>If you send us feedback or a correction, we may use it without obligation to you. Corrections are logged publicly.</p>
+  <h3>10. Suspension and ending</h3>
+  <p>We may suspend or close accounts that break these terms, with notice where practical. You may close your account at any time. Sections 2, 3, 7 (ownership), 11, 12 and 13 survive the end of these terms.</p>
+  <h3>11. Disclaimers</h3>
+  <p>To the extent the law allows, the service is provided “as is” and “as available”, without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, accuracy and uninterrupted availability. Delivery times are targets, not guarantees.</p>
+  <h3>12. Limitation of liability</h3>
+  <p>To the extent the law allows, we are not liable for indirect, incidental, special, consequential or punitive damages, or for lost profits, revenue, data or business, or for losses arising from decisions made in reliance on the content. Our total liability for any claim relating to the service is limited to the fees you paid us in the 12 months before the claim. Nothing in these terms limits liability that cannot be limited by law.</p>
+  <h3>13. Indemnity, law and disputes</h3>
+  <p>You will indemnify us against claims arising from your breach of these terms or misuse of the service. These terms are governed by the laws of the State of Ohio and applicable US federal law, without regard to conflict-of-law rules. Before filing a claim, each side agrees to try to resolve the dispute informally for 30 days by writing to the other. Courts located in Cuyahoga County, Ohio, have exclusive jurisdiction, except that either side may seek urgent injunctive relief anywhere. Consumer protection rights that cannot be waived where you live are not affected.</p>
+  <h3>14. General</h3>
+  <p>We may update these terms; we will post the new version with its date and email subscribers about material changes at least 14 days before they apply. Continued use after that means you accept them. These terms are the entire agreement on this subject. If any part is unenforceable, the rest remains in effect. We may assign these terms in a reorganization or sale; you may not assign them without our consent.</p>
+  <h3>Contact</h3>
+  <p>Outreach Consult LLC, Ohio, United States · <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a></p>`,true];
 PAGES.corrections=["Corrections",`<h2>Corrections and updates</h2>
   <p class="m-sub">When a fact changes or we get something wrong, we say so on the item itself and log it here.</p>
-  <ul><li><b>24 Sep 2026 · Update.</b> Morning brief of 23 September, Iraq item: the reported deadline has since been restated by the parties; the item now carries an update note and a link to the newer reporting.</li>
-  <li><b>23 Sep 2026 · Source review.</b> A secondary aggregator cited in the 23 September morning brief is now rated Tier 3. Its figures appear only with attribution.</li></ul>
+  ${window.WAR_LIVE?`<p>No corrections have been issued yet.</p>`:`<ul><li><b>24 Sep 2026 · Update.</b> Morning brief of 23 September, Iraq item: the reported deadline has since been restated by the parties; the item now carries an update note and a link to the newer reporting.</li>
+  <li><b>23 Sep 2026 · Source review.</b> A secondary aggregator cited in the 23 September morning brief is now rated Tier 3. Its figures appear only with attribution.</li></ul>`}
   <p>Spot an error? <button type="button" class="linkbtn" data-contact>Tell us</button> or email <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a>.</p>`];
 function contactForm(){
   modal(`<h2>Contact us</h2><p class="m-sub">Questions about subscriptions, team licenses, partnerships or press. Outreach Consult replies within one business day. You can also email the editors at <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a> or reach the firm through <a href="https://outreachconsult.com" target="_blank" rel="noopener">outreachconsult.com</a>.</p>
@@ -2057,11 +2137,13 @@ function contactForm(){
     <div class="two"><label for="cf-name">Name<input id="cf-name" required autocomplete="name"></label><label for="cf-org">Organization<input id="cf-org" autocomplete="organization"></label></div>
     <label for="cf-email">Work email<input id="cf-email" type="email" required autocomplete="email"></label>
     <label for="cf-topic">Topic<select id="cf-topic"><option>Subscriptions</option><option>Pro for Teams</option><option>Partnerships</option><option>Press</option><option>Something else</option></select></label>
-    <label for="cf-msg">Message<textarea id="cf-msg" rows="4" required></textarea></label>
+    <label for="cf-msg">Message<textarea id="cf-msg" rows="4" required maxlength="5000"></textarea></label>
+    <div class="cf-hp" aria-hidden="true"><label for="cf-web">Website<input id="cf-web" tabindex="-1" autocomplete="off"></label></div>
     <p class="cf-err" id="cf-err" hidden></p>
     <button class="btn" type="submit">Send message</button>
-  </form>`,"Contact us");
+  </form>`,"Contact us"); CF_OPENED=Date.now();
 }
+let CF_OPENED=0;
 function pdfPreview(){
   if(tier!=="pro"){ modal(`<h2>PDF download is a Pro feature</h2><p class="m-sub">Pro subscribers can download any brief as a formatted PDF for board packs and client briefings.</p><button class="btn" type="button" data-go-pro>${upgradeMode()?"Upgrade to Pro":"Preview as Pro"}</button>`,"PDF download"); return; }
   modal(`<h2>Download PDF</h2><p class="m-sub">Each PDF is stamped with the subscriber’s name and organization, which discourages sharing outside the license.</p>
@@ -2342,7 +2424,7 @@ function viewSignup(){
       <div class="fld full" style="margin-top:14px"><span class="flabel">Other regions you would want covered <span class="opt">optional</span></span><small class="hint">West Asia is our focus today. Your answer tells us where to expand next.</small><div class="pick">${WANT_REGIONS.map((r,i)=>`<label for="su-rg${i}"><input type="checkbox" id="su-rg${i}" data-rg="${esc(r)}" ${(p.regionsWanted||[]).includes(r)?"checked":""}>${esc(r)}</label>`).join("")}</div></div>
       <div class="grid-f" style="margin-top:12px">${fld("su-source","How did you hear about us?",`<select id="su-source">${sel(["Colleague or referral","Outreach Consult","LinkedIn","Search","Event or conference","News or newsletter","Other"],"Select",p.source)}</select>`,0,"",1)}</div>
     </fieldset>
-    <label class="chk" for="su-terms"><input type="checkbox" id="su-terms" required aria-describedby="su-terms-e"><span>I agree to the <button type="button" class="linkbtn" data-soon="Terms of service">Terms of Service</button> and <button type="button" class="linkbtn" data-soon="Privacy policy">Privacy Policy</button>, and I understand one account is for one person. <span class="req" aria-hidden="true">*</span></span></label>
+    <label class="chk" for="su-terms"><input type="checkbox" id="su-terms" required aria-describedby="su-terms-e"><span>I agree to the <button type="button" class="linkbtn" data-page="terms">Terms of Service</button> and <button type="button" class="linkbtn" data-page="privacy">Privacy Policy</button>, and I understand one account is for one person. <span class="req" aria-hidden="true">*</span></span></label>
     <small class="fe" id="su-terms-e" hidden></small>
     <label class="chk" for="su-news"><input type="checkbox" id="su-news"><span>Send me occasional product updates and invitations to Outreach Consult briefings. <span class="opt">optional</span></span></label>
     <p class="form-err" id="su-err" role="alert" hidden></p>
@@ -2541,7 +2623,7 @@ async function liveContact(n,em,msg,form){
   busy(form,true,"Sending…");
   const topic=($("#cf-topic")||{}).value||null, org=($("#cf-org")||{}).value||null;
   const {error}=await SB.from("contact_messages").insert({name:n,email:em,message:msg,topic,organization:org});
-  busy(form,false); if(error){ const er=$("#cf-err"); er.textContent=friendly(error); er.hidden=false; return }
+  busy(form,false); if(error){ const er=$("#cf-err"); er.textContent=error.code==="P0001"?error.message:friendly(error); er.hidden=false; return }
   $("#modal .m-box").innerHTML=`<button type="button" class="m-x" data-close aria-label="Close">×</button><h2>Thanks, ${esc(n.split(" ")[0])}</h2><p class="m-sub">Your message is with our editors. We reply within one business day.</p><button class="btn" type="button" data-close>Close</button>`;
 }
 async function liveBoot(){
@@ -3224,6 +3306,10 @@ document.addEventListener("submit",e=>{
   const n=$("#cf-name").value.trim(), em=$("#cf-email").value.trim(), msg=$("#cf-msg").value.trim(), err=$("#cf-err");
   const miss=[]; if(!n)miss.push("your name"); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))miss.push("a valid work email"); if(!msg)miss.push("a message");
   if(miss.length){err.textContent="Please add "+miss.join(", ")+".";err.hidden=false;return}
+  // Spam checks: a hidden field people never see, and a minimum time to fill in the form
+  if(($("#cf-web")||{}).value){ $("#modal .m-box").innerHTML=`<button type="button" class="m-x" data-close aria-label="Close">×</button><h2>Thanks</h2><p class="m-sub">Your message has been received.</p>`; return }
+  if(Date.now()-CF_OPENED<3000){err.textContent="That was quick. Please check your message and send it again.";err.hidden=false;CF_OPENED=0;return}
+  if((msg.match(/https?:\/\//gi)||[]).length>3){err.textContent="Please include no more than three links.";err.hidden=false;return}
   if(LIVE){ liveContact(n,em,msg,e.target); return; }
   $("#modal .m-box").innerHTML=`<button type="button" class="m-x" data-close aria-label="Close">×</button><h2>Thanks, ${esc(n.split(" ")[0])}</h2><p class="m-sub">This is a prototype, so your message was not sent. In the live site it goes straight to Outreach Consult.</p><button class="btn" type="button" data-close>Close</button>`;
 });

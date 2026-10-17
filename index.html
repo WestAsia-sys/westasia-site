@@ -461,6 +461,8 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .sec-head h2{margin:10px 0 10px;font-family:var(--serif);font-weight:600;font-size:clamp(28px,3.6vw,40px);line-height:1.1;text-wrap:balance}
 .sec-head p{margin:0;font-size:17px;color:var(--ink-2);line-height:1.55}
 .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (min-width:1180px){.feat{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:1179px){.feat{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .fcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
 .pub-sec.alt .fcard{background:var(--ground)}
 .fcard .fi{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,var(--surface));color:var(--c)}
@@ -1779,13 +1781,14 @@ document.addEventListener("click",e=>{
 /* ------------------------------------------------------------------ Commentary */
 // Hidden until launch: only staff see it in the menu and can open #commentary. Set to true to
 // launch it: it then appears in every subscriber's menu (Pro content; Essential sees an upgrade prompt).
-const COMMENTARY_PUBLIC=false;
+const COMMENTARY_PUBLIC=true;
 function viewCommentary(){
   const list=(BRIEF&&BRIEF.commentary)||[];
   const when=`${esc(BRIEF.edition)}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}`;
   const head=viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1",`<span class="sample">${when}</span>`);
   const hidden=COMMENTARY_PUBLIC?"":`<div class="notice"><b>Hidden</b><span>Only staff can see this page. Subscribers won’t see it until it launches.</span></div>`;
   if(tier!=="pro"){ const n=BRIEF.commentaryCount||list.length; return head+hidden+gate("Commentary is a Pro feature",`${n?`${n} opinion ${n===1?"piece":"pieces"} from the region’s press in this edition. `:""}Pro summarizes what influential writers in each country are arguing, with the key points of every piece, including those written in Arabic, Hebrew, Persian and Turkish.`); }
+  if(!LIVE&&!list.length) return head+`<section class="panel"><h2>How Commentary works</h2><p class="mu">In the live app, every brief adds up to eight significant opinion pieces from the region’s press, one country at a time and one piece per outlet, so no single voice dominates. Each comes with the writer’s argument, three to five key points and a link to the original. Pieces written in Arabic, Hebrew, Persian and Turkish are summarized in English, and every summary is checked against the piece before it is published.</p></section>`;
   if(!list.length) return head+hidden+`<section class="panel"><h2>No commentary in this edition</h2><p class="mu">${BRIEF.live&&!BRIEF.hasCommentary?"The digest starts with the next brief.":"No significant opinion pieces were found in this edition’s window."}</p></section>`;
   const countries=[...new Set(list.map(c=>c.country).filter(Boolean))];
   return head+hidden+`<p class="op-voices"><b>Voices in this edition:</b> ${countries.map(esc).join(" · ")}</p><div class="op-list">${list.map(c=>`<article class="panel op-card">
@@ -2083,7 +2086,8 @@ const SVG = {
   frames:'<rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="16" rx="2"/>',
   risk:'<path d="M3 20h18"/><path d="M6 16v-5M11 16V7M16 16v-8M21 16v-3"/>',
   you:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/>',
-  arch:'<path d="M3 5h18v4H3z"/><path d="M5 9v10h14V9M10 13h4"/>'
+  arch:'<path d="M3 5h18v4H3z"/><path d="M5 9v10h14V9M10 13h4"/>',
+  talk:'<path d="M4 5h16v11H10l-6 4z"/><path d="M8 9h8M8 12.5h5"/>'
 };
 const G_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.8 3.2-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.1a11 11 0 0 0 0 9.9z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>';
 const MS_ICON='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#F25022" d="M2 2h9.5v9.5H2z"/><path fill="#7FBA00" d="M12.5 2H22v9.5h-9.5z"/><path fill="#00A4EF" d="M2 12.5h9.5V22H2z"/><path fill="#FFB900" d="M12.5 12.5H22V22h-9.5z"/></svg>';
@@ -2096,25 +2100,27 @@ function footerHTML(){const f=document.querySelector(".site-foot");return f?f.ou
 
 /* ---- plans (single source for landing page and in-app Plans) ---- */
 const PLANS=[
- {k:"essential",name:"Essential",m:49,y:490,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
- {k:"pro",name:"Pro",m:99,y:990,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
- {k:"teams",name:"Pro for Teams",y:3950,feat:["Pro for 5 people","Each colleague signs up; we link them to your team within one business day","One annual payment","Custom quote for larger organizations"]}
+ {k:"essential",name:"Essential",m:49,y:490,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-Commentary from the region’s press","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
+ {k:"pro",name:"Pro",m:99,y:990,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Commentary: what influential writers across the region are arguing, with the key points of each piece, from five languages","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
+ {k:"teams",name:"Pro for Teams",y:3950,feat:["Everything in Pro, for 5 people","Commentary, the Friday report and hourly alerts for the whole team","The weekly PDF, ready to brief a board or clients","One annual payment and one invoice","Each colleague signs up; we link them to your team within one business day","Custom quotes for larger teams and organization-wide access"]}
 ];
 const PUBLIC_COMPACT=false;   // set to false to show the full feature lists on the landing page
 const SHORT_FEAT={essential:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Archive of the last 30 days"],
-  pro:["Everything in Essential","“What this means for you” for your exposures","Developments: verified updates every hour, with alerts","Weekly report every Friday, with a PDF","Unlimited archive, with search"],
-  teams:["Pro for 5 people","One annual payment"]};
+  pro:["Everything in Essential","Commentary from the region’s press, with key points","“What this means for you” for your exposures","Developments: verified updates every hour, with alerts","Weekly report every Friday, with a PDF","Unlimited archive, with search"],
+  teams:["Everything in Pro, for 5 people","One annual payment and one invoice","Custom quotes for larger organizations"]};
 const COMPARE=[
   ["Morning and afternoon briefs with executive summary","✓","✓","✓"],
   ["Web and email delivery","✓","✓","✓"],
   ["“How each side frames it”","Lead story","Every major story","Every major story"],
+  ["Commentary from the region’s press, with key points","—","✓","✓"],
   ["Risk dashboard","Current ratings","Ratings, trend arrows and history","Ratings, trend arrows and history"],
   ["Deadlines calendar","View","View and add to your calendar","View and add to your calendar"],
   ["Archive, with search","Last 30 days","Every brief since launch","Every brief since launch"],
   ["“What this means for you”","—","✓","✓"],
   ["Developments: verified updates every hour, with alerts","—","✓","✓"],
   ["Weekly report every Friday, with a PDF","—","✓","✓"],
-  ["People","1","1","5 (more on request)"],
+  ["People","1","1","5 (larger teams: custom quote)"],
+  ["Billing","Monthly or yearly","Monthly or yearly","One annual invoice"],
   ["Price","$49/mo or $490/yr","$99/mo or $990/yr","$3,950/yr"]];
 function compareModal(){
   modal(`<h2>Compare plans</h2><p class="m-sub">Every plan starts with a 15-day Pro trial. A card is required; nothing is charged until the trial ends.</p>
@@ -2236,6 +2242,8 @@ function viewHome(){
       ${fcard("--f-doh","frames","How each side frames it","For major stories, each government and party in its own words, quoted and attributed side by side. No editorializing.")}
       ${fcard("--t-tech","you","What this means for you","Set your exposures, from operations in Iraq to Red Sea shipping, and each brief adds notes written for them.",true)}
       ${fcard("--t-iraq","sum","Weekly report","Every Friday at 21:00 ET: the week’s top stories, the ratings that moved and the week ahead, with a PDF to forward or print.",true)}
+      ${fcard("--t-turkey","talk","Commentary from the region’s press","What influential writers in Riyadh, Tehran, Jerusalem, Ankara and beyond are arguing, summarized with key points, including pieces written in Arabic, Hebrew, Persian and Turkish.",true)}
+      ${fcard("--t-iran","arch","Archive and search","Every brief since launch, searchable, with 90 days of rating history for every country.",true)}
     </div>
   </div></section>
 

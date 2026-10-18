@@ -286,9 +286,9 @@ table.heat{width:100%;border-collapse:separate;border-spacing:5px;min-width:560p
 .popular{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:1px 9px;margin-bottom:8px}
 .trial{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:14px 18px;border-radius:var(--radius);background:var(--gold-soft);color:var(--ink);margin-bottom:16px;font-size:14px}
 .trial b{color:var(--gold-ink)}
-.delivery{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.delivery .toggle{justify-content:space-between;border-radius:10px;padding:13px 14px;background:var(--surface);border:1px solid var(--line)}
-.delivery .toggle span{display:inline-flex;align-items:center;gap:9px}
+.delivery{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px}
+.delivery .toggle{display:flex;justify-content:space-between;gap:14px;white-space:normal;border-radius:10px;padding:13px 14px;background:var(--surface);border:1px solid var(--line);min-width:0}
+.delivery .toggle span{display:inline-flex;align-items:center;gap:9px;flex:1 1 auto;min-width:0;line-height:1.35}
 .delivery .toggle i{display:none}
 .foot{margin-top:24px;font-size:12px;color:var(--muted);max-width:80ch}
 .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 16px;border-radius:8px;font-size:13.5px;font-weight:600;z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.2);border-bottom:2px solid var(--gold)}
@@ -950,6 +950,14 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .redeem-form{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .redeem-form input{flex:1 1 200px;font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:8px;text-transform:uppercase}
 .redeem .err{color:#B42318;font-size:14px;margin:8px 0 0}
+.refresh-btn{display:inline-flex;align-items:center;gap:7px;font:inherit;font-size:13px;font-weight:700;color:inherit;background:transparent;border:1px solid rgba(255,255,255,.22);border-radius:8px;padding:7px 11px;cursor:pointer}
+.refresh-btn:hover{background:rgba(255,255,255,.08)}
+.refresh-btn svg{width:15px;height:15px;flex:none}
+.refresh-btn.spin svg{animation:rf-spin .8s linear infinite}
+@keyframes rf-spin{to{transform:rotate(360deg)}}
+.rail .refresh-btn{margin:10px 0 4px;align-self:flex-start;color:#C9D4E2}
+.mobilehead .refresh-btn{padding:7px 9px;border-color:var(--line);color:var(--ink,#0F213B)}
+.mobilehead .refresh-btn span{display:none}
 </style>
 
 <div id="public" hidden></div>
@@ -957,6 +965,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
   <aside class="rail" aria-label="Main navigation">
     <a class="brand" href="#today" aria-label="West Asia Report, go to today’s brief"><img class="logo-img" data-mark="d" alt=""><div><b class="wm"><span>WEST ASIA</span><em>REPORT</em></b><span class="tagline">Risk, decoded.</span></div></a>
     <nav class="nav" id="nav"></nav>
+    <button class="refresh-btn" type="button" data-refresh aria-label="Refresh for the latest brief" title="Refresh for the latest brief"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span>Refresh</span></button>
     <div class="acct" id="acct"></div>
     <div class="tier">
       <small>Preview as</small>
@@ -970,6 +979,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
   <main id="main">
     <div class="mobilehead">
       <a class="brand" href="#today" aria-label="West Asia Report, go to today’s brief"><img class="logo-img" data-mark="l" alt=""><b class="wm"><span>WEST ASIA</span><em>REPORT</em></b></a>
+      <button class="refresh-btn" type="button" data-refresh aria-label="Refresh for the latest brief" title="Refresh for the latest brief"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg><span>Refresh</span></button>
       <div class="seg" role="group" aria-label="Subscription tier (mobile)">
         <button type="button" data-tier="essential" id="tier-essential-m">Essential</button>
         <button type="button" data-tier="pro" id="tier-pro-m">Pro</button>
@@ -3473,5 +3483,8 @@ document.addEventListener("submit",e=>{
 render();
 if(LIVE) liveBoot();
 </script>
+
+/* Refresh button: the installed desktop/phone app has no browser reload button */
+document.addEventListener("click",e=>{const b=e.target.closest("[data-refresh]");if(!b)return;b.classList.add("spin");setTimeout(()=>location.reload(),150)});
 
 </html>

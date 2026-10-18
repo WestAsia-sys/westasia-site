@@ -2254,10 +2254,10 @@ PAGES.terms=["Terms of service",`<h2>Terms of service</h2>
   <li><b>Cancelling:</b> cancel anytime under Plans, Manage billing. Access continues to the end of the paid period. Fees already paid are non-refundable except where these terms or the law say otherwise.</li>
   <li><b>Price changes:</b> we will give at least 30 days’ notice of a price change, effective at your next renewal.</li>
   <li><b>Failed payments:</b> if a payment fails and is not fixed within a reasonable period, we may suspend or downgrade your access.</li></ul>
-  <h3>6. Pro for Teams</h3>
-  <p>A Pro for Teams license covers up to five named people in the subscribing organization, each with their own account, for one annual fee. Seats may be reassigned when someone leaves. Larger licenses are available by agreement.</p>
+  <h3>6. Enterprise</h3>
+  <p>An Enterprise license covers the named people in the subscribing organization set out in the agreement, each with their own account, for an annual fee. Readers may be changed when someone leaves. Terms specific to an Enterprise agreement apply in addition to these terms.</p>
   <h3>7. How you may use the content</h3>
-  <p>We grant you a personal, non-exclusive, non-transferable license to read and use the content for your own work, and, for Pro for Teams, for your organization’s internal use. You may quote short excerpts with attribution to West Asia Report, and share the weekly report internally or with a client in the normal course of advising them. You may not:</p>
+  <p>We grant you a personal, non-exclusive, non-transferable license to read and use the content for your own work, and, for Enterprise, for your organization’s internal use. You may quote short excerpts with attribution to West Asia Report, and share the weekly report internally or with a client in the normal course of advising them. You may not:</p>
   <ul><li>republish, resell, syndicate or systematically redistribute the content, or make it available to people without a subscription;</li>
   <li>scrape, bulk-download or harvest the service by automated means, or use the content to train or develop machine-learning models or other automated systems;</li>
   <li>remove attributions or notices, or present the content as your own;</li>
@@ -2289,7 +2289,7 @@ function contactForm(){
   <form id="contact-form" class="cform" novalidate>
     <div class="two"><label for="cf-name">Name<input id="cf-name" required autocomplete="name"></label><label for="cf-org">Organization<input id="cf-org" autocomplete="organization"></label></div>
     <label for="cf-email">Work email<input id="cf-email" type="email" required autocomplete="email"></label>
-    <label for="cf-topic">Topic<select id="cf-topic"><option>Subscriptions</option><option>Pro for Teams</option><option>Partnerships</option><option>Press</option><option>Something else</option></select></label>
+    <label for="cf-topic">Topic<select id="cf-topic"><option>Subscriptions</option><option>Enterprise</option><option>Partnerships</option><option>Press</option><option>Something else</option></select></label>
     <label for="cf-msg">Message<textarea id="cf-msg" rows="4" required maxlength="5000"></textarea></label>
     <div class="cf-hp" aria-hidden="true"><label for="cf-web">Website<input id="cf-web" tabindex="-1" autocomplete="off"></label></div>
     <p class="cf-err" id="cf-err" hidden></p>
@@ -2337,12 +2337,12 @@ function footerHTML(){const f=document.querySelector(".site-foot");return f?f.ou
 const PLANS=[
  {k:"essential",name:"Essential",m:49,y:490,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-Commentary from the region’s press","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
  {k:"pro",name:"Pro",m:99,y:990,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Commentary: what influential writers across the region are arguing, with the key points of each piece, from five languages","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
- {k:"teams",name:"Pro for Teams",y:3950,feat:["Everything in Pro, for 5 people","Commentary, the Friday report and hourly alerts for the whole team","The weekly PDF, ready to brief a board or clients","One annual payment and one invoice","Each colleague signs up; we link them to your team within one business day","Custom quotes for larger teams and organization-wide access"]}
+ {k:"teams",name:"Enterprise",y:0,feat:["Everything in Pro for your whole team or organization","Five readers or more, each with their own account","Accounts set up for you; readers added or changed on request","One annual agreement and invoice","The weekly PDF, ready to brief a board or clients"]}
 ];
 const PUBLIC_COMPACT=false;   // set to false to show the full feature lists on the landing page
 const SHORT_FEAT={essential:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Archive of the last 30 days"],
   pro:["Everything in Essential","Commentary from the region’s press, with key points","“What this means for you” for your exposures","Developments: verified updates every hour, with alerts","Weekly report every Friday, with a PDF","Unlimited archive, with search"],
-  teams:["Everything in Pro, for 5 people","One annual payment and one invoice","Custom quotes for larger organizations"]};
+  teams:["Everything in Pro for your whole team","Five readers or more, set up for you","One annual agreement and invoice"]};
 const COMPARE=[
   ["Morning and afternoon briefs with executive summary","✓","✓","✓"],
   ["Web and email delivery","✓","✓","✓"],
@@ -2354,12 +2354,12 @@ const COMPARE=[
   ["“What this means for you”","—","✓","✓"],
   ["Developments: verified updates every hour, with alerts","—","✓","✓"],
   ["Weekly report every Friday, with a PDF","—","✓","✓"],
-  ["People","1","1","5 (larger teams: custom quote)"],
-  ["Billing","Monthly or yearly","Monthly or yearly","One annual invoice"],
-  ["Price","$49/mo or $490/yr","$99/mo or $990/yr","$3,950/yr"]];
+  ["People","1","1","5 or more"],
+  ["Billing","Monthly or yearly","Monthly or yearly","Annual agreement and invoice"],
+  ["Price","$49/mo or $490/yr","$99/mo or $990/yr","Custom: contact us"]];
 function compareModal(){
   modal(`<h2>Compare plans</h2><p class="m-sub">Every plan starts with a 15-day Pro trial. A card is required; nothing is charged until the trial ends.</p>
-  <div class="tv-scroll"><table class="atable cmp"><thead><tr><th scope="col">Feature</th><th scope="col">Essential</th><th scope="col">Pro</th><th scope="col">Pro for Teams</th></tr></thead><tbody>
+  <div class="tv-scroll"><table class="atable cmp"><thead><tr><th scope="col">Feature</th><th scope="col">Essential</th><th scope="col">Pro</th><th scope="col">Enterprise</th></tr></thead><tbody>
   ${COMPARE.map(r=>`<tr><th scope="row">${r[0]}</th>${r.slice(1).map(c=>`<td class="${c==="✓"?"yes":c==="—"?"no":""}">${c==="✓"?'<span aria-label="Included">✓</span>':c==="—"?'<span aria-label="Not included">—</span>':c}</td>`).join("")}</tr>`).join("")}
   </tbody></table></div>
   <div class="m-actions"><button class="btn" type="button" data-plan-go="pro|trial">Start 15-day free trial</button><button class="btn ghost" type="button" data-close>Close</button></div>`,"Compare plans",true);
@@ -2368,7 +2368,7 @@ document.addEventListener("click",e=>{ if(e.target.closest("[data-compare]")) co
 let billing=store.get("billing","monthly");
 let intent=store.get("intent",null);
 function planPrice(p){
-  if(p.k==="teams") return `<div class="price">$3,950<small> /year</small></div><div class="alt">5 seats · about $790 per seat a year</div>`;
+  if(p.k==="teams") return `<div class="price">Custom</div><div class="alt">For teams of five or more</div>`;
   return billing==="annual"?`<div class="price">$${p.y}<small> /year</small></div><div class="alt">About $${Math.round(p.y/12)} a month, billed yearly · 2 months free</div>`:`<div class="price">$${p.m}<small> /month</small></div><div class="alt">or $${p.y} a year (2 months free)</div>`;
 }
 function billToggle(){return `<div class="bill" role="group" aria-label="Billing period"><button type="button" data-bill="monthly" aria-pressed="${billing==="monthly"}">Monthly</button><button type="button" data-bill="annual" aria-pressed="${billing==="annual"}">Annual <span>2 months free</span></button></div>`}
@@ -2376,7 +2376,7 @@ function planCards(ctx){
   const inApp=ctx==="app", curP=user&&(user.plan||user.trialPlan);
   const acts=p=>{
     if(inApp&&curP===p.k) return `<span class="curplan">${user.plan?"Your current plan":"Your plan after the trial"}</span>`;
-    if(p.k==="teams") return `<button class="btn${inApp?"":" ghost"}" type="button" data-plan-go="teams|buy">Buy 5 seats</button><button class="linkbtn" type="button" data-contact>Talk to us about more seats</button>`;
+    if(p.k==="teams") return `<button class="btn ghost" type="button" data-contact data-contact-topic="Enterprise">Contact us</button>`;
     if(inApp) return `<button class="btn${p.k==="pro"?"":" ghost"}" type="button" data-plan-go="${p.k}|buy">${curP?"Switch to":"Subscribe to"} ${p.name}</button><button class="linkbtn" type="button" data-tier-pick="${p.k}">${tier===p.k?"Previewing this plan":"Preview "+p.name}</button>`;
     return `<button class="btn${p.k==="pro"?"":" ghost"}" type="button" data-plan-go="${p.k}|trial">Start 15-day free trial</button><button class="linkbtn" type="button" data-plan-go="${p.k}|buy">or subscribe now</button>`;
   };
@@ -2508,7 +2508,7 @@ function viewHome(){
       <details><summary>How is it different from a news site?</summary><p>It filters hundreds of reports into what matters, connects developments across countries, shows how each side frames major events in its own words and explains the implications, with every point linked to its sources.</p></details>
       <details><summary>Where does the reporting come from?</summary><p>From vetted regional and international outlets and official sources in five languages. Each outlet is tiered by reliability and labeled with its ownership. Read the full standards in the footer.</p></details>
       <details><summary>What happens after the free trial?</summary><p>A card is required to start the trial, but you are not charged for 15 days. You choose your plan when you start, and we email you a reminder before the trial ends. Cancel anytime before then and you will not be charged.</p></details>
-      <details><summary>Can my team share one subscription?</summary><p>Each subscription is for one person. Pro for Teams covers five people for one annual payment; larger organizations get a custom quote.</p></details>
+      <details><summary>Can my team share one subscription?</summary><p>Each subscription is for one person. For five readers or more, Enterprise sets up an account for each person on one annual agreement. Contact us for a quote.</p></details>
     </div>
   </div></section>
 
@@ -2600,14 +2600,14 @@ function viewVerify(){
   </form>`, pending.isNew?SIDE_UP:SIDE_IN);
 }
 function viewActivate(){
-  if(!intent||!PLANS.some(x=>x.k===intent.plan)){intent={plan:user&&user.seats==="team"?"teams":"pro",mode:"trial",billing};store.set("intent",intent);}
+  if(!intent||!PLANS.some(x=>x.k===intent.plan)||intent.plan==="teams"){intent={plan:"pro",mode:intent&&intent.mode==="buy"?"buy":"trial",billing};store.set("intent",intent);}
   const i=intent, buy=i.mode==="buy", yearly=i.plan==="teams"||i.billing==="annual", amt=planAmount(i), p=PLANS.find(x=>x.k===i.plan);
   const opt=q=>{const a=planAmount({plan:q.k,billing:i.billing});return `<label class="radio" for="ac-${q.k}"><input type="radio" name="ac-plan" id="ac-${q.k}" data-aplan="${q.k}" ${i.plan===q.k?"checked":""}><span><b>${q.name}</b><small>${q.k==="teams"?"$3,950 a year · 5 seats":`${money(a)} ${i.billing==="annual"?"a year":"a month"}`}</small></span></label>`};
   return authShell(`<div class="auth-card wide-card" id="activate-card">
     <h1>${buy?"Confirm your subscription":"Start your 15-day free trial"}</h1>
     <p class="lede">${buy?"Choose your plan and add a card. Your subscription starts today.":"Choose the plan you want after the trial and add a card. You won’t be charged today."}</p>
     ${i.plan==="teams"?"":`<div class="bill" role="group" aria-label="Billing period"><button type="button" data-abill="monthly" aria-pressed="${!yearly}">Monthly</button><button type="button" data-abill="annual" aria-pressed="${yearly}">Annual <span>2 months free</span></button></div>`}
-    <fieldset><legend>Plan${buy?"":" after the trial"}</legend><div class="radio-row three">${PLANS.map(opt).join("")}</div></fieldset>
+    <fieldset><legend>Plan${buy?"":" after the trial"}</legend><div class="radio-row">${PLANS.filter(q=>q.k!=="teams").map(opt).join("")}</div></fieldset>
     <table class="dtable"><tbody>
       ${buy?`<tr><th scope="row">Due today</th><td><b>${money(amt)}</b> <small class="mu">plus tax where it applies</small></td></tr><tr><th scope="row">Renews</th><td>${yearly?"Every year":"Every month"} until you cancel</td></tr>`
       :`<tr><th scope="row">Due today</th><td><b>$0</b></td></tr><tr><th scope="row">Trial</th><td>Full Pro access until ${trialEndDate()}</td></tr><tr><th scope="row">First charge</th><td>${money(amt)} for ${p.name} on ${trialEndDate()}, then ${yearly?"every year":"every month"}</td></tr><tr><th scope="row">Reminder</th><td>We email you before the trial ends</td></tr>`}
@@ -2853,7 +2853,7 @@ const isAdmin=()=>!!(signed&&user&&user.role==="admin");
 const STAFF_RE=/@outreachconsult\.com$/i;
 let TODAY=new Date("2026-09-24T12:00:00");
 const PRICE={essential:{m:49,y:490},pro:{m:99,y:990},teams:{m:0,y:3950}};
-const PLAN_L={essential:"Essential",pro:"Pro",teams:"Pro for Teams"};
+const PLAN_L={essential:"Essential",pro:"Pro",teams:"Enterprise"};
 const PLAN_C={essential:"--s1",pro:"--s2",teams:"--s3"};
 const STATUS_L={trial:"Trial",active:"Active",past_due:"Past due",canceled:"Canceled",expired:"Trial ended",comp:"Free pass"};
 const STATUS_I={trial:"◔",active:"●",past_due:"!",canceled:"✕",expired:"○",comp:"★"};
@@ -3033,7 +3033,7 @@ const subCols=["Name","Email","Phone","Job title","Seniority","Organization","Or
 function subRow(u,D){return [u.name,u.email,u.phone||"",u.title||"",u.seniority||"",u.org||"",u.orgtype||"",u.size||"",u.country||"",u.func||"",u.seats==="team"?"Team":"Individual",u.plan?PLAN_L[u.plan]:"",u.billing||"",STATUS_L[u.status]||u.status,u.plan==="teams"?u.seatsN:(u.plan?1:""),(u.status==="active"||u.status==="past_due")?Math.round(D.mrrOf(u)):"",u.signup,u.status==="trial"&&u.trialEnd?u.trialEnd:"",u.start||"",u.cancel||"",u.source||"",(u.regionsWanted||[]).join("; "),u.sso?u.sso:"Email code",u.news?"Yes":"No"]}
 function exportAdmin(v){
   const D=admData(), M=D.months, S=D.subs;
-  const monthly={title:"By month",head:["Month","MRR (USD)","Essential","Pro","Pro for Teams","New MRR","Churned MRR","New accounts","Became paying"],rows:M.map(x=>[x.label,Math.round(x.mrr),Math.round(x.essential),Math.round(x.pro),Math.round(x.teams),Math.round(x.newMRR),Math.round(x.churnMRR),x.trials,x.paid])};
+  const monthly={title:"By month",head:["Month","MRR (USD)","Essential","Pro","Enterprise","New MRR","Churned MRR","New accounts","Became paying"],rows:M.map(x=>[x.label,Math.round(x.mrr),Math.round(x.essential),Math.round(x.pro),Math.round(x.teams),Math.round(x.newMRR),Math.round(x.churnMRR),x.trials,x.paid])};
   if(v==="admin"){ const c=counts(),paying=S.filter(u=>u.status==="active"||u.status==="past_due");
     const t=[{title:"Summary",head:["Measure","Value"],rows:[["Monthly recurring revenue (USD)",Math.round(M[11].mrr)],["Annual run rate (USD)",Math.round(M[11].mrr*12)],["Paying accounts",paying.length],["Active trials",c.trial||0],["Signed up, no card yet",c.pending||0],["Past due",c.past_due||0],["Canceled",c.canceled||0],["All accounts",S.length]]},monthly];
     if(D.messages&&D.messages.length) t.push({title:"Messages from the contact form",head:["Date","Name","Email","Organization","Topic","Message"],rows:D.messages.map(m=>[new Date(m.created_at),m.name,m.email,m.organization||"",m.topic||"",m.message])});
@@ -3169,7 +3169,7 @@ function viewAdminOverview(){
   const seats=paying.reduce((s,u)=>s+(u.seatsN||1),0);
   const ended=D.subs.filter(u=>!u.pilot&&u.trialEnd<=TODAY&&u.trialEnd>new Date(TODAY-90*DAY));const conv=ended.filter(u=>u.start).length/(ended.length||1);
   const mStart=D.subs.filter(u=>u.billing==="monthly"&&(D.activeAt(u,new Date(TODAY-30*DAY))||(u.start&&u.start>new Date(TODAY-30*DAY)))).length,mChurn=D.subs.filter(u=>u.billing==="monthly"&&u.cancel&&u.cancel>new Date(TODAY-30*DAY)).length;
-  CH.mrr=w=>drawColumns(w,{labels:D.months.map(x=>x.m),tipTitle:i=>D.months[i].label,series:[{name:"Essential",c:"--s1",values:D.months.map(x=>x.essential)},{name:"Pro",c:"--s2",values:D.months.map(x=>x.pro)},{name:"Pro for Teams",c:"--s3",values:D.months.map(x=>x.teams)}]});
+  CH.mrr=w=>drawColumns(w,{labels:D.months.map(x=>x.m),tipTitle:i=>D.months[i].label,series:[{name:"Essential",c:"--s1",values:D.months.map(x=>x.essential)},{name:"Pro",c:"--s2",values:D.months.map(x=>x.pro)},{name:"Enterprise",c:"--s3",values:D.months.map(x=>x.teams)}]});
   CH.trials=w=>drawColumns(w,{labels:D.months.map(x=>x.m),tipTitle:i=>D.months[i].label+(i===11?" (to date)":""),fmt:v=>Math.round(v).toLocaleString("en-US"),series:[{name:"New trials",c:"--s1",values:D.months.map(x=>x.trials)}]});
   const visits=Math.round(m.trials*18.5),started=Math.round(m.trials*1.6);
   const fun=D.live?[["Created an account",D.subs.length],["Added a card (trial or paid)",D.subs.filter(u=>u.status!=="pending").length],["Paying now",paying.length]]:[["Landing page visitors",visits],["Started sign-up",started],["Created account (trial)",m.trials],["Became paying",m.paid]];
@@ -3185,7 +3185,7 @@ function viewAdminOverview(){
   ${kpi("Trial to paid",ended.length?pct(conv):"—",ended.length?"trials ended in last 90 days":"no trials have ended yet")}
   ${kpi("Monthly churn",mStart?pct(mChurn/mStart,1):"—","monthly plans, last 30 days")}</div>
   <div class="agrid two">
-    ${chart("mrr","Monthly recurring revenue by plan",D.live?"End of each month; this month to date.":"End of each month; September to date.",tableView(["Month","Essential","Pro","Pro for Teams","Total"],D.months.map(x=>[x.label,money(x.essential),money(x.pro),money(x.teams),money(x.mrr)]),"MRR by plan"),legend([["Essential","--s1"],["Pro","--s2"],["Pro for Teams","--s3"]]))}
+    ${chart("mrr","Monthly recurring revenue by plan",D.live?"End of each month; this month to date.":"End of each month; September to date.",tableView(["Month","Essential","Pro","Enterprise","Total"],D.months.map(x=>[x.label,money(x.essential),money(x.pro),money(x.teams),money(x.mrr)]),"MRR by plan"),legend([["Essential","--s1"],["Pro","--s2"],["Enterprise","--s3"]]))}
     ${chart("trials","New trials per month","Every sign-up starts a 15-day Pro trial.",tableView(["Month","New trials","Became paying"],D.months.map(x=>[x.label,x.trials,x.paid]),"Trials per month"))}
   </div>
   <div class="agrid two">
@@ -3428,7 +3428,7 @@ document.addEventListener("click",e=>{
     signIn({name:"Pilot User",email:"pilot@example.com",org:"",trial:false});
     setEdition(0);location.hash="today";
     toast(`Pilot: signed in with ${prov}`);return}
-  if(t.hasAttribute("data-contact")){contactForm();return}
+  if(t.hasAttribute("data-contact")){contactForm(); const tp=t.dataset.contactTopic; if(tp) setTimeout(()=>{const s=document.getElementById("cf-topic"); if(s){s.value=tp; const m=document.getElementById("cf-msg"); if(m&&!m.value) m.placeholder="Tell us about your team: how many readers, and what you follow most closely."}},0); return}
   if(t.dataset.page){const p=PAGES[t.dataset.page];modal(p[1],p[0],p[2]);return}
   if(t.hasAttribute("data-pdf")){pdfPreview();return}
   if(t.hasAttribute("data-pdf-go")){closeModal();toast("In the live app this downloads the PDF");return}

@@ -955,6 +955,29 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .refresh-btn svg{width:15px;height:15px;flex:none}
 .refresh-btn.spin svg{animation:rf-spin .8s linear infinite}
 @keyframes rf-spin{to{transform:rotate(360deg)}}
+.partner-hero{background:var(--navy);color:#fff;padding:56px 0 44px}
+.partner-wrap{max-width:820px;margin:0 auto;padding:0 16px}
+.partner-hero h1{font-size:clamp(28px,4.4vw,42px);line-height:1.15;margin:6px 0 12px}
+.partner-hero .lede{color:#C9D4E2;font-size:17px;max-width:640px}
+.partner-hero .eyebrow{color:var(--gold);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin:0}
+.partner-hero .mu,.partner-hero .mu a{color:#C9D4E2}
+.partner-perks{list-style:none;padding:0;margin:22px 0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.partner-perks li{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:16px}
+.partner-perks b{display:block;font-size:18px;color:#fff;margin-bottom:4px}
+.partner-perks span{color:#C9D4E2;font-size:14px}
+.partner-list{padding-left:20px;line-height:1.8}
+.partner-indep{margin-top:18px;font-size:14px;color:var(--muted,#5b6b80);border-left:3px solid var(--gold);padding-left:12px}
+.partner-note{background:#FBF5E6;border:1px solid #EAD9A8;border-radius:10px;padding:10px 12px;font-size:14px;margin:0 0 14px}
+.pt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.atable tr.tot td{border-top:2px solid var(--line);font-weight:700}
+.pt-range{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.pt-range button{font:inherit;font-size:13px;font-weight:700;border:0;background:transparent;color:var(--muted,#5b6b80);padding:6px 12px;border-radius:999px;cursor:pointer}
+.pt-range button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.pt-sub{font-size:12.5px;color:var(--muted,#5b6b80);margin-top:3px;font-weight:400}
+.pt-table td{vertical-align:top}.pt-table td:first-child{white-space:normal;min-width:240px;max-width:400px}.pt-act{white-space:nowrap}
+.linkbtn{font:inherit;font-size:12.5px;background:none;border:0;padding:0;color:var(--accent,#1F4E99);text-decoration:underline;cursor:pointer}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
 .rail .refresh-btn{margin:10px 0 4px;align-self:flex-start;color:#C9D4E2}
 .mobilehead .refresh-btn{padding:7px 9px;border-color:var(--line);color:var(--ink,#0F213B)}
 .mobilehead .refresh-btn span{display:none}
@@ -2323,7 +2346,7 @@ function pdfPreview(){
 }
 
 /* ------------------------------------------------------------------ Public site + accounts */
-const PUBLIC_VIEWS = ["home","signin","signup","verify","activate","welcome","index"];
+const PUBLIC_VIEWS = ["home","signin","signup","verify","activate","welcome","index","partner"];
 const SVG = {
   pulse:'<path d="M3 12h4l2.5-6 4 12 2.5-6H21"/>',
   sum:'<path d="M4 5h16M4 10h16M4 15h10M4 20h7"/>',
@@ -2402,7 +2425,7 @@ function intentChip(){
   return `<div class="intent"><div><b>${p.name}</b> · ${price}</div><span>${intent.mode==="buy"?"After you confirm your email, you’ll add a card and your subscription starts today.":"15 days of full Pro access. We’ll ask for a card, but you won’t be charged until the trial ends."}</span><button type="button" class="linkbtn" data-intent-clear>Change plan</button></div>`;
 }
 function stripeOn(){return !!(window.WAR_LIVE&&window.WAR_LIVE.url&&window.WAR_LIVE.stripe&&window.supabase)}
-function trialEndDate(){const F={month:"long",day:"numeric",year:"numeric"};if(user&&user.trialEnds)return new Date(user.trialEnds).toLocaleDateString("en-US",F);if(stripeOn()&&user&&!user.cardOnFile){const n=new Date();n.setDate(n.getDate()+15);return n.toLocaleDateString("en-US",F)}const d=new Date((user&&user.trialStart)||Date.now());d.setDate(d.getDate()+15);return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
+function trialEndDate(){const F={month:"long",day:"numeric",year:"numeric"};if(user&&user.trialEnds)return new Date(user.trialEnds).toLocaleDateString("en-US",F);if(stripeOn()&&user&&!user.cardOnFile){const n=new Date();n.setDate(n.getDate()+trialLen());return n.toLocaleDateString("en-US",F)}const d=new Date((user&&user.trialStart)||Date.now());d.setDate(d.getDate()+trialLen());return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
 function checkout(){
   const i=intent&&PLANS.some(x=>x.k===intent.plan)?intent:{plan:"pro",billing,mode:"buy"}; intent=i; store.set("intent",i);
   const p=PLANS.find(x=>x.k===i.plan), amt=planAmount(i), yearly=i.plan==="teams"||i.billing==="annual";
@@ -2614,13 +2637,13 @@ function viewActivate(){
   const i=intent, buy=i.mode==="buy", yearly=i.plan==="teams"||i.billing==="annual", amt=planAmount(i), p=PLANS.find(x=>x.k===i.plan);
   const opt=q=>{const a=planAmount({plan:q.k,billing:i.billing});return `<label class="radio" for="ac-${q.k}"><input type="radio" name="ac-plan" id="ac-${q.k}" data-aplan="${q.k}" ${i.plan===q.k?"checked":""}><span><b>${q.name}</b><small>${q.k==="teams"?"$3,950 a year · 5 seats":`${money(a)} ${i.billing==="annual"?"a year":"a month"}`}</small></span></label>`};
   return authShell(`<div class="auth-card wide-card" id="activate-card">
-    <h1>${buy?"Confirm your subscription":"Start your 15-day free trial"}</h1>
+    <h1>${buy?"Confirm your subscription":`Start your ${trialLen()}-day free trial`}</h1>${MYPARTNER?`<p class="partner-note">${esc(MYPARTNER.name)} member offer: ${MYPARTNER.trial_days}-day free trial${MYPARTNER.member_discount_pct?` and ${MYPARTNER.member_discount_pct}% off your first year`:""}, applied at checkout.</p>`:""}
     <p class="lede">${buy?"Choose your plan and add a card. Your subscription starts today.":"Choose the plan you want after the trial and add a card. You won’t be charged today."}</p>
     ${i.plan==="teams"?"":`<div class="bill" role="group" aria-label="Billing period"><button type="button" data-abill="monthly" aria-pressed="${!yearly}">Monthly</button><button type="button" data-abill="annual" aria-pressed="${yearly}">Annual <span>2 months free</span></button></div>`}
     <fieldset><legend>Plan${buy?"":" after the trial"}</legend><div class="radio-row">${PLANS.filter(q=>q.k!=="teams").map(opt).join("")}</div></fieldset>
     <table class="dtable"><tbody>
-      ${buy?`<tr><th scope="row">Due today</th><td><b>${money(amt)}</b> <small class="mu">plus tax where it applies</small></td></tr><tr><th scope="row">Renews</th><td>${yearly?"Every year":"Every month"} until you cancel</td></tr>`
-      :`<tr><th scope="row">Due today</th><td><b>$0</b></td></tr><tr><th scope="row">Trial</th><td>Full Pro access until ${trialEndDate()}</td></tr><tr><th scope="row">First charge</th><td>${money(amt)} for ${p.name} on ${trialEndDate()}, then ${yearly?"every year":"every month"}</td></tr><tr><th scope="row">Reminder</th><td>We email you before the trial ends</td></tr>`}
+      ${buy?`<tr><th scope="row">Due today</th><td><b>${money(memberPrice(amt))}</b> <small class="mu">plus tax where it applies</small></td></tr><tr><th scope="row">Renews</th><td>${yearly?"Every year":"Every month"} until you cancel</td></tr>`
+      :`<tr><th scope="row">Due today</th><td><b>$0</b></td></tr><tr><th scope="row">Trial</th><td>Full Pro access until ${trialEndDate()}</td></tr><tr><th scope="row">First charge</th><td>${money(memberPrice(amt))}${MYPARTNER&&MYPARTNER.member_discount_pct?` <small class="mu">(${MYPARTNER.member_discount_pct}% member discount)</small>`:""} for ${p.name} on ${trialEndDate()}, then ${yearly?"every year":"every month"}</td></tr><tr><th scope="row">Reminder</th><td>We email you before the trial ends</td></tr>`}
     </tbody></table>
     <button class="btn" type="button" data-activate>${buy?"Add card and subscribe":"Add card and start free trial"}</button>
     ${stripeOn()?`<p class="auth-alt" style="margin-top:10px">You’ll add your card on Stripe’s secure page. Card details never touch our servers.</p>`:`<p class="proto">Pilot: no card is collected. In the live version, Stripe’s secure card form appears here, so card details never touch our servers.</p>`}
@@ -2684,7 +2707,7 @@ function friendly(err){const m=(err&&err.message)||String(err||"");
 function profileToUser(p,subs){
   const s=(subs||[]).find(x=>(x.status==="active"||x.status==="trialing"||x.status==="past_due")&&(x.billing!=="comp"||new Date(x.current_period_end)>new Date()));
   const name=[p.first_name,p.last_name].filter(Boolean).join(" ")||p.email.split("@")[0];
-  const u={id:p.id,name,first:p.first_name||"",last:p.last_name||"",email:p.email,phone:p.phone||"",country:p.country||"",title:p.job_title||"",seniority:p.seniority||"",org:p.organization||"",orgtype:p.org_type||"",func:p.job_function||"",size:p.org_size||"",seats:p.seats||"individual",role:p.role==="admin"?"admin":undefined,trialStart:p.trial_started_at};
+  const u={id:p.id,name,first:p.first_name||"",last:p.last_name||"",email:p.email,phone:p.phone||"",country:p.country||"",title:p.job_title||"",seniority:p.seniority||"",org:p.organization||"",orgtype:p.org_type||"",func:p.job_function||"",size:p.org_size||"",seats:p.seats||"individual",role:p.role==="admin"?"admin":undefined,trialStart:p.trial_started_at,partner:p.partner_code||null};
   if(p.role==="admin"){u.title=u.title||"Founder";u.org=u.org||"Outreach Consult";u.trial=false;return u}
   u.hasStripe=(subs||[]).some(x=>x.stripe_customer_id);
   if(Array.isArray(p.exposures)&&p.exposures.length){expo=p.exposures.filter(k=>EXPOSURES[k]);store.set("expo",expo)}
@@ -2703,8 +2726,9 @@ const needsProfile=p=>!(p.organization&&p.job_title&&p.country&&p.seats);
 async function afterAuth(isNewHint){
   const me=await loadMe(); if(!me){toast("We couldn’t load your account. Please sign in again.");return}
   const {p,subs,provider}=me;
+  if(p.role!=="admin"&&!needsProfile(p)) await applyPartnerRef(p);
   if(p.role!=="admin"&&needsProfile(p)){ pending={isNew:true,sso:provider==="azure"?"Microsoft":provider==="google"?"Google":"email",first:p.first_name||"",last:p.last_name||"",email:p.email,live:true}; signed=false; location.hash="signup"; render(); return }
-  const u=profileToUser(p,subs); pending=null; signIn(u); setTimeout(devLoad,0);
+  const u=profileToUser(p,subs); pending=null; signIn(u); setTimeout(devLoad,0); loadMyPartner();
   if(u.role==="admin"){ tier="pro"; store.set("tier","pro"); setEdition(0); location.hash="today"; toast("Founder access: Admin is in the menu"); return }
   if(u.plan) { tier=u.plan==="essential"?"essential":"pro"; store.set("tier",tier); }
   else { tier="pro"; store.set("tier","pro"); }
@@ -2858,7 +2882,7 @@ document.addEventListener("submit",e=>{
 });
 
 /* ------------------------------------------------------------------ admin console */
-const ADMIN_TABS=[["admin","Overview"],["admin-subs","Subscribers"],["admin-signups","Sign-ups"],["admin-revenue","Revenue & finance"],["admin-briefs","Briefs & engagement"],["admin-passes","Passes"]];
+const ADMIN_TABS=[["admin","Overview"],["admin-subs","Subscribers"],["admin-signups","Sign-ups"],["admin-revenue","Revenue & finance"],["admin-briefs","Briefs & engagement"],["admin-passes","Passes"],["admin-partners","Partners"]];
 const isAdmin=()=>!!(signed&&user&&user.role==="admin");
 const STAFF_RE=/@outreachconsult\.com$/i;
 let TODAY=new Date("2026-09-24T12:00:00");
@@ -3375,7 +3399,7 @@ function viewAdminBriefsLive(D){
   ${B.slice(0,60).map(b=>`<tr><td data-l="Edition"><b>${dfmt(new Date(b.date+"T12:00:00"))} · ${b.edition==="morning"?"Morning":"Afternoon"}</b><small>${esc(b.headline.length>90?b.headline.slice(0,88)+"…":b.headline)}</small></td><td data-l="Delivered">${etf(b.delivered)} ${b.onTime?'<span class="st st-active"><span aria-hidden="true">●</span>On time</span>':'<span class="st st-past_due"><span aria-hidden="true">!</span>Late</span>'}</td><td class="num" data-l="Items">${b.items}</td><td class="num" data-l="Sources">${esc(String(b.sources))}</td><td class="num" data-l="Articles">${b.articles}</td><td class="num" data-l="Fixed">${b.fixed}</td><td class="num" data-l="Dropped">${b.failed}</td><td class="num" data-l="Minutes">${b.minutes?b.minutes.toFixed(1):"—"}</td><td class="num" data-l="AI cost">${b.cost?"$"+b.cost.toFixed(2):"—"}</td></tr>`).join("")||`<tr><td colspan="9" class="empty">No briefs yet.</td></tr>`}
   </tbody></table></div></section>`);
 }
-function viewAdmin(v){return {"admin":viewAdminOverview,"admin-subs":viewAdminSubs,"admin-signups":viewAdminSignups,"admin-revenue":viewAdminRevenue,"admin-briefs":viewAdminBriefs,"admin-passes":viewAdminPasses}[v]()}
+function viewAdmin(v){return {"admin":viewAdminOverview,"admin-subs":viewAdminSubs,"admin-signups":viewAdminSignups,"admin-revenue":viewAdminRevenue,"admin-briefs":viewAdminBriefs,"admin-passes":viewAdminPasses,"admin-partners":viewAdminPartners}[v]()}
 
 /* ---- admin events ---- */
 document.addEventListener("click",e=>{
@@ -3390,7 +3414,7 @@ document.addEventListener("input",e=>{if(e.target.id==="aq-q"){aq.q=e.target.val
 document.addEventListener("change",e=>{if(e.target.id==="aq-plan"||e.target.id==="aq-country"){aq[e.target.id.slice(3)]=e.target.value;aq.page=0;$("#subs-table").innerHTML=subsRows()}});
 
 /* ------------------------------------------------------------------ shell */
-function currentView(){let h=location.hash.replace("#","");if(h==="weekly")h="archive";if(h==="commentary"&&signed&&user&&!(user.trial&&!user.cardOnFile&&user.role!=="admin"))return (COMMENTARY_PUBLIC||isAdmin())?"commentary":"today";if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home"&&h!=="index")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
+function currentView(){let h=location.hash.replace("#","");if(/^partner\/[a-z0-9-]{2,30}$/i.test(h))return "partner";if(h==="weekly")h="archive";if(h==="commentary"&&signed&&user&&!(user.trial&&!user.cardOnFile&&user.role!=="admin"))return (COMMENTARY_PUBLIC||isAdmin())?"commentary":"today";if(signed&&user&&user.trial&&!user.cardOnFile&&user.role!=="admin"&&h!=="activate"&&h!=="home"&&h!=="index")return "activate";if(PUBLIC_VIEWS.includes(h))return h;if(!signed)return "home";if(ADMIN_TABS.some(x=>x[0]===h))return isAdmin()?h:"today";return VIEWS.some(v=>v[0]===h)?h:"today"}
 function renderNav(active){
   // Commentary: in the menu for staff while it is hidden; for everyone once COMMENTARY_PUBLIC is true
   const base=(COMMENTARY_PUBLIC||isAdmin())?VIEWS.flatMap(v=>v[0]==="foryou"?[v,["commentary","Commentary"]]:[v]):VIEWS;
@@ -3412,7 +3436,7 @@ function render(){setMarks();
   $("#public").hidden=!pub; $("#shell").hidden=pub; $("#tabbar").hidden=pub;
   document.body.classList.toggle("is-public",pub);
   if(pub){ if((v==="welcome"||v==="activate")&&!signed){location.hash="signup";return}
-    $("#public").innerHTML={home:viewHome,signin:viewSignin,signup:viewSignup,verify:viewVerify,activate:viewActivate,welcome:viewWelcome,index:viewIndex}[v](); if(v==="home") setupDemo(); if(v==="index") requestAnimationFrame(drawIndexChart); if(LIVE) pruneSSO(); return; }
+    $("#public").innerHTML={home:viewHome,signin:viewSignin,signup:viewSignup,verify:viewVerify,activate:viewActivate,welcome:viewWelcome,index:viewIndex,partner:viewPartner}[v](); if(v==="home") setupDemo(); if(v==="index") requestAnimationFrame(drawIndexChart); if(LIVE) pruneSSO(); return; }
   $("#public").innerHTML="";
   const adm=v.startsWith("admin");
   renderNav(adm?"admin":v);renderTier();renderAcct();
@@ -3480,11 +3504,123 @@ document.addEventListener("submit",e=>{
   if(LIVE){ liveContact(n,em,msg,e.target); return; }
   $("#modal .m-box").innerHTML=`<button type="button" class="m-x" data-close aria-label="Close">×</button><h2>Thanks, ${esc(n.split(" ")[0])}</h2><p class="m-sub">This is a prototype, so your message was not sent. In the live site it goes straight to Outreach Consult.</p><button class="btn" type="button" data-close>Close</button>`;
 });
+/* Refresh button: the installed desktop/phone app has no browser reload button */
+document.addEventListener("click",e=>{const b=e.target.closest("[data-refresh]");if(!b)return;b.classList.add("spin");setTimeout(()=>location.reload(),150)});
+
+/* ------------------------------------------------------------------ Partner program */
+// An organization offers the brief to its members: westasiareport.com/#partner/<code>.
+// Members get a longer trial and a first-year discount (applied by create-checkout);
+// the partner earns a share of what its members pay (Admin > Partners).
+const PARTNER_REF_DAYS=60;
+let PARTNER_PAGE=null, MYPARTNER=null, PARTNERS_ADM=null, PARTNER_RANGE="all";
+function trialLen(){return (MYPARTNER&&MYPARTNER.trial_days)||15}
+function memberPrice(a){return MYPARTNER&&MYPARTNER.member_discount_pct?a*(100-MYPARTNER.member_discount_pct)/100:a}
+function partnerRef(){const r=store.get("partnerRef",null);return r&&r.code&&Date.now()-r.at<PARTNER_REF_DAYS*864e5?r:null}
+async function loadPartnerPage(code){
+  if(!LIVE){PARTNER_PAGE={code,name:"Your organization",member_discount_pct:10,trial_days:30,sample:true};render();return}
+  try{const {data,error}=await SB.from("partners").select("code,name,member_discount_pct,trial_days").eq("code",code).eq("active",true).maybeSingle();
+    if(error) throw error; PARTNER_PAGE=data||{code,missing:true};
+    if(data) store.set("partnerRef",{code:data.code,at:Date.now()});
+  }catch(e){PARTNER_PAGE={code,missing:true}}
+  if(currentView()==="partner") render();
+}
+function viewPartner(){
+  const code=location.hash.split("/")[1].toLowerCase();
+  const head=`<header class="pub-nav">${brandHTML()}<nav class="pub-links" aria-label="Site"><a class="hide-sm" href="#home" style="color:#C9D4E2;font-weight:700;text-decoration:none">The brief</a><a class="pub-links signin" href="${signed?"#today":"#signin"}" style="color:#fff;font-weight:700;text-decoration:none">${signed?"Open the app":"Sign in"}</a></nav></header>`;
+  if(!PARTNER_PAGE||PARTNER_PAGE.code!==code){PARTNER_PAGE={code,loading:true};setTimeout(()=>loadPartnerPage(code),0)}
+  const P=PARTNER_PAGE;
+  if(P.loading) return head+`<section class="pub-sec"><div class="wrap"><p class="mu">Loading…</p></div></section>${footerHTML()}`;
+  if(P.missing) return head+`<section class="pub-sec"><div class="wrap partner-wrap"><h1>This member offer isn’t available</h1><p class="lede">The link may be mistyped or the offer may have ended. You can still start a regular 15-day free trial.</p><p><a class="btn-gold" href="#signup" data-plan-go="pro|trial">Start free trial</a> <a class="btn ghost" href="#home">About the brief</a></p></div></section>${footerHTML()}`;
+  const already=signed&&user&&(user.plan||user.cardOnFile);
+  return head+`<section class="partner-hero"><div class="wrap partner-wrap">
+      <p class="eyebrow">Member offer</p>
+      <h1>West Asia Report for members of ${esc(P.name)}</h1>
+      <p class="lede">Twice-daily briefs on the politics, security and markets of West Asia, delivered at 07:00 and 17:00 ET, with verified hourly updates between editions.</p>
+      <ul class="partner-perks">
+        <li><b>${P.trial_days}-day free trial</b><span>Full Pro access. Cancel anytime before it ends and you pay nothing.</span></li>
+        ${P.member_discount_pct?`<li><b>${P.member_discount_pct}% off your first year</b><span>Applied automatically at checkout, on any plan, monthly or yearly.</span></li>`:""}
+      </ul>
+      ${already?`<p class="mu">You already have an active plan on this account.</p><p><a class="btn-gold" href="#today">Open the app</a></p>`:`<p><a class="btn-gold" href="#signup" data-plan-go="pro|trial">Start your ${P.trial_days}-day free trial</a></p><p class="mu small">Already have an account? <a href="#signin">Sign in</a> and the member offer is applied when you add your card.</p>`}
+    </div></section>
+    <section class="pub-sec"><div class="wrap partner-wrap"><h2>What members get</h2>
+      <ul class="partner-list"><li>Morning and afternoon briefs with an executive summary</li><li>How each side frames the lead story, in its own words, from media across the region</li><li>Verified hourly developments and alerts</li><li>The West Asia Risk Index, country by country</li><li>Commentary from across the region and a weekly report every Friday</li></ul>
+      <p class="partner-indep">Offered in partnership with ${esc(P.name)}. West Asia Report is editorially independent: partners do not review or influence its content, and we never share subscriber information with them.</p>
+    </div></section>${footerHTML()}`;
+}
+async function applyPartnerRef(p){
+  const r=partnerRef(); if(!r||p.partner_code) return;
+  try{const {data,error}=await SB.rpc("set_partner",{p_code:r.code}); if(!error&&data){p.partner_code=data}}catch(e){}
+  store.set("partnerRef",null);
+}
+async function loadMyPartner(){
+  MYPARTNER=null; if(!LIVE||!user||!user.partner) return;
+  try{const {data}=await SB.from("partners").select("code,name,member_discount_pct,trial_days").eq("code",user.partner).maybeSingle(); MYPARTNER=data||null}catch(e){}
+  if(MYPARTNER&&["activate","plans"].includes(currentView())) render();
+}
+// Signed-in visitors who open a partner page are tagged too (only before they have paid).
+window.addEventListener("hashchange",()=>{ if(currentView()==="partner"&&LIVE&&signed&&user&&!user.partner&&!user.plan&&!user.cardOnFile){ setTimeout(async()=>{const r=partnerRef(); if(!r) return; const p={partner_code:null}; await applyPartnerRef(p); if(p.partner_code){user.partner=p.partner_code; store.set("user",user); loadMyPartner()}},400) } });
+
+function partnerRange(){const now=new Date(),q=Math.floor(now.getUTCMonth()/3);
+  const qs=(y,qq)=>new Date(Date.UTC(y,qq*3,1));
+  if(PARTNER_RANGE==="this") return [qs(now.getUTCFullYear(),q),qs(now.getUTCFullYear(),q+1),"This quarter"];
+  if(PARTNER_RANGE==="last") return [qs(now.getUTCFullYear(),q-1),qs(now.getUTCFullYear(),q),"Last quarter"];
+  return [null,null,"All time"]}
+async function loadPartnersAdm(){
+  const [f,to]=partnerRange();
+  try{const args=f?{p_from:f.toISOString(),p_to:to.toISOString()}:{}; const {data,error}=await SB.rpc("admin_partner_report",args); if(error) throw error; PARTNERS_ADM={rows:data||[]}}
+  catch(e){PARTNERS_ADM={rows:[],err:friendly(e)}}
+  if(location.hash==="#admin-partners") render();
+}
+const usd=c=>"$"+(Number(c||0)/100).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function viewAdminPartners(){
+  if(!LIVE) return adminShell("admin-partners",`<section class="apanel"><h3>Partners</h3><p class="mu">On the website, add partner organizations here. Each gets a member page (westasiareport.com/#partner/code); members get a 30-day trial and 10% off their first year, and this page tracks what they pay and the share you owe each partner.</p></section>`,true);
+  if(PARTNERS_ADM===null){setTimeout(loadPartnersAdm,0);return adminShell("admin-partners",`<section class="apanel"><p class="mu">Loading…</p></section>`,true)}
+  const [,,label]=partnerRange(), R=PARTNERS_ADM.rows;
+  const tot=k=>R.reduce((s,r)=>s+Number(r[k]||0),0);
+  return adminShell("admin-partners",`<section class="apanel"><h3>Add or edit a partner</h3>
+    <p class="mu">Members who sign up through the partner’s page get the trial and discount below. The partner earns its share of what those members actually pay (after refunds) in each member’s first 12 months as a paying subscriber. Saving an existing code updates it.</p>
+    <form id="pt-form" class="pass-form">
+      <label for="pt-code">Code (in the link)<input id="pt-code" required maxlength="30" pattern="[a-z0-9-]{2,30}" placeholder="e.g. adc"></label>
+      <label for="pt-name">Organization<input id="pt-name" required maxlength="120" placeholder="e.g. American-Arab Anti-Discrimination Committee"></label>
+      <label for="pt-share">Partner’s share<select id="pt-share"><option value="20" selected>20%</option><option value="15">15%</option><option value="25">25%</option></select></label>
+      <label for="pt-disc">Member discount, first year<select id="pt-disc"><option value="10" selected>10%</option><option value="0">None</option></select></label>
+      <label for="pt-trial">Member trial<select id="pt-trial"><option value="30" selected>30 days</option><option value="15">15 days</option></select></label>
+      <label for="pt-cname">Contact name<input id="pt-cname" maxlength="120"></label>
+      <label for="pt-cemail">Contact email<input id="pt-cemail" type="email" maxlength="160"></label>
+      <label for="pt-notes">Notes (only you see this)<input id="pt-notes" maxlength="300" placeholder="e.g. agreement signed Nov 2026, paid quarterly"></label>
+      <label class="chk" for="pt-active"><input type="checkbox" id="pt-active" checked> Active</label>
+      <button class="btn" type="submit">Save partner</button>
+    </form>${PARTNERS_ADM.err?`<p class="cf-err">${esc(PARTNERS_ADM.err)}</p>`:""}</section>
+    <section class="apanel"><div class="pt-head"><h3>Partners (${R.length}) · ${label}</h3>
+      <div class="pt-range" role="group" aria-label="Period">${[["all","All time"],["this","This quarter"],["last","Last quarter"]].map(([k,l])=>`<button type="button" data-ptr="${k}" aria-pressed="${PARTNER_RANGE===k}">${l}</button>`).join("")}</div></div>
+      ${R.length?`<div class="tv-scroll"><table class="atable cards pt-table"><thead><tr><th scope="col">Partner</th><th scope="col">Sign-ups</th><th scope="col">On trial</th><th scope="col">Paying</th><th scope="col">Net collected</th><th scope="col">Share owed</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>${R.map(r=>`<tr><td data-l="Partner"><b>${esc(r.name)}</b>${r.active?"":` <span class="mu">(inactive)</span>`}
+          <div class="pt-sub"><span id="ptl-${esc(r.code)}">westasiareport.com/#partner/${esc(r.code)}</span> <button type="button" class="linkbtn" data-copy="ptl-${esc(r.code)}">Copy link</button></div>
+          <div class="pt-sub">${Number(r.share_pct)|0}% share · ${Number(r.trial_days)|0}-day trial${r.member_discount_pct?` · ${Number(r.member_discount_pct)|0}% off first year`:""}${r.contact_email?` · ${esc(r.contact_name||"")} ${esc(r.contact_email)}`:""}</div></td>
+        <td data-l="Sign-ups">${Number(r.signups)|0}</td><td data-l="On trial">${Number(r.trialing)|0}</td><td data-l="Paying">${Number(r.paying)|0}</td>
+        <td data-l="Net collected">${usd(r.net_cents)}${Number(r.refunded_cents)?`<div class="pt-sub">${usd(r.collected_cents)} less ${usd(r.refunded_cents)} refunds</div>`:""}</td><td data-l="Share owed"><b>${usd(r.share_cents)}</b></td>
+        <td class="pt-act"><button type="button" class="btn ghost sm" data-pt-edit="${esc(r.code)}">Edit</button> <button type="button" class="btn ghost sm" data-pt-csv="${esc(r.code)}">Statement</button></td></tr>`).join("")}
+        ${R.length>1?`<tr class="tot"><td data-l="Total"><b>Total</b></td><td data-l="Sign-ups">${tot("signups")}</td><td data-l="On trial">${tot("trialing")}</td><td data-l="Paying">${tot("paying")}</td><td data-l="Net collected">${usd(tot("net_cents"))}</td><td data-l="Share owed"><b>${usd(tot("share_cents"))}</b></td><td></td></tr>`:""}</tbody></table></div>
+      <p class="mu" style="margin-top:10px">Figures come from Stripe payments (recorded as they’re paid). Before paying a partner, compare the statement with Stripe: Payments, filtered by the coupon PARTNER10.</p>`:`<p class="mu">No partners yet. Add your first one above.</p>`}</section>`,true);
+}
+document.addEventListener("submit",async e=>{
+  if(e.target.id!=="pt-form") return; e.preventDefault();
+  const btn=e.target.querySelector("button[type=submit]"); btn.disabled=true;
+  try{const {error}=await SB.rpc("save_partner",{p_code:$("#pt-code").value.trim().toLowerCase(),p_name:$("#pt-name").value.trim(),p_share:+$("#pt-share").value,p_discount:+$("#pt-disc").value,p_trial:+$("#pt-trial").value,p_active:$("#pt-active").checked,p_contact_name:$("#pt-cname").value||null,p_contact_email:$("#pt-cemail").value||null,p_notes:$("#pt-notes").value||null});
+    if(error) throw error; PARTNERS_ADM=null; toast("Partner saved")}
+  catch(err){toast(err&&err.code==="P0001"?err.message:"Couldn’t save the partner. Please try again.")}
+  btn.disabled=false; render();
+});
+document.addEventListener("click",e=>{
+  const r=e.target.closest("[data-ptr]"); if(r){PARTNER_RANGE=r.dataset.ptr;PARTNERS_ADM=null;render();return}
+  const ed=e.target.closest("[data-pt-edit]"); if(ed&&PARTNERS_ADM){const x=PARTNERS_ADM.rows.find(y=>y.code===ed.dataset.ptEdit); if(!x) return;
+    $("#pt-code").value=x.code;$("#pt-name").value=x.name;$("#pt-share").value=String(x.share_pct);$("#pt-disc").value=String(x.member_discount_pct);$("#pt-trial").value=String(x.trial_days);$("#pt-cname").value=x.contact_name||"";$("#pt-cemail").value=x.contact_email||"";$("#pt-notes").value=x.notes||"";$("#pt-active").checked=!!x.active;$("#pt-form").scrollIntoView({block:"start",behavior:"smooth"});return}
+  const cv=e.target.closest("[data-pt-csv]"); if(cv&&PARTNERS_ADM){const x=PARTNERS_ADM.rows.find(y=>y.code===cv.dataset.ptCsv); if(!x) return; const [,,label]=partnerRange();
+    const q=v=>`"${String(v).replace(/"/g,'""')}"`;
+    const rows=[["West Asia Report: partner statement"],["Partner",x.name],["Period",label],["Prepared",new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})],[],["Member sign-ups",x.signups],["Members on trial",x.trialing],["Paying members",x.paying],["Collected (USD)",(x.collected_cents/100).toFixed(2)],["Refunds (USD)",(x.refunded_cents/100).toFixed(2)],["Net collected (USD)",(x.net_cents/100).toFixed(2)],["Partner share",`${x.share_pct}%`],["Amount due (USD)",(x.share_cents/100).toFixed(2)],[],["Counts payments in each member's first 12 months as a paying subscriber, after refunds."]];
+    const blob=new Blob([rows.map(r=>r.map(q).join(",")).join("\r\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`partner-statement-${x.code}-${PARTNER_RANGE}.csv`; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+});
 render();
 if(LIVE) liveBoot();
 </script>
-
-/* Refresh button: the installed desktop/phone app has no browser reload button */
-document.addEventListener("click",e=>{const b=e.target.closest("[data-refresh]");if(!b)return;b.classList.add("spin");setTimeout(()=>location.reload(),150)});
 
 </html>

@@ -1441,6 +1441,8 @@ const EXPO_C = {iraq_ops:["--t-iraq","IQ"],shipping:["--t-turkey","SH"],gulf_inv
 const NAV_C = {developments:"--gold",archive:"--t-iran",today:"--t-israel",risk:"--t-syria",calendar:"--t-iraq",foryou:"--t-tech",commentary:"--t-turkey",plans:"--brand",admin:"--gold"};
 
 /* ------------------------------------------------------------------ state */
+// Text garbled by a wrong character set ("dÃ¼Åman"): never shown as a quote.
+const GARBLED=/Ã[\u0080-\u00ff\u0152-\u2122]|Å[\u0080-\u00bf\u0152-\u0178]|â€|Ø§|Ù„/;
 const store = {
   get(k,d){try{const v=localStorage.getItem("meb."+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem("meb."+k,JSON.stringify(v))}catch(e){}}
@@ -1797,7 +1799,7 @@ function docToBrief(row){
   return {live:true,id:`${row.brief_date}|${am?"AM":"PM"}`,edition:am?"Morning brief":"Afternoon brief",date:d.date_label||row.brief_date,issued:am?"0700 ET":"1700 ET",
     summary:{bl:s.headline||"",lead:s.lead||s.paragraph||"",blocks:(s.blocks||[]).map(b=>[b.title,b.text]),deadlines:dl,kd:(s.key_developments||[]).map(k=>[k.label,k.text,guessKey(k.label)])},
     sections:(d.sections||[]).map(sec=>({key:sec.key,title:sec.title,geo:!["business","tech"].includes(sec.key),items:(sec.items||[]).map(it=>({h:it.headline,b:it.body,i:it.implications||"",s:(it.sources||[]).map(srcKey),x:[]}))})),
-    framings:(Array.isArray(d.framing)?d.framing:[]).map(f=>({story:f.story||"",sides:(f.sides||[]).map(x=>({who:x.who||"",q:x.quote||"",n:x.note||"",outlet:x.outlet||"",url:x.url||"",translated:!!x.translated}))})).filter(f=>f.sides.length>=2),
+    framings:(Array.isArray(d.framing)?d.framing:[]).map(f=>({story:f.story||"",sides:(f.sides||[]).filter(x=>x&&!GARBLED.test(String(x.quote||""))).map(x=>({who:x.who||"",q:x.quote||"",n:x.note||"",outlet:String(x.outlet||"").replace(/\s*\((columns?|opinions?|op-?eds?)\)\s*$/i,""),url:x.url||"",translated:!!x.translated}))})).filter(f=>f.sides.length>=2),
     commentary:(Array.isArray(d.commentary)?d.commentary:[]).filter(c=>c&&typeof c==="object"&&c.headline&&c.summary).map(c=>({h:String(c.headline),s:String(c.summary),kp:(Array.isArray(c.key_points)?c.key_points:[]).filter(k=>typeof k==="string"&&k.trim()).slice(0,6),role:String(c.author_role||""),q:String(c.quote||""),by:String(c.author||""),outlet:String(c.outlet||""),country:String(c.country||""),lang:String(c.lang||"en"),translated:!!c.translated,url:String(c.url||""),on:String(c.on||"").slice(0,160)})),hasCommentary:Array.isArray(d.commentary)||Number.isFinite(d.commentary_count),commentaryCount:Array.isArray(d.commentary)?d.commentary.length:Math.max(0,d.commentary_count|0),framing:null,framingMore:Math.max(0,d.framing_more|0),markets:[],exposures:(d.exposures&&typeof d.exposures==="object")?d.exposures:{},hasExposures:!!(d.exposures&&typeof d.exposures==="object"),outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
 }
 /* --- live risk dashboard, chokepoints and calendar (built with every brief) --- */

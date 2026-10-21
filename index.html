@@ -970,6 +970,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .partner-note{background:#FBF5E6;border:1px solid #EAD9A8;border-radius:10px;padding:10px 12px;font-size:14px;margin:0 0 14px}
 .pt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .atable tr.tot td{border-top:2px solid var(--line);font-weight:700}
+.ts-box{min-height:65px;margin:4px 0 12px}
 .pt-range{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
 .pt-range button{font:inherit;font-size:13px;font-weight:700;border:0;background:transparent;color:var(--muted,#5b6b80);padding:6px 12px;border-radius:999px;cursor:pointer}
 .pt-range button[aria-pressed="true"]{background:var(--navy);color:#fff}
@@ -1028,7 +1029,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 <div id="modal" hidden></div>
 
 <script src="vendor/supabase-2.117.3.js"></script>
-<script>window.WAR_LIVE={url:"https://nnlixarbulqncotnlvto.supabase.co",key:"sb_publishable_SCNI20nnBi9maqla1vuXOQ_206nB4Q-",sso:[],vapid:"BFITmTamHINjMUDqO0ZJE4zW3UBz-FD4AB-6kc0CeD0smgwftYdxRnKkEQEJzwG1lnLo5EbvJKN2OufB_uMqy84",stripe:"pk_test_51UQtV8BnVnn23SjMJglK4k8tvcZyEJ1RpLR1N5tTr84IDAPMupbZmySAtDYFrxyMOW81oUhsB8HVLO5MJaIUwBYL00xetoe8kt"};/* sso: add "Google"/"Microsoft" once enabled in Supabase. vapid: paste VAPID_PUBLIC_KEY (public). stripe: Stripe publishable key (pk_test_ now, pk_live_ at launch) */</script>
+<script>window.WAR_LIVE={url:"https://nnlixarbulqncotnlvto.supabase.co",key:"sb_publishable_SCNI20nnBi9maqla1vuXOQ_206nB4Q-",sso:[],vapid:"BFITmTamHINjMUDqO0ZJE4zW3UBz-FD4AB-6kc0CeD0smgwftYdxRnKkEQEJzwG1lnLo5EbvJKN2OufB_uMqy84",turnstile:"0x4AAAAAAFfmS4pK5mPvl38P",stripe:"pk_test_51UQtV8BnVnn23SjMJglK4k8tvcZyEJ1RpLR1N5tTr84IDAPMupbZmySAtDYFrxyMOW81oUhsB8HVLO5MJaIUwBYL00xetoe8kt"};/* sso: add "Google"/"Microsoft" once enabled in Supabase. vapid: paste VAPID_PUBLIC_KEY (public). stripe: Stripe publishable key (pk_test_ now, pk_live_ at launch) */</script>
 <script>
 /* ------------------------------------------------------------------ data
    Sample edition built from live reporting on Sept 23, 2026. Risk ratings,
@@ -2348,8 +2349,9 @@ function contactForm(){
     <label for="cf-msg">Message<textarea id="cf-msg" rows="4" required maxlength="5000"></textarea></label>
     <div class="cf-hp" aria-hidden="true"><label for="cf-web">Website<input id="cf-web" tabindex="-1" autocomplete="off"></label></div>
     <p class="cf-err" id="cf-err" hidden></p>
+    ${LIVE&&window.WAR_LIVE.turnstile?`<div class="ts-box" data-ts></div>`:""}
     <button class="btn" type="submit">Send message</button>
-  </form>`,"Contact us"); CF_OPENED=Date.now();
+  </form>`,"Contact us"); CF_OPENED=Date.now(); tsMountAll();
 }
 let CF_OPENED=0;
 function pdfPreview(){
@@ -2581,6 +2583,7 @@ function viewSignin(){
     <h1>Sign in</h1><p class="lede">We’ll email you a one-time code. No password needed.</p>
     <label class="fld" for="si-email">Work email<input id="si-email" type="email" autocomplete="email" required placeholder="you@company.com"></label>
     <p class="form-err" id="si-err" hidden></p>
+    ${LIVE&&window.WAR_LIVE.turnstile?`<div class="ts-box" data-ts></div>`:""}
     <button class="btn" type="submit">Email me a sign-in code</button>
     <div class="or">or</div>
     <button class="sso" type="button" data-sso="Google">${G_ICON}Continue with Google</button>
@@ -2636,6 +2639,7 @@ function viewSignup(){
     <small class="fe" id="su-terms-e" hidden></small>
     <label class="chk" for="su-news"><input type="checkbox" id="su-news"><span>Send me occasional product updates and invitations to Outreach Consult briefings. <span class="opt">optional</span></span></label>
     <p class="form-err" id="su-err" role="alert" hidden></p>
+    ${sso?"":`${LIVE&&window.WAR_LIVE.turnstile?`<div class="ts-box" data-ts></div>`:""}`}
     <button class="btn" type="submit">${sso?"Finish and start trial":"Create account"}</button>
     ${sso?"":`<div class="or">or</div>
     <button class="sso" type="button" data-sso="Google">${G_ICON}Sign up with Google</button>
@@ -2761,9 +2765,10 @@ async function afterAuth(isNewHint){
   if(!isNewHint&&intent&&intent.mode==="buy") setTimeout(checkout,80);
 }
 async function liveSignin(em,form){
+  const captchaToken=tsToken(form); if(captchaToken===false) return showErr("si-err","Please complete the security check above the button.");
   busy(form,true,"Sending code…");
-  const {error}=await SB.auth.signInWithOtp({email:em,options:{shouldCreateUser:STAFF_RE.test(em)}}); // staff can sign in directly the first time
-  busy(form,false); if(error) return showErr("si-err",friendly(error));
+  const {error}=await SB.auth.signInWithOtp({email:em,options:{shouldCreateUser:STAFF_RE.test(em),...(captchaToken?{captchaToken}:{})}}); // staff can sign in directly the first time
+  busy(form,false); tsReset(form); if(error) return showErr("si-err",friendly(error));
   pending={email:em,isNew:false,live:true}; location.hash="verify";
 }
 async function liveSignup(prof,form){
@@ -2776,8 +2781,9 @@ async function liveSignup(prof,form){
     if(prof.seats==="team") toast("We’ll contact you about team seats");
     return afterAuth(true);
   }
-  const {error}=await SB.auth.signInWithOtp({email:prof.email,options:{shouldCreateUser:true,data:meta}});
-  busy(form,false); if(error) return showErr("su-err",friendly(error));
+  const captchaToken=tsToken(form); if(captchaToken===false){ busy(form,false); return showErr("su-err","Please complete the security check above the button."); }
+  const {error}=await SB.auth.signInWithOtp({email:prof.email,options:{shouldCreateUser:true,data:meta,...(captchaToken?{captchaToken}:{})}});
+  busy(form,false); tsReset(form); if(error) return showErr("su-err",friendly(error));
   pending={...prof,live:true}; location.hash="verify";
 }
 async function liveVerify(code,form){
@@ -2834,10 +2840,21 @@ async function checkoutReturn(){
   CHECKOUT_PENDING=false; toast("Payment received. Your account will update in a minute.");
 }
 async function liveContact(n,em,msg,form){
+  const er=$("#cf-err"), token=tsToken(form);
+  if(token===false){ er.textContent="Please complete the security check above the button."; er.hidden=false; return }
   busy(form,true,"Sending…");
   const topic=($("#cf-topic")||{}).value||null, org=($("#cf-org")||{}).value||null;
-  const {error}=await SB.from("contact_messages").insert({name:n,email:em,message:msg,topic,organization:org});
-  busy(form,false); if(error){ const er=$("#cf-err"); er.textContent=error.code==="P0001"?error.message:friendly(error); er.hidden=false; return }
+  let fail="";
+  if(window.WAR_LIVE.turnstile){
+    // the contact function checks the security token with Cloudflare, then saves the message
+    try{ const r=await fetch(window.WAR_LIVE.url+"/functions/v1/contact",{method:"POST",headers:{"Content-Type":"application/json",apikey:window.WAR_LIVE.key,Authorization:"Bearer "+window.WAR_LIVE.key},body:JSON.stringify({name:n,email:em,message:msg,topic,organization:org,token})});
+      if(!r.ok){ const j=await r.json().catch(()=>({})); fail=j.error||"We couldn’t send your message. Please try again, or email editor@westasiareport.com."; } }
+    catch(e){ fail="We couldn’t reach the server. Please try again, or email editor@westasiareport.com."; }
+  } else {
+    const {error}=await SB.from("contact_messages").insert({name:n,email:em,message:msg,topic,organization:org});
+    if(error) fail=error.code==="P0001"?error.message:friendly(error);
+  }
+  busy(form,false); tsReset(form); if(fail){ er.textContent=fail; er.hidden=false; return }
   $("#modal .m-box").innerHTML=`<button type="button" class="m-x" data-close aria-label="Close">×</button><h2>Thanks, ${esc(n.split(" ")[0])}</h2><p class="m-sub">Your message is with our editors. We reply within one business day.</p><button class="btn" type="button" data-close>Close</button>`;
 }
 async function liveBoot(){
@@ -3651,6 +3668,20 @@ document.addEventListener("click",e=>{
     const rows=[["West Asia Report: partner statement"],["Partner",x.name],["Period",label],["Prepared",new Date().toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})],[],["Member sign-ups",x.signups],["Members on trial",x.trialing],["Paying members",x.paying],["Collected (USD)",(x.collected_cents/100).toFixed(2)],["Refunds (USD)",(x.refunded_cents/100).toFixed(2)],["Net collected (USD)",(x.net_cents/100).toFixed(2)],["Partner share",`${x.share_pct}%`],["Amount due (USD)",(x.share_cents/100).toFixed(2)],[],["Counts payments in each member's first 12 months as a paying subscriber, after refunds."]];
     const blob=new Blob([rows.map(r=>r.map(q).join(",")).join("\r\n")],{type:"text/csv"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`partner-statement-${x.code}-${PARTNER_RANGE}.csv`; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 });
+/* ------------------------------------------------------------------ Security check (Cloudflare Turnstile)
+   On sign-in, sign-up (email) and the contact form. Supabase checks the token for sign-in codes;
+   the "contact" function checks it for messages. tsToken: "" when not needed, false when missing. */
+let TS_LOADING=null;
+function tsLoad(){ if(window.turnstile) return Promise.resolve(); if(TS_LOADING) return TS_LOADING;
+  TS_LOADING=new Promise((res,rej)=>{ const s=document.createElement("script"); s.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; s.async=true; s.onload=()=>res(); s.onerror=()=>{TS_LOADING=null;rej(new Error("blocked"))}; document.head.appendChild(s) });
+  return TS_LOADING }
+function tsMountAll(){ if(!LIVE||!window.WAR_LIVE.turnstile) return; const boxes=[...document.querySelectorAll("[data-ts]:not([data-ts-id])")]; if(!boxes.length) return;
+  tsLoad().then(()=>{ boxes.forEach(b=>{ if(!b.isConnected||b.dataset.tsId) return; try{ b.dataset.tsId=window.turnstile.render(b,{sitekey:window.WAR_LIVE.turnstile,theme:"light",size:"flexible"}) }catch(e){} }) })
+    .catch(()=>boxes.forEach(b=>{ b.innerHTML=`<p class="form-err">The security check didn’t load. Please turn off any content blocker for this site and reload, or email <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a>.</p>` })) }
+function tsToken(form){ const b=form&&form.querySelector("[data-ts]"); if(!b) return ""; const id=b.dataset.tsId; const t=id&&window.turnstile?window.turnstile.getResponse(id):""; return t||false }
+function tsReset(form){ const b=form&&form.querySelector("[data-ts]"); if(b&&b.dataset.tsId&&window.turnstile){ try{window.turnstile.reset(b.dataset.tsId)}catch(e){} } }
+new MutationObserver(()=>{ if(document.querySelector("[data-ts]:not([data-ts-id])")) tsMountAll() }).observe(document.body,{childList:true,subtree:true});
+
 render();
 if(LIVE) liveBoot();
 </script>

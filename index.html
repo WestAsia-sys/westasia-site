@@ -1023,7 +1023,7 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
   </main>
 </div>
 <nav class="tabbar" id="tabbar" aria-label="Main navigation (mobile)"></nav>
-<div class="toast" id="toast" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <div class="ctip" id="ctip" role="tooltip" hidden></div>
 <div id="modal" hidden></div>
 
@@ -1499,7 +1499,18 @@ BRIEF23.summary.blocks = [
 ];
 
 /* ------------------------------------------------------------------ Today */
+/* Live site: the pilot's sample editions are never shown as a subscriber's brief. Until a real
+   brief has loaded (or when loading fails, or none is published yet) the brief pages say so. */
+function needBrief(){return typeof LIVE!=="undefined"&&LIVE&&signed&&!(BRIEF&&BRIEF.live)}
+function briefWait(){
+  const st=LIVE_BRIEFS;
+  const h=st==="error"?"We couldn’t load the latest brief":st==="empty"?"The first brief is on its way":"Loading the latest brief…";
+  const p=st==="error"?"Check your connection, then try again.":st==="empty"?"Briefs are published at 07:00 and 17:00 ET. The latest one appears here as soon as it is out.":"";
+  return `<section class="panel brief-wait" aria-live="polite"><h2>${h}</h2>${p?`<p class="mu">${p}</p>`:""}${st==="error"?'<button type="button" class="btn" data-brief-retry>Try again</button>':""}</section>`;
+}
+document.addEventListener("click",e=>{ if(e.target.closest&&e.target.closest("[data-brief-retry]")){ LIVE_BRIEFS="loading"; liveBriefs._sig=null; render(); liveBriefs(); } });
 function viewToday(){
+  if(needBrief()) return viewHead("Today’s brief","Morning and afternoon briefs, at 07:00 and 17:00 ET.","","")+briefWait();
   const s=BRIEF.summary;
   const secs=BRIEF.sections.filter(x=>filter==="all"||x.key===filter||(filter==="markets"&&!x.geo));
   const short=t=>t.replace("Iran, the US and the Gulf","Iran & Gulf").replace("Israel and Palestine","Israel & Palestine").replace("Yemen and the Red Sea","Yemen & Red Sea");
@@ -1799,11 +1810,12 @@ function docToBrief(row){
   return {live:true,id:`${row.brief_date}|${am?"AM":"PM"}`,edition:am?"Morning brief":"Afternoon brief",date:d.date_label||row.brief_date,issued:am?"0700 ET":"1700 ET",
     summary:{bl:s.headline||"",lead:s.lead||s.paragraph||"",blocks:(s.blocks||[]).map(b=>[b.title,b.text]),deadlines:dl,kd:(s.key_developments||[]).map(k=>[k.label,k.text,guessKey(k.label)])},
     sections:(d.sections||[]).map(sec=>({key:sec.key,title:sec.title,geo:!["business","tech"].includes(sec.key),items:(sec.items||[]).map(it=>({h:it.headline,b:it.body,i:it.implications||"",s:(it.sources||[]).map(srcKey),x:[]}))})),
-    framings:(Array.isArray(d.framing)?d.framing:[]).map(f=>({story:f.story||"",sides:(f.sides||[]).filter(x=>x&&!GARBLED.test(String(x.quote||""))).map(x=>({who:x.who||"",q:x.quote||"",n:x.note||"",outlet:String(x.outlet||"").replace(/\s*\((columns?|opinions?|op-?eds?)\)\s*$/i,""),url:x.url||"",translated:!!x.translated}))})).filter(f=>f.sides.length>=2),
+    framings:(Array.isArray(d.framing)?d.framing:[]).map(f=>({story:f.story||"",sides:(f.sides||[]).filter(x=>x&&!GARBLED.test(String(x.quote||""))&&!/[\u0590-\u06ff]/.test(String(x.quote||""))&&String(x.quote||"").trim().split(/\s+/).length>=3&&!/\b(sources?|reports?|reported|newspaper|correspondents?)\b/i.test(String(x.who||""))).map(x=>({who:x.who||"",q:x.quote||"",n:x.note||"",outlet:String(x.outlet||"").replace(/\s*\((columns?|opinions?|op-?eds?)\)\s*$/i,""),url:x.url||"",translated:!!x.translated}))})).filter(f=>f.sides.length>=2),
     commentary:(Array.isArray(d.commentary)?d.commentary:[]).filter(c=>c&&typeof c==="object"&&c.headline&&c.summary).map(c=>({h:String(c.headline),s:String(c.summary),kp:(Array.isArray(c.key_points)?c.key_points:[]).filter(k=>typeof k==="string"&&k.trim()).slice(0,6),role:String(c.author_role||""),q:String(c.quote||""),by:String(c.author||""),outlet:String(c.outlet||""),country:String(c.country||""),lang:String(c.lang||"en"),translated:!!c.translated,url:String(c.url||""),on:String(c.on||"").slice(0,160)})),hasCommentary:Array.isArray(d.commentary)||Number.isFinite(d.commentary_count),commentaryCount:Array.isArray(d.commentary)?d.commentary.length:Math.max(0,d.commentary_count|0),framing:null,framingMore:Math.max(0,d.framing_more|0),markets:[],exposures:(d.exposures&&typeof d.exposures==="object")?d.exposures:{},hasExposures:!!(d.exposures&&typeof d.exposures==="object"),outlook:d.outlook||null,stats:{sources:(d.stats||{}).sources_used||0,items:(d.stats||{}).items||0}};
 }
 /* --- live risk dashboard, chokepoints and calendar (built with every brief) --- */
 let LIVE_OUTLOOK=null;
+let LIVE_BRIEFS="loading";   // live briefs: loading | ok | empty | error
 const CAL_TAG_L={iran_gulf:"Iran",israel_palestine:"Israel",lebanon:"Lebanon",syria:"Syria",iraq:"Iraq",yemen_red_sea:"Yemen",saudi:"Saudi Arabia",turkey:"Turkey",egypt_jordan_north_africa:"North Africa",us:"United States",business:"Markets"};
 function applyOutlook(ed){
   const o=ed&&ed.outlook; if(!o) return; LIVE_OUTLOOK={...o,edition:ed.edition,date:ed.date};
@@ -1815,17 +1827,20 @@ function applyOutlook(ed){
   CAL.length=0; (o.calendar||[]).forEach(e=>{const d=new Date(e.date+"T12:00:00"); if(isNaN(d)||d<today) return;
     const same=d.toDateString()===new Date().toDateString(); CAL.push({d:String(d.getDate()),m:MN[d.getMonth()]+(d.getFullYear()!==new Date().getFullYear()?" "+String(d.getFullYear()).slice(2):""),t:same?"Today":WD[d.getDay()],h:String(e.title||""),p:String(e.why||""),tag:CAL_TAG_L[e.tag]||"Watch",key:okKey(e.tag)?e.tag:null,iso:/^\d{4}-\d{2}-\d{2}$/.test(e.date)?e.date:null})});
 }
+const BRIEF_VIEWS=["today","","archive","foryou","commentary","risk","calendar"];
+function briefsNone(st){ if(BRIEF&&BRIEF.live) return; LIVE_BRIEFS=st; if(BRIEF_VIEWS.includes(location.hash.replace("#",""))) render(); }
 async function liveBriefs(){
   if(!LIVE||!signed) return;
   try{
     const {data,error}=await SB.from("brief_feed").select("brief_date,edition,headline,doc,published_at").order("brief_date",{ascending:false}).order("published_at",{ascending:false}).limit(20);
-    if(error) throw error; if(!data||!data.length) return;          // keep the samples until the first real brief exists
+    if(error) throw error; if(!data||!data.length) return briefsNone("empty");   // no brief published yet
     // A brief finished early is held until 07:00 / 17:00 ET (doc.release_at); show it then.
     const now=Date.now(), held=data.map(r=>r.doc&&r.doc.release_at?Date.parse(r.doc.release_at):0).filter(t=>t>now);
     if(held.length){ clearTimeout(liveBriefs._t); liveBriefs._t=setTimeout(liveBriefs,Math.min(...held)-now+5000) }
-    const rows=data.filter(r=>!(r.doc&&r.doc.release_at&&Date.parse(r.doc.release_at)>now)); if(!rows.length) return;
+    const rows=data.filter(r=>!(r.doc&&r.doc.release_at&&Date.parse(r.doc.release_at)>now)); if(!rows.length) return briefsNone("empty");
     const conv=rows.map(docToBrief).filter(b=>b.sections.length);
-    if(!conv.length) return;
+    if(!conv.length) return briefsNone("empty");
+    LIVE_BRIEFS="ok";
     // stay on an older edition the reader chose; otherwise show the latest
     const sig=rows.map(r=>r.brief_date+r.edition+r.published_at).join(",");
     if(sig===liveBriefs._sig&&BRIEF&&BRIEF.live) return;           // nothing new since the last check
@@ -1835,12 +1850,12 @@ async function liveBriefs(){
     if(curB&&!EDITIONS.some(e=>e.id===curB.id)) insertEdition(curB); // an older brief opened from the archive
     LIVE_IDS.length=0; EDITIONS.forEach(e=>LIVE_IDS.push(e.id));
     const keep=curB?EDITIONS.findIndex(e=>e.id===curB.id):-1; setEdition(keep>=0?keep:0); if(keep>=0) filter=f;
-    const v=location.hash.replace("#",""); if(["today","","archive","foryou","commentary","risk","calendar"].includes(v)) render();
-  }catch(err){ console.warn("briefs",err) }
+    const v=location.hash.replace("#",""); if(BRIEF_VIEWS.includes(v)||v==="admin") render();   // admin: the share kit's caption
+  }catch(err){ console.warn("briefs",err); briefsNone("error") }
 }
 async function devLoad(){
   if(!LIVE||!signed) return;
-  liveBriefs();
+  devLoad._at=Date.now(); liveBriefs();
   const day=new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
   try{
     if(tier==="pro"){ const {data,error}=await SB.from("developments").select("*").eq("day",day).order("published_at",{ascending:true}); if(error) throw error; LIVE_DEV={rows:(data||[]).slice().sort((x,y)=>x.published_at<y.published_at?-1:1),at:Date.now()}; }
@@ -1915,11 +1930,13 @@ function shareKit(){
   if(!LIVE) return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">On the website, the latest share card and a ready-to-post caption appear here after each brief.</p></section>`;
   if(SHARE===null){ setTimeout(loadShareKit,0); return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">Loading…</p></section>` }
   const card=SHARE.find(x=>x.channel==="card"), tg=SHARE.find(x=>x.channel==="telegram");
-  const s=(BRIEF&&BRIEF.summary)||{bl:"",kd:[]};
-  const cap=`${s.bl}\n\n${(s.kd||[]).slice(0,3).map(k=>`• ${k[0]}: ${k[1]}`).join("\n")}\n\nThe full brief, with every side's own words: https://westasiareport.com/?src=linkedin`;
+  // Caption for the brief on the card (else the latest live brief), never the edition open in Today or a sample.
+  const cid=card?`${card.brief_date}|${card.edition==="morning"?"AM":"PM"}`:"", L=EDITIONS.find(e=>e.live&&e.id===cid)||EDITIONS.find(e=>e.live);
+  const s=(L&&L.summary)||null;
+  const cap=s?`${s.bl}\n\n${(s.kd||[]).slice(0,3).map(k=>`• ${k[0]}: ${k[1]}`).join("\n")}\n\nThe full brief, with every side's own words: https://westasiareport.com/?src=linkedin`:"";
   return `<section class="apanel share-kit"><h3>Share kit</h3><div class="sk-grid">
     <div>${card&&safeUrl(card.card_url)!=="#"?`<a href="${safeUrl(card.card_url)}" target="_blank" rel="noopener"><img src="${safeUrl(card.card_url)}" alt="Share card for the latest brief" class="sk-img"></a><p class="mu" style="margin:6px 0 0">${esc(card.brief_date)} · ${card.edition==="morning"?"Morning":"Afternoon"} · <a href="${safeUrl(card.card_url)}" target="_blank" rel="noopener" download>Open full size</a></p>`:`<p class="mu">The first card is made an hour after the next brief is released.</p>`}</div>
-    <div><label for="sk-cap" class="sk-l">Caption for LinkedIn</label><textarea id="sk-cap" rows="8">${esc(cap)}</textarea><button type="button" class="btn sm" data-copy="sk-cap">Copy caption</button>
+    <div>${cap?`<label for="sk-cap" class="sk-l">Caption for LinkedIn</label><textarea id="sk-cap" rows="8">${esc(cap)}</textarea><button type="button" class="btn sm" data-copy="sk-cap">Copy caption</button>`:`<p class="sk-l">Caption for LinkedIn</p><p class="mu">The caption appears when the latest brief has loaded.</p>`}
     <p class="mu" style="margin-top:8px">Telegram: ${tg?`last posted ${new Date(tg.posted_at).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}`:"not posted yet (needs the channel set up)"}</p></div></div></section>`;
 }
 async function loadPasses(){
@@ -1970,7 +1987,7 @@ document.addEventListener("submit",async e=>{
 // launch it: it then appears in every subscriber's menu (Pro content; Essential sees an upgrade prompt).
 const COMMENTARY_PUBLIC=true;
 function viewCommentary(){
-  if(LIVE&&signed&&!(BRIEF&&BRIEF.live)) return viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1","")+`<section class="panel"><p class="mu">Loading the latest edition…</p></section>`;
+  if(needBrief()) return viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1","")+briefWait();
   const list=(BRIEF&&BRIEF.commentary)||[];
   const when=`${esc(BRIEF.edition)}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}`;
   const head=viewHead("Commentary","What influential writers across the region are arguing, summarized in our words. The views are the writers’ own; West Asia Report takes no side.","#0EA5E9","#6366F1",`<span class="sample">${when}</span>`);
@@ -1988,11 +2005,12 @@ function viewCommentary(){
   </article>`).join("")}</div>`;
 }
 function viewForYou(){
-  const head=viewHead("What this means for you","Choose your exposures. Every brief then adds notes drawn from that edition’s verified items.","#DB2777","#7C3AED",tier==="pro"?`<span class="sample">Notes for the ${esc(BRIEF.edition.toLowerCase())}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}</span>`:"");
+  const wait=tier==="pro"&&needBrief();
+  const head=viewHead("What this means for you","Choose your exposures. Every brief then adds notes drawn from that edition’s verified items.","#DB2777","#7C3AED",tier==="pro"&&!wait?`<span class="sample">Notes for the ${esc(BRIEF.edition.toLowerCase())}, ${esc(String(BRIEF.date).replace(new RegExp(", "+new Date().getFullYear()+"$"),""))}</span>`:"");
   if(tier!=="pro") return head+gate("This is a Pro feature","Tell us where you have exposure, such as operations in Iraq or Red Sea shipping, and each brief adds a section on what the news means for you.");
   const boxes=Object.entries(EXPOSURES).map(([k,e])=>`<label for="ex-${k}" style="--c:var(${EXPO_C[k][0]})"><input type="checkbox" id="ex-${k}" data-expo="${k}" ${expo.includes(k)?"checked":""}><span class="xi">${EXPO_C[k][1]}</span><span><b>${e.t}</b><small>${e.d}</small></span><span class="tick" aria-hidden="true">${expo.includes(k)?"✓":""}</span></label>`).join("");
   const noteList=k=>BRIEF.live?(((BRIEF.exposures||{})[k])||[]):(((BRIEF.exposures||{})[k])||EXPOSURES[k].notes);
-  const notes=expo.length?expo.map(k=>{const L=noteList(k);return `<article class="note" style="--c:var(${EXPO_C[k][0]})"><h3>${EXPOSURES[k].t}</h3>${L.length?`<ul>${L.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:`<p class="mu note-empty">${BRIEF.live&&!BRIEF.hasExposures?"Notes start with the next brief.":"Nothing in this edition bears directly on this exposure."}</p>`}</article>`}).join(""):`<div class="gate"><b>Pick at least one exposure</b><p>Your personalized notes appear here and in each brief.</p></div>`;
+  const notes=wait?briefWait():expo.length?expo.map(k=>{const L=noteList(k);return `<article class="note" style="--c:var(${EXPO_C[k][0]})"><h3>${EXPOSURES[k].t}</h3>${L.length?`<ul>${L.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:`<p class="mu note-empty">${BRIEF.live&&!BRIEF.hasExposures?"Notes start with the next brief.":"Nothing in this edition bears directly on this exposure."}</p>`}</article>`}).join(""):`<div class="gate"><b>Pick at least one exposure</b><p>Your personalized notes appear here and in each brief.</p></div>`;
   return head+`<div class="expo" role="group" aria-label="Your exposures">${boxes}</div>
   <h2 class="sub-title">Today’s notes</h2><div class="notes">${notes}</div>`;
 }
@@ -2150,7 +2168,7 @@ function openWeekly(i){
   ${(w.week_ahead||[]).length?`<h3 class="wk-h">The week ahead</h3><ul class="wk-rc">${w.week_ahead.map(e=>{const d=new Date(e.date+"T12:00:00");return `<li><span><b>${d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"})}</b></span><span>${esc(e.title)}${e.why?` · <span class="mu">${esc(e.why)}</span>`:""}</span></li>`}).join("")}</ul>`:""}
   ${(w.theaters||[]).length?`<h3 class="wk-h">Country by country</h3>${w.theaters.map(t=>`<div class="wk-story"><h4>${esc(t.title||"")}</h4><p>${esc(t.text||"")}</p></div>`).join("")}`:""}
   ${w.markets?`<h3 class="wk-h">Markets, energy and shipping</h3><p>${esc(w.markets)}</p>`:""}
-  <p class="mu" style="font-size:12.5px;margin-top:14px">Drawn from ${w.briefs_count||0} briefs published ${esc(w.range_label||"")}.</p>`,"Weekly report",true);
+  <p class="mu" style="font-size:12.5px;margin-top:14px">Drawn from ${Number(w.briefs_count)|0} briefs published ${esc(w.range_label||"")}.</p>`,"Weekly report",true);
 }
 async function weeklyPDF(i){
   const w=weeklyList()[i]; if(!w) return;
@@ -2205,10 +2223,12 @@ const ocLogo=cls=>`<a class="oc-logo ${cls||""}" href="https://outreachconsult.c
 document.querySelectorAll(".sf-logo").forEach(el=>el.innerHTML=OC_SVG);
 /* ------------------------------------------------------------------ Modals */
 function modal(html,label,wide){
-  const m=$("#modal"); m.innerHTML=`<div class="m-back" data-close></div><div class="m-box${wide?" wide":""}" role="dialog" aria-modal="true" aria-label="${label}"><button type="button" class="m-x" data-close aria-label="Close">×</button>${html}</div>`;
+  const m=$("#modal"); if(m.hidden) modal._ret=document.activeElement; m.innerHTML=`<div class="m-back" data-close></div><div class="m-box${wide?" wide":""}" role="dialog" aria-modal="true" aria-label="${label}"><button type="button" class="m-x" data-close aria-label="Close">×</button>${html}</div>`;
   m.hidden=false; const f=m.querySelector("input,textarea,select,button.btn"); (f||m.querySelector(".m-x")).focus();
 }
-function closeModal(){ $("#modal").hidden=true; $("#modal").innerHTML=""; }
+function closeModal(){ const was=!$("#modal").hidden; $("#modal").hidden=true; $("#modal").innerHTML="";
+  // keyboard and screen-reader users return to the control that opened the dialog
+  const r=modal._ret; modal._ret=null; if(was&&r&&r.isConnected&&r!==document.body&&typeof r.focus==="function") try{r.focus({preventScroll:true})}catch(e){} }
 const PAGES = {
   about:["About",`${ocLogo("about-logo")}<h2>About West Asia Report</h2>
     <p>West Asia Report is built and powered by <b>Outreach Consult</b>, a strategic communications and public affairs advisory.</p>
@@ -2337,7 +2357,7 @@ function pdfPreview(){
   modal(`<h2>Download PDF</h2><p class="m-sub">Each PDF is stamped with the subscriber’s name and organization, which discourages sharing outside the license.</p>
     <div class="pdf">
       <div class="pdf-page">
-        <div class="pdf-head"><img class="pdf-logo-img" src="${WA_MARK_L}" alt=""><span>West Asia Report</span><span class="pdf-ed">${BRIEF.edition} · ${BRIEF.date}</span></div>
+        <div class="pdf-head"><img class="pdf-logo-img" src="${WA_MARK_L}" alt=""><span>West Asia Report</span><span class="pdf-ed">${esc(BRIEF.edition)} · ${esc(BRIEF.date)}</span></div>
         <div class="pdf-h1">${esc(BRIEF.summary.bl)}</div>
         <div class="pdf-lines">${Array.from({length:9},(_,i)=>`<i style="width:${[96,92,98,88,94,70,97,90,60][i]}%"></i>`).join("")}</div>
         <div class="pdf-lines">${Array.from({length:6},(_,i)=>`<i style="width:${[95,90,97,85,93,55][i]}%"></i>`).join("")}</div>
@@ -2412,7 +2432,7 @@ function planCards(ctx){
   const acts=p=>{
     if(inApp&&curP===p.k) return `<span class="curplan">${user.plan?"Your current plan":"Your plan after the trial"}</span>`;
     if(p.k==="teams") return `<button class="btn ghost" type="button" data-contact data-contact-topic="Enterprise">Contact us</button>`;
-    if(inApp) return `<button class="btn${p.k==="pro"?"":" ghost"}" type="button" data-plan-go="${p.k}|buy">${curP?"Switch to":"Subscribe to"} ${p.name}</button><button class="linkbtn" type="button" data-tier-pick="${p.k}">${tier===p.k?"Previewing this plan":"Preview "+p.name}</button>`;
+    if(inApp) return `<button class="btn${p.k==="pro"?"":" ghost"}" type="button" data-plan-go="${p.k}|buy">${curP?"Switch to":"Subscribe to"} ${p.name}</button>${LIVE&&!isAdmin()?"":`<button class="linkbtn" type="button" data-tier-pick="${p.k}">${tier===p.k?"Previewing this plan":"Preview "+p.name}</button>`}`;   // live: only staff can preview another plan
     return `<button class="btn${p.k==="pro"?"":" ghost"}" type="button" data-plan-go="${p.k}|trial">Start 15-day free trial</button><button class="linkbtn" type="button" data-plan-go="${p.k}|buy">or subscribe now</button>`;
   };
   const short=!inApp&&PUBLIC_COMPACT;
@@ -2454,7 +2474,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.bill){billing=t.dataset.bill;store.set("billing",billing);const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(t.dataset.cbill){billing=t.dataset.cbill;store.set("billing",billing);intent.billing=billing;store.set("intent",intent);checkout();return}
   if(t.dataset.planGo){const [plan,mode]=t.dataset.planGo.split("|");intent={plan,mode,billing:plan==="teams"?"annual":billing};store.set("intent",intent);
-    if(signed){closeModal(); if(mode==="buy") checkout(); else location.hash="today"; return}
+    if(signed){e.preventDefault(); closeModal(); if(mode==="buy") checkout(); else location.hash="today"; return}   // an <a href="#signup"> must not open the sign-up form for a signed-in reader
     if(location.hash==="#signup") render(); else location.hash="signup"; return}
   if(t.hasAttribute("data-checkout")){checkout();return}
   if(t.hasAttribute("data-portal")){livePortal(t);return}
@@ -2682,10 +2702,12 @@ function viewWelcome(){
 }
 function renderAcct(){
   const a=$("#acct"); if(!a) return;
-  a.innerHTML = user ? `<b>${esc(user.name)}</b><small>${esc([user.title,user.org].filter(Boolean).join(", ")||user.email)}</small>${user.role==="admin"?'<span class="trialb">Founder access</span>':user.plan?`<span class="trialb">${PLANS.find(x=>x.k===user.plan).name} · ${user.billing}</span>`:user.trial?`<span class="trialb">Pro trial · ends ${trialEndDate().replace(/, \d{4}$/,"")}</span><a class="acct-sub" href="#plans">Manage plan</a>`:""}<button type="button" data-signout>Sign out</button>` : "";
+  a.innerHTML = user ? `<b>${esc(user.name)}</b><small>${esc([user.title,user.org].filter(Boolean).join(", ")||user.email)}</small>${user.role==="admin"?'<span class="trialb">Founder access</span>':user.plan?`<span class="trialb">${PLANS.find(x=>x.k===user.plan).name} · ${user.billing==="comp"?"free pass":esc(user.billing)}</span>`:user.trial?`<span class="trialb">Pro trial · ends ${trialEndDate().replace(/, \d{4}$/,"")}</span><a class="acct-sub" href="#plans">Manage plan</a>`:""}<button type="button" data-signout>Sign out</button>` : "";
 }
 function signIn(u){ user=u; signed=true; store.set("user",u); store.set("signed",true); }
 function signOut(){ signed=false; user=null; store.set("signed",false); store.set("user",null);
+  // Live: this account's reading settings must not carry over to the next person on this device.
+  if(LIVE) ["expo","delivery","devAlerts","intent","tier","pushOn"].forEach(k=>{try{localStorage.removeItem("meb."+k)}catch(e){}});
   // Live: reload so nothing from this account stays in memory for the next person on this device.
   if(LIVE&&SB){ const go=()=>{try{history.replaceState(null,"",location.pathname+"#home")}catch(_){} location.reload()}; SB.auth.signOut().then(go,go); return }
   location.hash="home"; }
@@ -2697,7 +2719,7 @@ const EMAIL_RE=/^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const LIVE = !!(window.WAR_LIVE && window.WAR_LIVE.url && window.WAR_LIVE.key && window.supabase);
 const SB = LIVE ? window.supabase.createClient(window.WAR_LIVE.url, window.WAR_LIVE.key, {auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}) : null;
 const SSO_PROVIDER={Google:"google",Microsoft:"azure"};
-if(LIVE){ Object.keys(RISK).forEach(k=>delete RISK[k]); CHOKES.length=0; CAL.length=0; } // live site: no sample ratings or dates
+if(LIVE){ Object.keys(RISK).forEach(k=>delete RISK[k]); CHOKES.length=0; CAL.length=0; LIVE_IDS.length=0; } // live site: no sample ratings, dates or editions
 let CHECKOUT_PENDING=false;
 function busy(form,on,label){const b=form&&form.querySelector('button[type="submit"]'); if(!b)return; if(on){b.dataset.label=b.textContent;b.textContent=label||"Please wait…";b.disabled=true}else{b.textContent=b.dataset.label||b.textContent;b.disabled=false}}
 function friendly(err){const m=(err&&err.message)||String(err||"");
@@ -2824,12 +2846,14 @@ async function liveBoot(){
     if(/[?&]checkout=success/.test(location.search)) CHECKOUT_PENDING=true;
     if(/[?&]code=/.test(location.search)){ try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){} }
     if(session){ const h=location.hash.replace("#",""); const me=await loadMe();
-      if(me&&(me.p.role==="admin"||!needsProfile(me.p))){ const u=profileToUser(me.p,me.subs); signIn(u); if(!h||h==="home"||h==="signin"||h==="verify") location.hash="today"; else render(); }
+      if(me&&(me.p.role==="admin"||!needsProfile(me.p))){ const u=profileToUser(me.p,me.subs); signIn(u); tagMember(); if(!h||h==="home"||h==="signin"||h==="verify") location.hash="today"; else render(); }
       else await afterAuth(true); }
     else if(signed){ signed=false; user=null; store.set("signed",false); store.set("user",null); render(); }
   }catch(err){ console.warn("boot",err) }
   if(signed) checkoutReturn(); else if(/[?&]checkout=/.test(location.search)){ try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){} }
   devLoad(); setInterval(()=>{ if(document.visibilityState==="visible") devLoad() }, 5*60*1000);
+  // Back to a tab or phone app left open for hours: check for a newer brief right away, not at the next 5-minute tick.
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible"&&signed&&Date.now()-(devLoad._at||0)>60*1000) devLoad() });
   SB.auth.onAuthStateChange((ev)=>{ if(ev==="SIGNED_OUT"&&signed){ signed=false; user=null; store.set("signed",false); store.set("user",null); location.hash="home"; } });
 }
 
@@ -3522,7 +3546,7 @@ async function loadPartnerPage(code){
   if(!LIVE){PARTNER_PAGE={code,name:"Your organization",member_discount_pct:10,trial_days:30,sample:true};render();return}
   try{const {data,error}=await SB.from("partners").select("code,name,member_discount_pct,trial_days").eq("code",code).eq("active",true).maybeSingle();
     if(error) throw error; PARTNER_PAGE=data||{code,missing:true};
-    if(data) store.set("partnerRef",{code:data.code,at:Date.now()});
+    if(data){ store.set("partnerRef",{code:data.code,at:Date.now()}); tagMember(); }
   }catch(e){PARTNER_PAGE={code,missing:true}}
   if(currentView()==="partner") render();
 }
@@ -3542,7 +3566,7 @@ function viewPartner(){
         <li><b>${P.trial_days}-day free trial</b><span>Full Pro access. Cancel anytime before it ends and you pay nothing.</span></li>
         ${P.member_discount_pct?`<li><b>${P.member_discount_pct}% off your first year</b><span>Applied automatically at checkout, on any plan, monthly or yearly.</span></li>`:""}
       </ul>
-      ${already?`<p class="mu">You already have an active plan on this account.</p><p><a class="btn-gold" href="#today">Open the app</a></p>`:`<p><a class="btn-gold" href="#signup" data-plan-go="pro|trial">Start your ${P.trial_days}-day free trial</a></p><p class="mu small">Already have an account? <a href="#signin">Sign in</a> and the member offer is applied when you add your card.</p>`}
+      ${already?`<p class="mu">You already have an active plan on this account.</p><p><a class="btn-gold" href="#today">Open the app</a></p>`:`<p><a class="btn-gold" href="#signup" data-plan-go="pro|trial">Start your ${P.trial_days}-day free trial</a></p>${signed?"":`<p class="mu small">Already have an account? <a href="#signin">Sign in</a> and the member offer is applied when you add your card.</p>`}`}
     </div></section>
     <section class="pub-sec"><div class="wrap partner-wrap"><h2>What members get</h2>
       <ul class="partner-list"><li>Morning and afternoon briefs with an executive summary</li><li>How each side frames the lead story, in its own words, from media across the region</li><li>Verified hourly developments and alerts</li><li>The West Asia Risk Index, country by country</li><li>Commentary from across the region and a weekly report every Friday</li></ul>
@@ -3559,8 +3583,14 @@ async function loadMyPartner(){
   try{const {data}=await SB.from("partners").select("code,name,member_discount_pct,trial_days").eq("code",user.partner).maybeSingle(); MYPARTNER=data||null}catch(e){}
   if(MYPARTNER&&["activate","plans"].includes(currentView())) render();
 }
-// Signed-in visitors who open a partner page are tagged too (only before they have paid).
-window.addEventListener("hashchange",()=>{ if(currentView()==="partner"&&LIVE&&signed&&user&&!user.partner&&!user.plan&&!user.cardOnFile){ setTimeout(async()=>{const r=partnerRef(); if(!r) return; const p={partner_code:null}; await applyPartnerRef(p); if(p.partner_code){user.partner=p.partner_code; store.set("user",user); loadMyPartner()}},400) } });
+// Signed-in visitors who open a partner page are tagged too (only before they have paid), as soon
+// as the partner page has loaded: also on a fresh page load, where no hashchange fires.
+async function tagMember(){
+  if(!(LIVE&&signed&&user&&user.role!=="admin"&&!user.partner&&!user.plan&&!user.cardOnFile)||!partnerRef()) return;
+  const p={partner_code:null}; await applyPartnerRef(p);
+  if(p.partner_code&&user){user.partner=p.partner_code; store.set("user",user); loadMyPartner()}
+}
+window.addEventListener("hashchange",()=>{ if(currentView()==="partner"&&PARTNER_PAGE&&!PARTNER_PAGE.loading&&!PARTNER_PAGE.missing) tagMember(); });
 
 function partnerRange(){const now=new Date(),q=Math.floor(now.getUTCMonth()/3);
   const qs=(y,qq)=>new Date(Date.UTC(y,qq*3,1));

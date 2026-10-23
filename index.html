@@ -971,6 +971,8 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .pt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .atable tr.tot td{border-top:2px solid var(--line);font-weight:700}
 .ts-box{min-height:65px;margin:4px 0 12px}
+.dv-x{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent,#1F4E99);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.dv-x:hover{background:var(--accent-soft,#eef3fb)}
 .pt-range{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
 .pt-range button{font:inherit;font-size:13px;font-weight:700;border:0;background:transparent;color:var(--muted,#5b6b80);padding:6px 12px;border-radius:999px;cursor:pointer}
 .pt-range button[aria-pressed="true"]{background:var(--navy);color:#fff}
@@ -1689,7 +1691,7 @@ function devRegion(k){return `<span class="dv-reg" style="--c:${col(k)}"><i></i>
 function devCard(raw,compact){
   const it=devCur(raw);
   return `<article class="dv-card${it.level==="major"?" major":""}" id="dv-${it.id}">
-    <div class="dv-meta"><time>${it.t0?`${it.t0} ET · updated ${it.t}`:`${it.t} ET`}</time>${devRegion(it.reg)}${devBadge(it.status)}${it.level==="major"?`<span class="dv-major">Major · ${it.t0?"alert and follow-up sent":"alert sent"}</span>`:""}</div>
+    <div class="dv-meta"><time>${it.t0?`${it.t0} ET · updated ${it.t}`:`${it.t} ET`}</time>${devRegion(it.reg)}${devBadge(it.status)}${it.level==="major"?`<span class="dv-major">Major · ${it.t0?"alert and follow-up sent":"alert sent"}</span>`:""}${LIVE&&isAdmin()?`<a class="dv-x" href="${xIntent(xPost(`${(DEV_STATUS[it.status]||DEV_STATUS.developing)[0].toUpperCase()}: ${it.h}`,"https://westasiareport.com/?src=x"))}" target="_blank" rel="noopener" title="Post this development on X">Post on X</a>`:""}</div>
     <h4>${esc(it.h)}</h4>
     ${compact?"":`<p>${esc(it.b)}</p>${it.why?`<p class="dv-why"><b>Why it matters:</b> ${esc(it.why)}</p>`:""}
     ${it.first?`<p class="dv-hist"><b>${it.first.t} ET · ${(DEV_STATUS[it.first.status]||DEV_STATUS.developing)[0]}:</b> ${esc(it.first.b)}</p>`:""}
@@ -1927,6 +1929,14 @@ document.addEventListener("click",e=>{
 /* ------------------------------------------------------------------ Admin: share kit and passes */
 let SHARE=null, PASSES=null, PASS_NEW=null;
 async function loadShareKit(){ try{ const {data}=await SB.from("social_posts").select("brief_date,edition,channel,card_url,posted_at").order("posted_at",{ascending:false}).limit(10); SHARE=data||[] }catch(e){ SHARE=[] } if(location.hash==="#admin") render(); }
+/* X (Twitter): posts are written here and opened in X's own "post" window, signed in as
+   @WestAsiaReport. Nothing is posted automatically. X counts every link as 23 characters. */
+const X_MAX=280, X_LINK=23;
+function xPost(body,url){ const room=X_MAX-(url?X_LINK+2:0); let b=String(body||"").trim();
+  if(b.length>room){ b=b.slice(0,room-1); const cut=b.lastIndexOf(" "); b=(cut>room*0.6?b.slice(0,cut):b).replace(/[\s,;:–-]+$/,"")+"…" }
+  return url?`${b}\n\n${url}`:b }
+function xLen(t){ return String(t).replace(/https?:\/\/\S+/g,"x".repeat(X_LINK)).length }
+function xIntent(t){ return "https://x.com/intent/post?text="+encodeURIComponent(t) }
 function shareKit(){
   if(!LIVE) return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">On the website, the latest share card and a ready-to-post caption appear here after each brief.</p></section>`;
   if(SHARE===null){ setTimeout(loadShareKit,0); return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">Loading…</p></section>` }
@@ -1935,9 +1945,11 @@ function shareKit(){
   const cid=card?`${card.brief_date}|${card.edition==="morning"?"AM":"PM"}`:"", L=EDITIONS.find(e=>e.live&&e.id===cid)||EDITIONS.find(e=>e.live);
   const s=(L&&L.summary)||null;
   const cap=s?`${s.bl}\n\n${(s.kd||[]).slice(0,3).map(k=>`• ${k[0]}: ${k[1]}`).join("\n")}\n\nThe full brief, with every side's own words: https://westasiareport.com/?src=linkedin`:"";
+  const xcap=s?xPost(s.bl,"https://westasiareport.com/?src=x"):"";
   return `<section class="apanel share-kit"><h3>Share kit</h3><div class="sk-grid">
     <div>${card&&safeUrl(card.card_url)!=="#"?`<a href="${safeUrl(card.card_url)}" target="_blank" rel="noopener"><img src="${safeUrl(card.card_url)}" alt="Share card for the latest brief" class="sk-img"></a><p class="mu" style="margin:6px 0 0">${esc(card.brief_date)} · ${card.edition==="morning"?"Morning":"Afternoon"} · <a href="${safeUrl(card.card_url)}" target="_blank" rel="noopener" download>Open full size</a></p>`:`<p class="mu">The first card is made an hour after the next brief is released.</p>`}</div>
     <div>${cap?`<label for="sk-cap" class="sk-l">Caption for LinkedIn</label><textarea id="sk-cap" rows="8">${esc(cap)}</textarea><button type="button" class="btn sm" data-copy="sk-cap">Copy caption</button>`:`<p class="sk-l">Caption for LinkedIn</p><p class="mu">The caption appears when the latest brief has loaded.</p>`}
+    ${xcap?`<label for="sk-x" class="sk-l" style="margin-top:14px">Post for X <span class="mu" id="sk-x-n">${xLen(xcap)}/280</span></label><textarea id="sk-x" rows="5" data-xcount="sk-x-n">${esc(xcap)}</textarea><button type="button" class="btn sm" data-copy="sk-x">Copy</button> <button type="button" class="btn sm ghost" data-xpost="sk-x">Post on X</button><p class="mu" style="margin:6px 0 0">To add the card, download it with “Open full size” and attach it in X.</p>`:""}
     <p class="mu" style="margin-top:8px">Telegram: ${tg?`last posted ${new Date(tg.posted_at).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}`:"not posted yet (needs the channel set up)"}</p></div></div></section>`;
 }
 async function loadPasses(){
@@ -3681,6 +3693,10 @@ function tsMountAll(){ if(!LIVE||!window.WAR_LIVE.turnstile) return; const boxes
 function tsToken(form){ const b=form&&form.querySelector("[data-ts]"); if(!b) return ""; const id=b.dataset.tsId; const t=id&&window.turnstile?window.turnstile.getResponse(id):""; return t||false }
 function tsReset(form){ const b=form&&form.querySelector("[data-ts]"); if(b&&b.dataset.tsId&&window.turnstile){ try{window.turnstile.reset(b.dataset.tsId)}catch(e){} } }
 new MutationObserver(()=>{ if(document.querySelector("[data-ts]:not([data-ts-id])")) tsMountAll() }).observe(document.body,{childList:true,subtree:true});
+
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-xpost]"); if(!b) return; const t=document.getElementById(b.dataset.xpost); if(!t) return;
+  if(xLen(t.value)>X_MAX){ toast("Too long for X: shorten the text first"); return } window.open(xIntent(t.value),"_blank","noopener") });
+document.addEventListener("input",e=>{ const t=e.target; if(!t.dataset||!t.dataset.xcount) return; const n=document.getElementById(t.dataset.xcount); if(n){ const k=xLen(t.value); n.textContent=k+"/280"; n.style.color=k>X_MAX?"#B42318":"" } });
 
 render();
 if(LIVE) liveBoot();

@@ -972,6 +972,8 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .pt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .atable tr.tot td{border-top:2px solid var(--line);font-weight:700}
 .ts-box{min-height:65px;margin:4px 0 12px}
+.sk-video{width:100%;max-width:300px;aspect-ratio:9/16;background:#0F213B;border-radius:12px;display:block}
+.sk-in{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px}
 .dv-x{margin-left:auto;font-size:12px;font-weight:700;color:var(--accent,#1F4E99);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
 .dv-x:hover{background:var(--accent-soft,#eef3fb)}
 .pt-range{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
@@ -1929,7 +1931,7 @@ document.addEventListener("click",e=>{
 
 /* ------------------------------------------------------------------ Admin: share kit and passes */
 let SHARE=null, PASSES=null, PASS_NEW=null;
-async function loadShareKit(){ try{ const {data}=await SB.from("social_posts").select("brief_date,edition,channel,card_url,posted_at").order("posted_at",{ascending:false}).limit(10); SHARE=data||[] }catch(e){ SHARE=[] } if(location.hash==="#admin") render(); }
+async function loadShareKit(){ try{ const {data}=await SB.from("social_posts").select("brief_date,edition,channel,card_url,text,posted_at").order("posted_at",{ascending:false}).limit(12); SHARE=data||[] }catch(e){ SHARE=[] } if(location.hash==="#admin") render(); }
 /* X (Twitter): posts are written here and opened in X's own "post" window, signed in as
    @WestAsiaReport. Nothing is posted automatically. X counts every link as 23 characters. */
 const X_MAX=280, X_LINK=23;
@@ -1938,6 +1940,18 @@ function xPost(body,url){ const room=X_MAX-(url?X_LINK+2:0); let b=String(body||
   return url?`${b}\n\n${url}`:b }
 function xLen(t){ return String(t).replace(/https?:\/\/\S+/g,"x".repeat(X_LINK)).length }
 function xIntent(t){ return "https://x.com/intent/post?text="+encodeURIComponent(t) }
+function shortHTML(){
+  const sh=(SHARE||[]).find(x=>x.channel==="short"&&x.card_url&&safeUrl(x.card_url)!=="#");
+  if(!sh) return `<p class="sk-l" style="margin-top:16px">Daily Short</p><p class="mu">The vertical video for YouTube Shorts, Reels and TikTok is made with the share card, about an hour after each brief.</p>`;
+  let m={}; try{ m=JSON.parse(sh.text||"{}") }catch(e){}
+  const u=safeUrl(sh.card_url), kind=m.kind==="sides"?"Two sides":"3 things to know";
+  return `<div class="sk-short"><p class="sk-l" style="margin-top:16px">Daily Short · ${esc(kind)} · ${esc(sh.brief_date)} ${sh.edition==="morning"?"morning":"afternoon"}${m.seconds?` · ${Number(m.seconds)|0}s`:""}</p>
+    <video src="${u}" controls playsinline preload="metadata" class="sk-video"></video>
+    <p style="margin:6px 0 10px"><a class="btn sm" href="${u}" download target="_blank" rel="noopener">Download video</a></p>
+    <label for="sk-st" class="sk-l">Title</label><input id="sk-st" class="sk-in" value="${esc(m.title||"")}"><button type="button" class="btn sm ghost" data-copy-in="sk-st">Copy title</button>
+    <label for="sk-sd" class="sk-l" style="margin-top:8px">Description</label><textarea id="sk-sd" rows="6">${esc(m.description||"")}</textarea><button type="button" class="btn sm ghost" data-copy="sk-sd">Copy description</button>
+    <p class="mu" style="margin:6px 0 0">Upload on YouTube as a Short (vertical, under 60 seconds). The same file works for Instagram Reels, TikTok and X.</p></div>`;
+}
 function shareKit(){
   if(!LIVE) return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">On the website, the latest share card and a ready-to-post caption appear here after each brief.</p></section>`;
   if(SHARE===null){ setTimeout(loadShareKit,0); return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">Loading…</p></section>` }
@@ -1951,6 +1965,7 @@ function shareKit(){
     <div>${card&&safeUrl(card.card_url)!=="#"?`<a href="${safeUrl(card.card_url)}" target="_blank" rel="noopener"><img src="${safeUrl(card.card_url)}" alt="Share card for the latest brief" class="sk-img"></a><p class="mu" style="margin:6px 0 0">${esc(card.brief_date)} · ${card.edition==="morning"?"Morning":"Afternoon"} · <a href="${safeUrl(card.card_url)}" target="_blank" rel="noopener" download>Open full size</a></p>`:`<p class="mu">The first card is made an hour after the next brief is released.</p>`}</div>
     <div>${cap?`<label for="sk-cap" class="sk-l">Caption for LinkedIn</label><textarea id="sk-cap" rows="8">${esc(cap)}</textarea><button type="button" class="btn sm" data-copy="sk-cap">Copy caption</button>`:`<p class="sk-l">Caption for LinkedIn</p><p class="mu">The caption appears when the latest brief has loaded.</p>`}
     ${xcap?`<label for="sk-x" class="sk-l" style="margin-top:14px">Post for X <span class="mu" id="sk-x-n">${xLen(xcap)}/280</span></label><textarea id="sk-x" rows="5" data-xcount="sk-x-n">${esc(xcap)}</textarea><button type="button" class="btn sm" data-copy="sk-x">Copy</button> <button type="button" class="btn sm ghost" data-xpost="sk-x">Post on X</button><p class="mu" style="margin:6px 0 0">To add the card, download it with “Open full size” and attach it in X.</p>`:""}
+    ${shortHTML()}
     <p class="mu" style="margin-top:8px">Telegram: ${tg?`last posted ${new Date(tg.posted_at).toLocaleString("en-US",{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}`:"not posted yet (needs the channel set up)"}</p></div></div></section>`;
 }
 async function loadPasses(){
@@ -3698,6 +3713,9 @@ new MutationObserver(()=>{ if(document.querySelector("[data-ts]:not([data-ts-id]
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-xpost]"); if(!b) return; const t=document.getElementById(b.dataset.xpost); if(!t) return;
   if(xLen(t.value)>X_MAX){ toast("Too long for X: shorten the text first"); return } window.open(xIntent(t.value),"_blank","noopener") });
 document.addEventListener("input",e=>{ const t=e.target; if(!t.dataset||!t.dataset.xcount) return; const n=document.getElementById(t.dataset.xcount); if(n){ const k=xLen(t.value); n.textContent=k+"/280"; n.style.color=k>X_MAX?"#B42318":"" } });
+
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-copy-in]"); if(!b) return; const el=document.getElementById(b.dataset.copyIn); if(!el) return;
+  (navigator.clipboard?navigator.clipboard.writeText(el.value):Promise.reject()).then(()=>toast("Copied"),()=>{el.select();toast("Press Ctrl+C to copy")}) });
 
 render();
 if(LIVE) liveBoot();

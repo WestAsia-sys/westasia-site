@@ -1940,18 +1940,47 @@ function xPost(body,url){ const room=X_MAX-(url?X_LINK+2:0); let b=String(body||
   return url?`${b}\n\n${url}`:b }
 function xLen(t){ return String(t).replace(/https?:\/\/\S+/g,"x".repeat(X_LINK)).length }
 function xIntent(t){ return "https://x.com/intent/post?text="+encodeURIComponent(t) }
+let SHORT_MSG="";
+function shortPicker(sh,m){
+  if(!sh) return "";
+  const list=(Array.isArray(m.stories)?m.stories:[]).filter(x=>typeof x==="string"&&x.trim()).slice(0,8);
+  const cur=m.kind==="three"?"__three__":(m.story||"");
+  const opts=list.map(s=>`<option value="${esc(s)}"${s===cur?" selected":""}>${esc(s.length>70?s.slice(0,68)+"…":s)}</option>`).join("")
+    +`<option value="__three__"${cur==="__three__"?" selected":""}>Top 3 headlines of the brief</option>`;
+  return `<label for="sk-story" class="sk-l" style="margin-top:12px">Story for this Short</label>
+    <select id="sk-story" class="sk-in">${opts}</select>
+    <button type="button" class="btn sm" data-remake="1" data-date="${esc(sh.brief_date)}" data-ed="${esc(sh.edition)}">Remake Short</button>
+    <p class="mu" id="sk-remake-msg" style="margin:6px 0 0">${esc(SHORT_MSG||"Pick another story and remake. Takes about 3 to 4 minutes.")}</p>`;
+}
 function shortHTML(){
-  const sh=(SHARE||[]).find(x=>x.channel==="short"&&x.card_url&&safeUrl(x.card_url)!=="#");
-  if(!sh) return `<p class="sk-l" style="margin-top:16px">Daily Short</p><p class="mu">The vertical video for YouTube Shorts, Reels and TikTok is made with the share card, about an hour after each brief.</p>`;
-  let m={}; try{ m=JSON.parse(sh.text||"{}") }catch(e){}
+  const sh=(SHARE||[]).find(x=>x.channel==="short");
+  let m={}; try{ m=JSON.parse((sh&&sh.text)||"{}") }catch(e){}
+  if(!sh||!sh.card_url||safeUrl(sh.card_url)==="#") return `<p class="sk-l" style="margin-top:16px">Daily Short</p><p class="mu">${sh?"No story in this brief qualified for a video. You can make one from the brief's top 3 headlines.":"The vertical video for YouTube Shorts, Reels and TikTok is made with the share card, about an hour after each brief."}</p>${shortPicker(sh,m)}`;
   const u=safeUrl(sh.card_url), kind=m.kind==="sides"?"Two sides":"3 things to know";
-  return `<div class="sk-short"><p class="sk-l" style="margin-top:16px">Daily Short · ${esc(kind)} · ${esc(sh.brief_date)} ${sh.edition==="morning"?"morning":"afternoon"}${m.seconds?` · ${Number(m.seconds)|0}s`:""}</p>
+  const voice=m.voiced?"Narrated":"Captions and music only";
+  return `<div class="sk-short"><p class="sk-l" style="margin-top:16px">Daily Short · ${esc(kind)} · ${esc(sh.brief_date)} ${sh.edition==="morning"?"morning":"afternoon"}${m.seconds?` · ${Number(m.seconds)|0}s`:""} · ${voice}</p>
     <video src="${u}" controls playsinline preload="metadata" class="sk-video"></video>
     <p style="margin:6px 0 10px"><a class="btn sm" href="${u}" download target="_blank" rel="noopener">Download video</a></p>
     <label for="sk-st" class="sk-l">Title</label><input id="sk-st" class="sk-in" value="${esc(m.title||"")}"><button type="button" class="btn sm ghost" data-copy-in="sk-st">Copy title</button>
     <label for="sk-sd" class="sk-l" style="margin-top:8px">Description</label><textarea id="sk-sd" rows="6">${esc(m.description||"")}</textarea><button type="button" class="btn sm ghost" data-copy="sk-sd">Copy description</button>
+    ${shortPicker(sh,m)}
     <p class="mu" style="margin:6px 0 0">Upload on YouTube as a Short (vertical, under 60 seconds). The same file works for Instagram Reels, TikTok and X.</p></div>`;
 }
+document.addEventListener("click",async e=>{ const b=e.target.closest("[data-remake]"); if(!b) return;
+  const sel=document.getElementById("sk-story"); const story=sel?sel.value:"";
+  const before=((SHARE||[]).find(x=>x.channel==="short")||{}).card_url||"";
+  btnBusy(b,true,"Starting…");
+  try{
+    const j=await callFn("remake-short",{brief_date:b.dataset.date,edition:b.dataset.ed,story:story||null});
+    SHORT_MSG=j.started?"Making the new Short. It appears here in about 3 to 4 minutes (this panel checks on its own).":"Queued. It will be made at the next hourly run, within the hour.";
+    let n=0; const iv=setInterval(async()=>{ n++; await loadShareKit();
+      const now=((SHARE||[]).find(x=>x.channel==="short")||{}).card_url||"";
+      if(now&&now!==before){ SHORT_MSG="New Short ready."; clearInterval(iv); if(location.hash==="#admin") render(); }
+      else if(n>=16){ clearInterval(iv); SHORT_MSG="Still working. Check back in a few minutes and press Refresh."; if(location.hash==="#admin") render(); }
+    },30000);
+  }catch(err){ SHORT_MSG=err.message||"Could not start the remake."; }
+  btnBusy(b,false); const msg=document.getElementById("sk-remake-msg"); if(msg) msg.textContent=SHORT_MSG;
+});
 function shareKit(){
   if(!LIVE) return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">On the website, the latest share card and a ready-to-post caption appear here after each brief.</p></section>`;
   if(SHARE===null){ setTimeout(loadShareKit,0); return `<section class="apanel share-kit"><h3>Share kit</h3><p class="mu">Loading…</p></section>` }
@@ -2420,8 +2449,8 @@ function footerHTML(){const f=document.querySelector(".site-foot");return f?f.ou
 
 /* ---- plans (single source for landing page and in-app Plans) ---- */
 const PLANS=[
- {k:"essential",name:"Essential",m:49,y:490,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-Commentary from the region’s press","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
- {k:"pro",name:"Pro",m:99,y:990,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Commentary: what influential writers across the region are arguing, with the key points of each piece, from five languages","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
+ {k:"essential",name:"Essential",m:19,y:190,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-Commentary from the region’s press","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
+ {k:"pro",name:"Pro",m:69,y:690,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Commentary: what influential writers across the region are arguing, with the key points of each piece, from five languages","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
  {k:"teams",name:"Enterprise",y:0,feat:["Everything in Pro for your whole team or organization","Five readers or more, each with their own account","Accounts set up for you; readers added or changed on request","One annual agreement and invoice","The weekly PDF, ready to brief a board or clients"]}
 ];
 const PUBLIC_COMPACT=false;   // set to false to show the full feature lists on the landing page
@@ -2441,7 +2470,7 @@ const COMPARE=[
   ["Weekly report every Friday, with a PDF","—","✓","✓"],
   ["People","1","1","5 or more"],
   ["Billing","Monthly or yearly","Monthly or yearly","Annual agreement and invoice"],
-  ["Price","$49/mo or $490/yr","$99/mo or $990/yr","Custom: contact us"]];
+  ["Price","$19/mo or $190/yr","$69/mo or $690/yr","Custom: contact us"]];
 function compareModal(){
   modal(`<h2>Compare plans</h2><p class="m-sub">Every plan starts with a 15-day Pro trial. A card is required; nothing is charged until the trial ends.</p>
   <div class="tv-scroll"><table class="atable cmp"><thead><tr><th scope="col">Feature</th><th scope="col">Essential</th><th scope="col">Pro</th><th scope="col">Enterprise</th></tr></thead><tbody>
@@ -2957,7 +2986,7 @@ const ADMIN_TABS=[["admin","Overview"],["admin-subs","Subscribers"],["admin-sign
 const isAdmin=()=>!!(signed&&user&&user.role==="admin");
 const STAFF_RE=/@outreachconsult\.com$/i;
 let TODAY=new Date("2026-09-24T12:00:00");
-const PRICE={essential:{m:49,y:490},pro:{m:99,y:990},teams:{m:0,y:3950}};
+const PRICE={essential:{m:19,y:190},pro:{m:69,y:690},teams:{m:0,y:3950}};
 const PLAN_L={essential:"Essential",pro:"Pro",teams:"Enterprise"};
 const PLAN_C={essential:"--s1",pro:"--s2",teams:"--s3"};
 const STATUS_L={trial:"Trial",active:"Active",past_due:"Past due",canceled:"Canceled",expired:"Trial ended",comp:"Free pass"};

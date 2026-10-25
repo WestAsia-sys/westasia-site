@@ -58,7 +58,7 @@ war_head(mb_substr($headline, 0, 70) . " · West Asia Report", $desc, $path, $ld
 <?php if ($kd): ?>
   <section class="card"><h2>The brief in 30 seconds</h2><ul class="kd">
 <?php foreach ($kd as $k): ?>
-    <li><?php if (trim((string)($k["label"] ?? "")) !== ""): ?><b><?= e($k["label"]) ?>:</b> <?php endif; ?><?= e($k["text"]) ?></li>
+    <li><?php if (trim((string)($k["label"] ?? "")) !== ""): ?><b><?= e(mb_strtoupper(mb_substr(trim($k["label"]), 0, 1)) . mb_substr(trim($k["label"]), 1)) ?>:</b> <?php endif; ?><?= e($k["text"]) ?></li>
 <?php endforeach; ?>
   </ul></section>
 <?php endif; ?>

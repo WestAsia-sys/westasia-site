@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /seo-check.php
+Disallow: /0-check/
+
+Sitemap: https://westasiareport.com/sitemap.xml

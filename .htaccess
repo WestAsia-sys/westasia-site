@@ -4,5 +4,6 @@ RewriteEngine On
 RewriteRule ^brief/([0-9]{4}-[0-9]{2}-[0-9]{2}-(morning|afternoon))/?$ brief.php?id=$1 [L,QSA]
 RewriteRule ^briefs/?$ briefs.php [L,QSA]
 RewriteRule ^risk-index/?$ risk.php [L,QSA]
+RewriteRule ^free/?$ free.php [L,QSA]
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 RewriteRule ^_lib\.php$ - [R=404,L]

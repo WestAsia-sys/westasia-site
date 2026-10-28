@@ -13,11 +13,11 @@ const WAR_CACHE_SECONDS = 300;
 function e($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); }
 
 /** Calls a public database function. Returns decoded JSON, or null if unavailable. */
-function war_rpc(string $fn, array $args = []) {
+function war_rpc(string $fn, array $args = [], bool $cache = true) {
     $dir = sys_get_temp_dir() . "/war-cache";
     if (!is_dir($dir)) { @mkdir($dir, 0700, true); }
     $file = $dir . "/" . md5($fn . json_encode($args)) . ".json";
-    if (is_file($file) && time() - filemtime($file) < WAR_CACHE_SECONDS) {
+    if ($cache && is_file($file) && time() - filemtime($file) < WAR_CACHE_SECONDS) {
         $d = json_decode((string)@file_get_contents($file), true);
         if ($d !== null) { return $d; }
     }
@@ -32,9 +32,9 @@ function war_rpc(string $fn, array $args = []) {
     curl_close($ch);
     if ($body !== false && $code >= 200 && $code < 300) {
         $d = json_decode($body, true);
-        if (is_array($d)) { @file_put_contents($file, $body, LOCK_EX); return $d; }
+        if ($d !== null || $body === "null") { if ($cache) { @file_put_contents($file, $body, LOCK_EX); } return $d; }
     }
-    if (is_file($file)) {                     // database briefly unreachable: serve the last good copy
+    if ($cache && is_file($file)) {           // database briefly unreachable: serve the last good copy
         $d = json_decode((string)@file_get_contents($file), true);
         if ($d !== null) { return $d; }
     }
@@ -99,11 +99,66 @@ function war_head(string $title, string $desc, string $path, array $ld = [], str
     echo "<nav aria-label=\"Site\"><a href=\"/briefs\">Briefs</a><a href=\"/risk-index\">Risk Index</a><a href=\"/#signin\">Sign in</a><a class=\"gold\" href=\"/?src=seo#signup\">Start free trial</a></nav></div></header>\n<main>\n";
 }
 
+/** "Get the Monday brief free" box: email, security check, no card. */
+function war_free_box(string $id = "fb", string $title = "Get the Monday brief free", string $sub = ""): string {
+    static $assets = false;
+    $sub = $sub ?: "Our full Monday morning brief in your inbox every week: every theater, every side in its own words, and the risk ratings. No card, no account.";
+    $out = "<section class=\"free card\" aria-labelledby=\"$id-h\"><h2 id=\"$id-h\">" . e($title) . "</h2><p>" . e($sub) . "</p>"
+         . "<form data-free novalidate><label for=\"$id-email\" class=\"sr\">Email address</label><div class=\"frow\">"
+         . "<input type=\"email\" id=\"$id-email\" required autocomplete=\"email\" inputmode=\"email\" placeholder=\"you@example.com\">"
+         . "<button class=\"btn\" type=\"submit\">Send me the Monday brief</button></div>"
+         . "<input type=\"text\" name=\"website\" class=\"hp\" tabindex=\"-1\" autocomplete=\"off\" aria-hidden=\"true\">"
+         . "<div class=\"cf-turnstile\" data-sitekey=\"" . WAR_TURNSTILE . "\" data-size=\"flexible\" data-theme=\"light\"></div>"
+         . "<p class=\"msg\" role=\"status\" aria-live=\"polite\"></p><p class=\"mu\">Free every Monday at 07:00 ET. Unsubscribe anytime.</p></form></section>";
+    if (!$assets) {
+        $assets = true;
+        $out .= "<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script>"
+              . "<script>" . WAR_FREE_JS . "</script>";
+    }
+    return $out;
+}
+
+const WAR_TURNSTILE = "0x4AAAAAAFfmS4pK5mPvl38P";
+
+const WAR_FREE_JS = <<<'JS'
+document.addEventListener("submit",async function(e){
+  var f=e.target.closest&&e.target.closest("[data-free]"); if(!f) return; e.preventDefault();
+  var m=f.querySelector(".msg"), b=f.querySelector("button"), em=f.querySelector("input[type=email]").value.trim();
+  var t=(f.querySelector('[name="cf-turnstile-response"]')||{}).value||"";
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){ m.textContent="Please enter a valid email address."; return; }
+  if(!t){ m.textContent="Please complete the security check above the button."; return; }
+  b.disabled=true; var label=b.textContent; b.textContent="Sending…"; m.textContent="";
+  try{
+    var r=await fetch(WAR_DB+"/functions/v1/free-signup",{method:"POST",headers:{"Content-Type":"application/json",apikey:WAR_PK,Authorization:"Bearer "+WAR_PK},
+      body:JSON.stringify({email:em,token:t,src:warSrc(),website:f.querySelector(".hp").value})});
+    var j={}; try{ j=await r.json(); }catch(_){}
+    if(r.ok){ var p=document.createElement("p"); p.className="ok"; p.innerHTML="<b>Check your inbox.</b> We sent a confirmation link to <span></span>. Click it, and your first free brief arrives Monday at 07:00 ET.";
+      p.querySelector("span").textContent=em; f.replaceWith(p); return; }
+    m.textContent=j.error||"Something went wrong. Please try again.";
+  }catch(_){ m.textContent="We couldn't reach the server. Please check your connection and try again."; }
+  b.disabled=false; b.textContent=label; try{ window.turnstile&&turnstile.reset(f.querySelector(".cf-turnstile")); }catch(_){}
+});
+JS;
+
+/** Remembers where the visitor first came from (?src=..., or the search engine / site that sent them). */
+const WAR_SRC_JS = <<<'JS'
+function warSrc(){ try{ var v=JSON.parse(localStorage.getItem("war_src")||"null"); return v&&v.src||""; }catch(_){ return ""; } }
+(function(){ try{
+  if(localStorage.getItem("war_src")) return;
+  var q=new URLSearchParams(location.search), s=(q.get("src")||q.get("utm_source")||"").toLowerCase().replace(/[^a-z0-9_-]/g,"").slice(0,40);
+  if(!s&&document.referrer){ var h=""; try{ h=new URL(document.referrer).hostname.replace(/^www\./,""); }catch(_){}
+    if(h&&h!==location.hostname){ var map=[["google","google"],["bing","bing"],["duckduckgo","duckduckgo"],["yahoo","yahoo"],["youtube","youtube"],["youtu.be","youtube"],["t.co","x"],["x.com","x"],["twitter","x"],["linkedin","linkedin"],["lnkd.in","linkedin"],["facebook","facebook"],["instagram","instagram"],["reddit","reddit"],["chatgpt","chatgpt"],["perplexity","perplexity"]];
+      s="web"; for(var i=0;i<map.length;i++){ if(h.indexOf(map[i][0])>-1){ s=map[i][1]; break; } } } }
+  if(s) localStorage.setItem("war_src",JSON.stringify({src:s,at:new Date().toISOString(),page:location.pathname}));
+}catch(_){} })();
+JS;
+
 function war_foot(): void {
     $y = date("Y");
     echo "</main>\n<footer class=\"foot\"><div class=\"wrap\"><p><b>West Asia Report</b> · Twice-daily briefs on the politics, security and markets of West Asia, with every side in its own words. Published at 07:00 and 17:00 ET.</p>";
     echo "<p><a href=\"/\">Home</a> · <a href=\"/briefs\">All briefs</a> · <a href=\"/risk-index\">Risk Index</a> · <a href=\"/#plans\">Plans and pricing</a> · <a href=\"/#privacy\">Privacy</a> · <a href=\"/#terms\">Terms</a></p>";
-    echo "<p class=\"mu\">© $y Outreach Consult LLC</p></div></footer>\n</body>\n</html>\n";
+    echo "<p class=\"mu\">© $y Outreach Consult LLC</p></div></footer>\n";
+    echo "<script>var WAR_DB=" . json_encode(WAR_DB) . ",WAR_PK=" . json_encode(WAR_KEY) . ";" . WAR_SRC_JS . "</script>\n</body>\n</html>\n";
 }
 
 function war_cta(): string {
@@ -137,4 +192,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;p
 .lv{font-weight:700;border-radius:6px;padding:2px 8px;color:#fff;white-space:nowrap}.l1{background:#3F8F5F}.l2{background:#4A73A8}.l3{background:#A7822A}.l4{background:#B9612F}.l5{background:#A93838}
 .tr{display:block;font-size:12px;color:var(--mu)}.foot{border-top:1px solid var(--line);padding:22px 0 30px;margin-top:20px;font-size:14px;color:var(--ink2)}
 .tbl{overflow-x:auto}
+.free h2{margin-bottom:6px}.frow{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.frow input{flex:1 1 240px;min-width:0;font:inherit;padding:12px 14px;border:1px solid var(--line);border-radius:999px}
+.frow .btn{margin:0;border:0;cursor:pointer;font:inherit;font-weight:800}.free .msg{color:#A93838;font-weight:600;min-height:1em;margin:8px 0 0}.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ok{background:#EAF5EE;border:1px solid #BFE0CB;border-radius:12px;padding:16px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.hero{background:var(--navy);color:#F2F5F9;padding:34px 0 30px;margin-top:-28px}.hero h1{color:#fff}.hero p{color:#C9D4E2;max-width:640px}.ticks{padding-left:18px}.ticks li{margin:6px 0}
 CSS;

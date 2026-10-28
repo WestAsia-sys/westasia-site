@@ -42,5 +42,5 @@ if ($list) {
     foreach ($list as $r) { echo "<li><time>" . e(war_edition_label($r["brief_date"], $r["edition"])) . "</time><a href=\"" . e(war_brief_url($r["brief_date"], $r["edition"])) . "\">" . e($r["headline"] ?: "West Asia brief") . "</a></li>"; }
     echo "</ul><p><a href=\"/briefs\">All briefs →</a></p></section>";
 }
-echo war_cta() . "</div>";
+echo war_free_box("fb", "Get the Monday brief free", "The full Monday brief, with the week's rating changes and the reporting behind them, free in your inbox. No card, no account.") . war_cta() . "</div>";
 war_foot();

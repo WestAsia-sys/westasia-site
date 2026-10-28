@@ -2588,7 +2588,7 @@ function viewHome(){
       <h1>The region,<br>twice a day.</h1>
       <p class="sub">A decision-ready brief on the politics, security and markets of West Asia and North Africa. Delivered at 07:00 and 17:00 ET, sourced across five languages and fact-checked twice.</p>
       <div class="hero-ctas"><button type="button" class="btn-gold" data-plan-go="pro|trial">Start your 15-day free trial</button><button type="button" class="btn-line" data-scroll="pricing">See plans and subscribe</button></div>
-      <div class="hero-meta"><span>English · Arabic · Persian · Hebrew · Turkish</span><span>Every claim sourced</span><span>Web, app and email</span><a class="hero-idx" href="#index">See today’s free Risk Index →</a></div>
+      <div class="hero-meta"><span>English · Arabic · Persian · Hebrew · Turkish</span><span>Every claim sourced</span><span>Web, app and email</span><a class="hero-idx" href="#index">See today’s free Risk Index →</a><a class="hero-idx" href="/free">Get the Monday brief free →</a></div>
     </div>
 <figure class="demo hero-demo">
       
@@ -2827,6 +2827,7 @@ async function loadMe(){
 const needsProfile=p=>!(p.organization&&p.job_title&&p.country&&p.seats);
 async function afterAuth(isNewHint){
   const me=await loadMe(); if(!me){toast("We couldn’t load your account. Please sign in again.");return}
+  srcSave();
   const {p,subs,provider}=me;
   if(p.role!=="admin"&&!needsProfile(p)) await applyPartnerRef(p);
   if(p.role!=="admin"&&needsProfile(p)){ pending={isNew:true,sso:provider==="azure"?"Microsoft":provider==="google"?"Google":"email",first:p.first_name||"",last:p.last_name||"",email:p.email,live:true}; signed=false; location.hash="signup"; render(); return }
@@ -2936,7 +2937,7 @@ async function liveBoot(){
     const {data:{session}}=await SB.auth.getSession();
     if(/[?&]checkout=success/.test(location.search)) CHECKOUT_PENDING=true;
     if(/[?&]code=/.test(location.search)){ try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){} }
-    if(session){ const h=location.hash.replace("#",""); const me=await loadMe();
+    if(session){ const h=location.hash.replace("#",""); const me=await loadMe(); if(me) srcSave();
       if(me&&(me.p.role==="admin"||!needsProfile(me.p))){ const u=profileToUser(me.p,me.subs); signIn(u); tagMember(); if(!h||h==="home"||h==="signin"||h==="verify") location.hash="today"; else render(); }
       else await afterAuth(true); }
     else if(signed){ signed=false; user=null; store.set("signed",false); store.set("user",null); render(); }
@@ -3314,7 +3315,7 @@ function counts(){const S=admData().subs;const c={};S.forEach(u=>c[u.status]=(c[
 /* ---- Overview ---- */
 function viewAdminOverview(){
   if(LIVE){const g=admLiveGate("admin");if(g)return g}
-  setTimeout(()=>{const v=$("#view .atools")||$("#view .atabs"); if(v&&!$("#view .share-kit")) v.insertAdjacentHTML("afterend",shareKit())},0);
+  setTimeout(()=>{const v=$("#view .atools")||$("#view .atabs"); if(v&&!$("#view .share-kit")) v.insertAdjacentHTML("afterend",shareKit()+growthHTML())},0);
   const D=admData(),m=cur(),p=prev(),c=counts();
   const paying=D.subs.filter(u=>u.status==="active"||u.status==="past_due");
   const seats=paying.reduce((s,u)=>s+(u.seatsN||1),0);
@@ -3763,6 +3764,33 @@ document.addEventListener("input",e=>{ const t=e.target; if(!t.dataset||!t.datas
 document.addEventListener("click",e=>{ const b=e.target.closest("[data-copy-in]"); if(!b) return; const el=document.getElementById(b.dataset.copyIn); if(!el) return;
   (navigator.clipboard?navigator.clipboard.writeText(el.value):Promise.reject()).then(()=>toast("Copied"),()=>{el.select();toast("Press Ctrl+C to copy")}) });
 
+/* Where visitors come from: the first source seen (?src=..., or the search engine / site that sent them),
+   saved once to the account after sign-in. Same key as the public pages (/brief, /free...). */
+function warSrc(){ try{ const v=JSON.parse(localStorage.getItem("war_src")||"null"); return (v&&v.src)||""; }catch(e){ return ""; } }
+(function(){ try{
+  if(localStorage.getItem("war_src")) return;
+  const q=new URLSearchParams(location.search); let s=(q.get("src")||q.get("utm_source")||"").toLowerCase().replace(/[^a-z0-9_-]/g,"").slice(0,40);
+  if(!s&&document.referrer){ let h=""; try{ h=new URL(document.referrer).hostname.replace(/^www\./,""); }catch(e){}
+    if(h&&h!==location.hostname){ const map=[["google","google"],["bing","bing"],["duckduckgo","duckduckgo"],["yahoo","yahoo"],["youtube","youtube"],["youtu.be","youtube"],["t.co","x"],["x.com","x"],["twitter","x"],["linkedin","linkedin"],["lnkd.in","linkedin"],["facebook","facebook"],["instagram","instagram"],["reddit","reddit"],["chatgpt","chatgpt"],["perplexity","perplexity"]];
+      s="web"; for(const [k,v] of map){ if(h.includes(k)){ s=v; break; } } } }
+  if(s) localStorage.setItem("war_src",JSON.stringify({src:s,at:new Date().toISOString(),page:location.pathname}));
+}catch(e){} })();
+function srcSave(){ const s=warSrc(); if(!LIVE||!s) return; try{ if(localStorage.getItem("war_src_saved")) return; }catch(e){}
+  SB.rpc("set_signup_src",{p_src:s}).then(({error})=>{ if(!error){ try{localStorage.setItem("war_src_saved","1")}catch(e){} } }); }
+let GROWTH=null;
+function growthHTML(){ return `<section class="apanel" id="growth-panel"><h3>Where subscribers come from <span class="mu">(last 90 days)</span></h3>${growthBody()}</section>`; }
+function growthBody(){
+  if(!LIVE) return `<p class="mu">On the website, free sign-ups, accounts, trials and paying subscribers appear here by source (YouTube, X, LinkedIn, search…).</p>`;
+  if(GROWTH===null){ setTimeout(loadGrowth,0); return `<p class="mu">Loading…</p>`; }
+  if(GROWTH.err) return `<p class="mu">${esc(GROWTH.err)}</p>`;
+  if(!GROWTH.rows.length) return `<p class="mu">No sign-ups yet. Sources appear as people sign up.</p>`;
+  const t=k=>GROWTH.rows.reduce((a,r)=>a+(Number(r[k])||0),0);
+  return `<div class="tbl-wrap"><table class="dtable"><thead><tr><th scope="col">Source</th><th scope="col">Free sign-ups</th><th scope="col">Confirmed</th><th scope="col">Accounts</th><th scope="col">Trials</th><th scope="col">Paying</th></tr></thead><tbody>${GROWTH.rows.map(r=>`<tr><th scope="row">${esc(r.src)}</th><td>${r.free_signups|0}</td><td>${r.free_confirmed|0}</td><td>${r.accounts|0}</td><td>${r.trials|0}</td><td>${r.paying|0}</td></tr>`).join("")}<tr><th scope="row">Total</th><td>${t("free_signups")}</td><td>${t("free_confirmed")}</td><td>${t("accounts")}</td><td>${t("trials")}</td><td>${t("paying")}</td></tr></tbody></table></div>
+  <p class="mu" style="margin:8px 0 0">"Unknown" are accounts made before tracking started. Visits by source are in Cloudflare Web Analytics.</p>`;
+}
+async function loadGrowth(){ if(loadGrowth.busy) return; loadGrowth.busy=true;
+  try{ const {data,error}=await SB.rpc("admin_source_funnel",{days:90}); if(error) throw error; GROWTH={rows:data||[]}; }catch(e){ GROWTH={rows:[],err:"Couldn't load sources: "+friendly(e)}; }
+  loadGrowth.busy=false; const el=$("#growth-panel"); if(el) el.outerHTML=growthHTML(); }
 function pageHash(){ const h=location.hash.replace("#",""); if(["privacy","terms","about"].includes(h)&&typeof PAGES!=="undefined"&&PAGES[h]){ const p=PAGES[h]; setTimeout(()=>modal(p[1],p[0],p[2]),0); } }
 window.addEventListener("hashchange",pageHash);
 render();

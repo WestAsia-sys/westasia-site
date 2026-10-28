@@ -20,5 +20,5 @@ else {
     }
     if ($month) { echo "</ul></section>"; }
 }
-echo war_cta() . "</div>";
+echo war_free_box() . war_cta() . "</div>";
 war_foot();

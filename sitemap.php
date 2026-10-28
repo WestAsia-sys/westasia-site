@@ -6,7 +6,7 @@ header("Cache-Control: public, max-age=600");
 $list = war_rpc("public_brief_list", ["n" => 2000]) ?: [];
 $newest = $list ? substr((string)($list[0]["published_at"] ?? ""), 0, 10) : date("Y-m-d");
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
-foreach ([["/", "daily", "1.0"], ["/briefs", "daily", "0.8"], ["/risk-index", "daily", "0.8"]] as [$p, $f, $pr]) {
+foreach ([["/", "daily", "1.0"], ["/briefs", "daily", "0.8"], ["/risk-index", "daily", "0.8"], ["/free", "weekly", "0.7"]] as [$p, $f, $pr]) {
     echo "<url><loc>" . e(WAR_SITE . $p) . "</loc><lastmod>" . e($newest) . "</lastmod><changefreq>$f</changefreq><priority>$pr</priority></url>\n";
 }
 foreach ($list as $r) {

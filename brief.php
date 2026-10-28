@@ -69,6 +69,7 @@ war_head(mb_substr($headline, 0, 70) . " · West Asia Report", $desc, $path, $ld
 <?php endforeach; ?>
   </div></section>
 <?php endif; ?>
+  <?= war_free_box() ?>
   <?= war_cta() ?>
   <nav class="pn" aria-label="More briefs">
     <span><?php if ($prev): ?><a href="<?= e(war_brief_url($prev["brief_date"], $prev["edition"])) ?>">← <?= e(war_edition_label($prev["brief_date"], $prev["edition"])) ?></a><?php endif; ?></span>

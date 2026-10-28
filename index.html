@@ -942,6 +942,8 @@ a.brand:hover b.wm span{color:#D4B46A}.mobilehead a.brand:hover b.wm span{color:
 .idx-cite{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg2,#F3F5F8);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-wrap:anywhere}
 .idx-cta{border-top:3px solid var(--gold)}
 .hero-idx{color:var(--gold);font-weight:700;text-decoration:none}
+.dv-alerted{border:2px solid var(--gold);border-radius:var(--radius);padding:12px;margin:0 0 16px;background:var(--gold-soft)}
+.dv-alerted-h{margin:0 0 8px;font-size:13px;color:var(--gold-ink)}
 .hero-idx:hover{text-decoration:underline}
 .share-kit{margin-top:18px}
 .sk-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
@@ -1690,6 +1692,26 @@ document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[da
 let devAlerts = {level:"major",push:true,email:true,followups:true,quiet:true, ...store.get("devAlerts",{})};
 const DEV_STATUS={developing:["Developing","Reported, not yet confirmed by a second independent source or by officials"],confirmed:["Confirmed","Confirmed by two independent sources or by an official statement"],corrected:["Corrected","New reporting changed this item. The earlier version is shown on the card"]};
 const ETF=iso=>new Date(iso).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",hour12:false});
+let DV_FOCUS=null, DV_FOCUS_MISSING=false;   // a development opened from a push or email alert
+const DV_ID_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function dvFromUrl(u){ try{ const v=new URL(u,location.href).searchParams.get("dv"); return v&&DV_ID_RE.test(v)?v.toLowerCase():null; }catch(e){ return null; } }
+async function openDev(id){
+  if(!id) return; DV_FOCUS=id; DV_FOCUS_MISSING=false;
+  try{ sessionStorage.setItem("war_dv",id) }catch(e){}
+  if(location.hash!=="#developments") location.hash="developments"; else render();
+  if(!LIVE||!signed) return;                       // shown after sign-in (liveBoot / afterAuth)
+  await devLoad();
+  const have=LIVE_DEV&&(LIVE_DEV.rows||[]).some(r=>r.id===id);
+  if(!have&&tier==="pro"){ try{ const {data}=await SB.from("developments").select("*").eq("id",id).maybeSingle();
+      if(data){ LIVE_DEV=LIVE_DEV||{rows:[],at:Date.now()}; LIVE_DEV.extra=data; } else DV_FOCUS_MISSING=true; }catch(e){ console.warn("dev",e) } }
+  try{ sessionStorage.removeItem("war_dv") }catch(e){}
+  if(location.hash==="#developments") render();
+  setTimeout(()=>{ const el=document.getElementById("dv-"+id); if(el){ el.scrollIntoView({block:"center"}); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),2400); } },150);
+}
+(function(){ const id=dvFromUrl(location.href); if(id){ DV_FOCUS=id; try{ sessionStorage.setItem("war_dv",id) }catch(e){}
+  try{ const u=new URL(location.href); u.searchParams.delete("dv"); history.replaceState(null,"",u.pathname+u.search+(u.hash||"#developments")) }catch(e){} } })();
+window.addEventListener("hashchange",()=>{ if(location.hash!=="#developments"){ DV_FOCUS=null; DV_FOCUS_MISSING=false; } });
+if("serviceWorker" in navigator){ navigator.serviceWorker.addEventListener("message",e=>{ const d=e.data||{}; if(d.type==="open-url"){ const id=dvFromUrl(d.url); if(id) openDev(id); else if(d.url){ try{ const u=new URL(d.url,location.href); if(u.origin===location.origin) location.hash=u.hash||"#developments"; }catch(_){} } } }); }
 let LIVE_DEV=null;   // {rows, teaser, at} in live mode
 function devCur(it){ if(it.resolved) return it; return it.upd?{...it,...it.upd,t0:it.t,first:{t:it.t,status:it.status,h:it.h,b:it.b}}:it; }
 function rowToItem(r){ const pub=ETF(r.published_at), upd=ETF(r.updated_at), h=r.history||[];
@@ -1752,7 +1774,11 @@ function viewDevelopments(){
   const lv=[["major","Major events only","Recommended. Usually a few a week."],["all","Every development","Up to 4 a day, plus any major events."],["off","Off",""]];
   const off=devAlerts.level==="off";
   const ns=M.live?[]:devNotifs(M);
-  return head+`<div class="dv-grid"><div>
+  const focus=DV_FOCUS&&LIVE_DEV?(LIVE_DEV.rows||[]).concat(LIVE_DEV.extra?[LIVE_DEV.extra]:[]).find(r=>r.id===DV_FOCUS):null;
+  const focusDay=focus?new Date(focus.published_at).toLocaleDateString("en-US",{timeZone:"America/New_York",weekday:"long",month:"long",day:"numeric"}):"";
+  const pinned=focus?`<section class="dv-alerted" aria-label="The development from your alert"><p class="dv-alerted-h"><b>From your alert</b>${focus.day!==new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"})?` · ${esc(focusDay)}`:""}</p>${devCard(rowToItem(focus))}</section>`
+    :(DV_FOCUS&&DV_FOCUS_MISSING?`<p class="dv-alerted-h">The development from your alert is no longer available. It may have been folded into the latest brief.</p>`:"");
+  return head+`<div class="dv-grid"><div>${pinned}
     <div class="dv-status"><span class="dv-pulse" aria-hidden="true"></span><span><b>Monitoring</b> · ${M.last?`Last check ${M.last} ET · `:"Checked every hour at :17 · "}Next check ${M.next} ET</span><span class="dv-since">Since the morning brief (07:00 ET)</span></div>
     <ol class="dv-time">
       <li class="dv-hour next"><div class="dv-tick"><time>${M.next}</time></div><div class="dv-items"><p class="dv-none">Next check</p></div></li>
@@ -2333,7 +2359,7 @@ PAGES.sources=["Source policy",`<h2>Source policy</h2>
 PAGES.privacy=["Privacy policy",`<h2>Privacy policy</h2>
   <p class="m-sub">Last updated October 16, 2026. This policy explains what West Asia Report collects, why, and the choices you have. West Asia Report is operated by Outreach Consult LLC, Ohio, United States (“we”, “us”).</p>
   <h3>What we collect</h3>
-  <ul><li><b>Account details you give us:</b> name, work email, phone, country, job title, seniority, organization and its type and size, primary function, regions of interest, how you heard about us, and your marketing preference.</li>
+  <ul><li><b>Account details you give us:</b> name, email, country and, if you give them, phone, job title, seniority, organization and its type and size, primary function, regions of interest, how you heard about us, and your marketing preference.</li>
   <li><b>Reading preferences:</b> the exposures you choose for “What this means for you”, your delivery and alert settings, and the countries you follow.</li>
   <li><b>Subscription records:</b> your plan, billing period, trial and renewal dates and payment status. Card details are entered on Stripe’s secure page and never reach our servers.</li>
   <li><b>Alerts:</b> if you turn on notifications, your browser gives us a delivery address for that device. We use it only to send the alerts you chose.</li>
@@ -2418,7 +2444,7 @@ function contactForm(){
   modal(`<h2>Contact us</h2><p class="m-sub">Questions about subscriptions, team licenses, partnerships or press. Outreach Consult replies within one business day. You can also email the editors at <a href="mailto:editor@westasiareport.com">editor@westasiareport.com</a> or reach the firm through <a href="https://outreachconsult.com" target="_blank" rel="noopener">outreachconsult.com</a>.</p>
   <form id="contact-form" class="cform" novalidate>
     <div class="two"><label for="cf-name">Name<input id="cf-name" required autocomplete="name"></label><label for="cf-org">Organization<input id="cf-org" autocomplete="organization"></label></div>
-    <label for="cf-email">Work email<input id="cf-email" type="email" required autocomplete="email"></label>
+    <label for="cf-email">Email<input id="cf-email" type="email" required autocomplete="email"></label>
     <label for="cf-topic">Topic<select id="cf-topic"><option>Subscriptions</option><option>Enterprise</option><option>Partnerships</option><option>Press</option><option>Something else</option></select></label>
     <label for="cf-msg">Message<textarea id="cf-msg" rows="4" required maxlength="5000"></textarea></label>
     <div class="cf-hp" aria-hidden="true"><label for="cf-web">Website<input id="cf-web" tabindex="-1" autocomplete="off"></label></div>
@@ -2655,7 +2681,7 @@ const SIDE_UP={h:"15 days of Pro, on us.",li:["Both daily briefs with the full e
 function viewSignin(){
   return authShell(`<form class="auth-card" id="signin-form" novalidate>
     <h1>Sign in</h1><p class="lede">We’ll email you a one-time code. No password needed.</p>
-    <label class="fld" for="si-email">Work email<input id="si-email" type="email" autocomplete="email" required placeholder="you@company.com"></label>
+    <label class="fld" for="si-email">Email<input id="si-email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
     <p class="form-err" id="si-err" hidden></p>
     ${LIVE&&window.WAR_LIVE.turnstile?`<div class="ts-box" data-ts></div>`:""}
     <button class="btn" type="submit">Email me a sign-in code</button>
@@ -2689,16 +2715,16 @@ function viewSignup(){
     <fieldset><legend>About you</legend><div class="grid-f">
       ${fld("su-first","First name",`<input id="su-first" autocomplete="given-name" required value="${v("first")}">`,1)}
       ${fld("su-last","Last name",`<input id="su-last" autocomplete="family-name" required value="${v("last")}">`,1)}
-      ${fld("su-email","Work email",`<input id="su-email" type="email" autocomplete="email" required placeholder="you@company.com" value="${v("email")}" ${sso?"readonly":""} aria-describedby="su-email-h">`,1,"Use your organization’s address. Personal email services can’t start a trial.",1)}
-      ${fld("su-phone","Phone",`<input id="su-phone" type="tel" autocomplete="tel" placeholder="+1 216 555 0100" value="${v("phone")}" required aria-describedby="su-phone-h">`,1,"Include the country code. Used only for account and billing questions.")}
+      ${fld("su-email","Email",`<input id="su-email" type="email" autocomplete="email" required placeholder="you@example.com" value="${v("email")}" ${sso?"readonly":""} aria-describedby="su-email-h">`,1,"Work or personal. Your briefs and sign-in codes go here.",1)}
+      ${fld("su-phone","Phone",`<input id="su-phone" type="tel" autocomplete="tel" placeholder="+1 216 555 0100" value="${v("phone")}" aria-describedby="su-phone-h">`,0,"Include the country code. Used only for account and billing questions.")}
       ${fld("su-country","Country of residence",`<select id="su-country" autocomplete="country-name" required>${sel(COUNTRIES,"Select a country",p.country)}</select>`,1)}
     </div></fieldset>
     <fieldset><legend>Your work</legend><div class="grid-f">
-      ${fld("su-title","Job title",`<input id="su-title" autocomplete="organization-title" required value="${v("title")}">`,1)}
+      ${fld("su-title","Job title",`<input id="su-title" autocomplete="organization-title" value="${v("title")}">`,0)}
       ${fld("su-seniority","Seniority",`<select id="su-seniority">${sel(SENIORITY,"Select",p.seniority)}</select>`,0)}
-      ${fld("su-org","Organization",`<input id="su-org" autocomplete="organization" required value="${v("org")}">`,1)}
-      ${fld("su-orgtype","Organization type",`<select id="su-orgtype" required>${sel(ORG_TYPES,"Select",p.orgtype)}</select>`,1)}
-      ${fld("su-function","Primary function",`<select id="su-function" required>${sel(FUNCTIONS,"Select",p.func)}</select>`,1)}
+      ${fld("su-org","Organization",`<input id="su-org" autocomplete="organization" value="${v("org")}">`,0)}
+      ${fld("su-orgtype","Organization type",`<select id="su-orgtype">${sel(ORG_TYPES,"Select",p.orgtype)}</select>`,0)}
+      ${fld("su-function","Primary function",`<select id="su-function">${sel(FUNCTIONS,"Select",p.func)}</select>`,0)}
       ${fld("su-size","Organization size",`<select id="su-size">${sel(ORG_SIZES,"Select",p.size)}</select>`,0)}
     </div></fieldset>
     <fieldset><legend>Your subscription <span class="req" aria-hidden="true">*</span></legend>
@@ -2824,10 +2850,11 @@ async function loadMe(){
   const {data:p,error}=await SB.from("profiles").select("*").eq("id",au.id).maybeSingle(); if(error) throw error; if(!p) return null;
   const {data:subs}=await SB.from("subscriptions").select("plan,billing,status,trial_ends_at,current_period_end,stripe_customer_id").eq("user_id",au.id);
   return {p,subs:subs||[],provider:(au.app_metadata&&au.app_metadata.provider)||"email"};}
-const needsProfile=p=>!(p.organization&&p.job_title&&p.country&&p.seats);
+const needsProfile=p=>!(p.first_name&&p.country&&p.seats);
 async function afterAuth(isNewHint){
   const me=await loadMe(); if(!me){toast("We couldn’t load your account. Please sign in again.");return}
   srcSave();
+  try{ const pd=sessionStorage.getItem("war_dv"); if(pd&&DV_ID_RE.test(pd)) setTimeout(()=>openDev(pd),400); }catch(e){}
   const {p,subs,provider}=me;
   if(p.role!=="admin"&&!needsProfile(p)) await applyPartnerRef(p);
   if(p.role!=="admin"&&needsProfile(p)){ pending={isNew:true,sso:provider==="azure"?"Microsoft":provider==="google"?"Google":"email",first:p.first_name||"",last:p.last_name||"",email:p.email,live:true}; signed=false; location.hash="signup"; render(); return }
@@ -2942,6 +2969,7 @@ async function liveBoot(){
       else await afterAuth(true); }
     else if(signed){ signed=false; user=null; store.set("signed",false); store.set("user",null); render(); }
   }catch(err){ console.warn("boot",err) }
+  if(signed){ let pend=null; try{ pend=sessionStorage.getItem("war_dv") }catch(e){} if(pend&&DV_ID_RE.test(pend)) openDev(pend); }
   if(signed) checkoutReturn(); else if(/[?&]checkout=/.test(location.search)){ try{history.replaceState(null,"",location.pathname+(location.hash||""))}catch(e){} }
   devLoad(); setInterval(()=>{ if(document.visibilityState==="visible") devLoad() }, 5*60*1000);
   // Back to a tab or phone app left open for hours: check for a newer brief right away, not at the next 5-minute tick.
@@ -2955,7 +2983,7 @@ document.addEventListener("submit",e=>{
   e.preventDefault();
   if(id==="signin-form"){
     const em=$("#si-email").value.trim();
-    if(!EMAIL_RE.test(em)) return showErr("si-err","Enter your work email, for example you@company.com.");
+    if(!EMAIL_RE.test(em)) return showErr("si-err","Enter your email, for example you@example.com.");
     if(LIVE){ liveSignin(em,e.target); return; }
     pending={email:em,isNew:false,admin:STAFF_RE.test(em)}; location.hash="verify";
   } else if(id==="signup-form"){
@@ -2965,14 +2993,9 @@ document.addEventListener("submit",e=>{
     if(!val("su-first")) bad("su-first","Enter your first name.");
     if(!val("su-last")) bad("su-last","Enter your last name.");
     const em=val("su-email");
-    if(!EMAIL_RE.test(em)) bad("su-email","Enter a valid email address, for example you@company.com.");
-    else if(FREE_MAIL.test(em)) { store.set("rejects",(store.get("rejects",0)|0)+1); ADM=null; } if(EMAIL_RE.test(em)&&FREE_MAIL.test(em)) bad("su-email","Please use your work email. If your organization has none, contact us and we’ll set up your trial.");
-    const ph=val("su-phone"), phd=ph.replace(/\D/g,""); if(!ph) bad("su-phone","Enter your phone number, with country code."); else if(!/^\+?[\d\s().-]{7,24}$/.test(ph)||phd.length<8||phd.length>15) bad("su-phone","Enter a phone number with country code, for example +1 216 555 0100.");
+    if(!EMAIL_RE.test(em)) bad("su-email","Enter a valid email address, for example you@example.com.");
+    const ph=val("su-phone"), phd=ph.replace(/\D/g,""); if(ph&&(!/^\+?[\d\s().-]{7,24}$/.test(ph)||phd.length<8||phd.length>15)) bad("su-phone","Enter a phone number with country code, for example +1 216 555 0100, or leave it empty.");
     if(!val("su-country")) bad("su-country","Select your country.");
-    if(!val("su-title")) bad("su-title","Enter your job title.");
-    if(!val("su-org")) bad("su-org","Enter your organization.");
-    if(!val("su-orgtype")) bad("su-orgtype","Select your organization type.");
-    if(!val("su-function")) bad("su-function","Select your primary function.");
     const seats=(f.querySelector('input[name="su-seats"]:checked')||{}).value; if(!seats) bad("su-seats","Choose who the subscription is for.");
     if(!$("#su-terms").checked) bad("su-terms","You need to accept the Terms of Service and Privacy Policy to continue.");
     if(errs.length){ showErr("su-err",`Please fix ${errs.length} ${errs.length===1?"field":"fields"} marked below.`); const first=$("#"+errs[0])||f.querySelector('input[name="su-seats"]'); if(first){first.focus(); first.scrollIntoView({block:"center",behavior:"smooth"})} return; }
@@ -3379,7 +3402,7 @@ function subDetail(id){
   modal(`<h2>${esc(u.name)}${u.pilot?' <span class="pilot-tag">Pilot</span>':""}</h2><p class="m-sub">${esc(u.title||"")}${u.title?", ":""}${esc(u.org)}</p>
   <div class="dstat">${statusBadge(u.status)}${u.plan?`<span class="pl"><i style="--c:var(${PLAN_C[u.plan]})"></i>${PLAN_L[u.plan]}</span>`:""}${ltv?`<span>Paid to date <b>${money(ltv)}</b></span>`:""}</div>
   <table class="dtable"><tbody>
-  ${row("Email",`<a href="mailto:${esc(u.email)}">${esc(u.email)}</a>`)}${row("Phone",esc(u.phone||""))}${row("Country",esc(u.country||""))}
+  ${row("Email",`<a href="mailto:${esc(u.email)}">${esc(u.email)}</a> <small class="mu">${FREE_MAIL.test(u.email||"")?"personal address":"work address"}</small>`)}${row("Phone",esc(u.phone||""))}${row("Country",esc(u.country||""))}
   ${row("Organization type",esc(u.orgtype||""))}${row("Organization size",esc(u.size||""))}${row("Seniority",esc(u.seniority||""))}${row("Primary function",esc(u.func||""))}
   ${row("Subscription for",u.seats==="team"?"A team":"Just themselves")}${row("Heard about us",esc(u.source||""))}${row("Other regions wanted",esc((u.regionsWanted||[]).join(", ")))}${row("Sign-up method",u.sso?`${u.sso} single sign-on`:"Email code")}${row("Product updates",u.news?"Opted in":"Not opted in")}
   ${row("Signed up",dfmt(u.signup))}${row("Trial ends",u.status==="trial"&&u.trialEnd?dfmt(u.trialEnd):"")}${row("Paying since",u.start?dfmt(u.start):"")}${row("Billing",u.billing&&u.status!=="trial"&&u.status!=="pending"?`${u.billing}${u.plan==="teams"?` · ${u.seatsN} seats`:""} · ${money(D.mrrOf(u))}/mo`:"")}${row("Canceled",u.cancel?dfmt(u.cancel):"")}
@@ -3403,7 +3426,7 @@ function viewAdminSignups(){
   CH.otype=w=>drawHBars(w,{rows:byType});CH.country=w=>drawHBars(w,{rows:byCountry});CH.src=w=>drawHBars(w,{rows:bySrc});CH.fn=w=>drawHBars(w,{rows:byFn});
   const recent=D.subs.slice(0,12);
   return adminShell("admin-signups",`
-  <div class="kpis">${kpi("Sign-ups, last 7 days",last(7).length,"")}${kpi("Sign-ups, last 30 days",l30.length,"")}${kpi("Team requests, 30 days",l30.filter(u=>u.seats==="team").length,"routed to sales")}${kpi("Single sign-on",pct(l30.filter(u=>u.sso).length/(l30.length||1)),"Google or Microsoft")}${kpi("Opted in to updates",pct(l30.filter(u=>u.news).length/(l30.length||1)),"last 30 days")}${D.live?kpi("Signed up, no card yet",D.subs.filter(u=>u.status==="pending").length,"all time"):kpi("Personal emails turned away",D.rejects,"since launch")}</div>
+  <div class="kpis">${kpi("Sign-ups, last 7 days",last(7).length,"")}${kpi("Sign-ups, last 30 days",l30.length,"")}${kpi("Team requests, 30 days",l30.filter(u=>u.seats==="team").length,"routed to sales")}${kpi("Single sign-on",pct(l30.filter(u=>u.sso).length/(l30.length||1)),"Google or Microsoft")}${kpi("Opted in to updates",pct(l30.filter(u=>u.news).length/(l30.length||1)),"last 30 days")}${D.live?kpi("Signed up, no card yet",D.subs.filter(u=>u.status==="pending").length,"all time"):kpi("Work emails",pct(l30.filter(u=>u.email&&!FREE_MAIL.test(u.email)).length/(l30.length||1)),"of sign-ups, last 30 days")}</div>
   ${chart("weekly","Sign-ups per week","Last 16 weeks, week ending on the date shown.",tableView(["Week ending","All sign-ups","Single sign-on"],D.weeks.map(x=>[x.label,x.total,x.sso]),"Weekly sign-ups"),legend([["All sign-ups","--s1","ln"],["Via Google or Microsoft","--s2","ln"]]))}
   ${chart("want","Where subscribers want us to expand",`Optional sign-up question. ${pct(anyWant/(D.subs.length||1))} of sign-ups picked at least one region; the share shown is of all sign-ups.`,tableView(["Region","Sign-ups asking for it","Share of all sign-ups"],byWant.map(x=>[x[0],x[1],pct(x[1]/D.subs.length,1)]),"Regions requested"))}
   <div class="agrid two">
@@ -3613,7 +3636,7 @@ document.addEventListener("submit",e=>{
   if(e.target.id!=="contact-form")return;
   e.preventDefault();
   const n=$("#cf-name").value.trim(), em=$("#cf-email").value.trim(), msg=$("#cf-msg").value.trim(), err=$("#cf-err");
-  const miss=[]; if(!n)miss.push("your name"); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))miss.push("a valid work email"); if(!msg)miss.push("a message");
+  const miss=[]; if(!n)miss.push("your name"); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))miss.push("a valid email"); if(!msg)miss.push("a message");
   if(miss.length){err.textContent="Please add "+miss.join(", ")+".";err.hidden=false;return}
   // Spam checks: a hidden field people never see, and a minimum time to fill in the form
   if(($("#cf-web")||{}).value){ $("#modal .m-box").innerHTML=`<button type="button" class="m-x" data-close aria-label="Close">×</button><h2>Thanks</h2><p class="m-sub">Your message has been received.</p>`; return }

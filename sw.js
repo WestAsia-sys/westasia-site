@@ -15,13 +15,19 @@ self.addEventListener("push", (e) => {
   }));
 });
 
+// Tapping an alert opens that development: in the app if it's already open (the page
+// loads the latest developments and pins this one), otherwise in a new window.
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || "/#developments";
-  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((wins) => {
-    for (const w of wins) {
-      if (w.url.startsWith(self.location.origin)) { w.navigate(url); return w.focus(); }
+  const url = new URL((e.notification.data && e.notification.data.url) || "/#developments", self.location.origin).href;
+  e.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    const win = wins.find((w) => w.url.startsWith(self.location.origin));
+    if (win) {
+      try { await win.focus(); } catch (_) {}
+      try { win.postMessage({ type: "open-url", url }); return; } catch (_) {}
+      try { await win.navigate(url); return; } catch (_) {}
     }
-    return self.clients.openWindow(url);
-  }));
+    await self.clients.openWindow(url);
+  })());
 });

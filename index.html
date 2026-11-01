@@ -1402,7 +1402,7 @@ BRIEF1010.stats.sources = new Set(BRIEF1010.sections.flatMap(s=>s.items.flatMap(
 BRIEF1010.stats.items = BRIEF1010.sections.reduce((n,s)=>n+s.items.length,0);
 EDITIONS.unshift(BRIEF1010);
 
-/* ------------------------------------------------------------------ Developments: hourly checks after the morning brief (ET)
+/* ------------------------------------------------------------------ Developments: checks through the day after the morning brief (ET)
    status: developing = reported, not yet confirmed by a second independent source or by officials
            confirmed  = two independent sources, or an official statement
    level:  major = triggers instant alerts; notable = feed only */
@@ -1688,7 +1688,12 @@ document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[da
 
 /* ------------------------------------------------------------------ For you */
 
-/* ------------------------------------------------------------------ Developments (Pro): hourly verified updates between briefs */
+/* ------------------------------------------------------------------ Developments (Pro): verified updates between briefs */
+// The check runs at 17 past these UTC hours (see developments.yml in the pipeline); keep the two in step.
+const DV_SLOTS_UTC=[0,2,4,6,8,12,14,16,18,22];
+function dvNextCheck(){ const now=new Date(), nx=new Date(now); nx.setUTCMinutes(17,0,0);
+  for(let k=0;k<48;k++){ if(nx>now&&DV_SLOTS_UTC.includes(nx.getUTCHours())) return nx; nx.setUTCHours(nx.getUTCHours()+1); }
+  return nx; }
 let devAlerts = {level:"major",push:true,email:true,followups:true,quiet:true, ...store.get("devAlerts",{})};
 const DEV_STATUS={developing:["Developing","Reported, not yet confirmed by a second independent source or by officials"],confirmed:["Confirmed","Confirmed by two independent sources or by an official statement"],corrected:["Corrected","New reporting changed this item. The earlier version is shown on the card"]};
 const ETF=iso=>new Date(iso).toLocaleTimeString("en-US",{timeZone:"America/New_York",hour:"2-digit",minute:"2-digit",hour12:false});
@@ -1719,11 +1724,11 @@ function rowToItem(r){ const pub=ETF(r.published_at), upd=ETF(r.updated_at), h=r
     t:h.length?upd:pub,t0:h.length?pub:null,first:h.length?{t:pub,status:h[0].status,h:h[0].headline,b:h[0].body}:null,alerted:r.alerted}; }
 function devModel(){
   if(LIVE&&LIVE_DEV){ const items=(LIVE_DEV.rows||[]).map(rowToItem); const now=new Date();
-    const nx=new Date(now); nx.setMinutes(17,0,0); if(nx<=now) nx.setHours(nx.getHours()+1);
+    const nx=dvNextCheck();
     const groups={}; (LIVE_DEV.rows||[]).forEach((r,i)=>{const k=ETF(r.published_at);(groups[k]=groups[k]||[]).push(items[i])});
     return {live:true,checks:Object.keys(groups).sort().map(k=>({t:k,items:groups[k]})),all:items,last:null,next:ETF(nx.toISOString()),day:new Date().toLocaleDateString("en-US",{timeZone:"America/New_York",weekday:"long",month:"long",day:"numeric"}),teaser:LIVE_DEV.teaser};
   }
-  if(LIVE){ const nx=new Date(); nx.setMinutes(17,0,0); if(nx<=new Date()) nx.setHours(nx.getHours()+1);
+  if(LIVE){ const nx=dvNextCheck();
     return {live:true,checks:[],all:[],last:null,next:ETF(nx.toISOString()),day:new Date().toLocaleDateString("en-US",{timeZone:"America/New_York",weekday:"long",month:"long",day:"numeric"}),teaser:null}; }
   return {live:false,checks:DEV_CHECKS,all:DEV_ALL,last:DEV_CHECKS[DEV_CHECKS.length-1].t,next:DEV_NEXT,day:DEV_DAY};
 }
@@ -1746,7 +1751,7 @@ function devStrip(){
   if(tier!=="pro"){ const n=M.teaser?M.teaser.count:items.length, mj=M.teaser?M.teaser.major:items.filter(x=>x.level==="major").length;
     return `<section class="dv-strip locked" aria-label="Developments since this brief">
     <div class="dv-head"><h2><span class="dv-pulse" aria-hidden="true"></span>Developments since this brief</h2><span class="lock">PRO</span></div>
-    <p class="dv-lockp"><b>${n} verified ${n===1?"update":"updates"} today</b>${mj?`, including ${mj} major ${mj===1?"event":"events"}`:""}. Pro checks every hour between briefs and alerts you to major events.</p>
+    <p class="dv-lockp"><b>${n} verified ${n===1?"update":"updates"} today</b>${mj?`, including ${mj} major ${mj===1?"event":"events"}`:""}. Pro checks our sources throughout the day and alerts you to major events.</p>
     ${items.length?`<div class="dv-blur" aria-hidden="true">${items.slice(0,2).map(x=>`<div><b>${devCur(x).t} ET</b> ${esc(devCur(x).h)}</div>`).join("")}</div>`:""}
     <button class="btn" type="button" data-go-pro>${upgradeMode()?"See Pro plans":"Preview as Pro"}</button></section>`; }
   if(!items.length) return `<section class="dv-strip" aria-label="Developments since this brief"><div class="dv-head"><h2><span class="dv-pulse" aria-hidden="true"></span>Developments since this brief</h2><span class="dv-chk">Next check ${M.next} ET</span></div><p class="dv-lockp">No major developments since this brief.</p></section>`;
@@ -1765,8 +1770,8 @@ function devNotifs(M){
 function notifHTML(n){return `<div class="nt"><div class="nt-top"><img src="${WA_MARK_D}" alt=""><span>West Asia Report</span><time>${n.t}</time></div><b>${esc(n.title)}</b><p>${esc(n.body)}</p>${n.follow?'<small>Follow-up · replaces the earlier alert</small>':""}</div>`}
 function viewDevelopments(){
   const pro=tier==="pro", M=devModel();
-  const head=viewHead("Developments","Verified updates every hour between the 07:00 and 17:00 briefs. Each one is folded into the next brief with full context.","","",`<span class="sample">${M.live?"Today":"Live sample"} · ${M.day}</span>`);
-  if(!pro) return head+`<div class="dv-gate">${gate("Developments are in Pro","Every hour between briefs, we check our vetted sources and publish only what is significant and verified. Items reported by a single outlet are labeled Developing until a second independent source confirms. Major events trigger an instant alert.")}
+  const head=viewHead("Developments","Verified updates throughout the day, between the 07:00 and 17:00 briefs. Each one is folded into the next brief with full context.","","",`<span class="sample">${M.live?"Today":"Live sample"} · ${M.day}</span>`);
+  if(!pro) return head+`<div class="dv-gate">${gate("Developments are in Pro","Throughout the day, between briefs, we check our vetted sources and publish only what is significant and verified. Items reported by a single outlet are labeled Developing until a second independent source confirms. Major events trigger an instant alert.")}
     ${M.all.length?`<div class="dv-blur big" aria-hidden="true">${M.all.slice().reverse().slice(0,3).map(x=>devCard(x,true)).join("")}</div>`:""}</div>`;
   const rows=M.checks.slice().reverse().map(c=>c.items.length
     ? `<li class="dv-hour"><div class="dv-tick"><time>${c.t}</time></div><div class="dv-items">${c.items.map(x=>devCard(x.resolved?x:{...x,t:c.t})).join("")}</div></li>`
@@ -1779,7 +1784,7 @@ function viewDevelopments(){
   const pinned=focus?`<section class="dv-alerted" aria-label="The development from your alert"><p class="dv-alerted-h"><b>From your alert</b>${focus.day!==new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"})?` · ${esc(focusDay)}`:""}</p>${devCard(rowToItem(focus))}</section>`
     :(DV_FOCUS&&DV_FOCUS_MISSING?`<p class="dv-alerted-h">The development from your alert is no longer available. It may have been folded into the latest brief.</p>`:"");
   return head+`<div class="dv-grid"><div>${pinned}
-    <div class="dv-status"><span class="dv-pulse" aria-hidden="true"></span><span><b>Monitoring</b> · ${M.last?`Last check ${M.last} ET · `:"Checked every hour at :17 · "}Next check ${M.next} ET</span><span class="dv-since">Since the morning brief (07:00 ET)</span></div>
+    <div class="dv-status"><span class="dv-pulse" aria-hidden="true"></span><span><b>Monitoring</b> · ${M.last?`Last check ${M.last} ET · `:"Checked throughout the day · "}Next check ${M.next} ET</span><span class="dv-since">Since the morning brief (07:00 ET)</span></div>
     <ol class="dv-time">
       <li class="dv-hour next"><div class="dv-tick"><time>${M.next}</time></div><div class="dv-items"><p class="dv-none">Next check</p></div></li>
       ${rows||'<li class="dv-hour quiet"><div class="dv-tick"><time>—</time></div><div class="dv-items"><p class="dv-none">No major developments yet today.</p></div></li>'}
@@ -2015,7 +2020,7 @@ document.addEventListener("click",async e=>{ const b=e.target.closest("[data-rem
   btnBusy(b,true,"Starting…");
   try{
     const j=await callFn("remake-short",{brief_date:b.dataset.date,edition:b.dataset.ed,story:story||null});
-    SHORT_MSG=j.started?"Making the new Short. It appears here in about 3 to 4 minutes (this panel checks on its own).":"Queued. It will be made at the next hourly run, within the hour.";
+    SHORT_MSG=j.started?"Making the new Short. It appears here in about 3 to 4 minutes (this panel checks on its own).":"Queued. It will be made at the next scheduled run, within about two hours.";
     let n=0; const iv=setInterval(async()=>{ n++; await loadShareKit();
       const now=((SHARE||[]).find(x=>x.channel==="short")||{}).card_url||"";
       if(now&&now!==before){ SHORT_MSG="New Short ready."; clearInterval(iv); if(location.hash==="#admin") render(); }
@@ -2492,13 +2497,13 @@ function footerHTML(){const f=document.querySelector(".site-foot");return f?f.ou
 
 /* ---- plans (single source for landing page and in-app Plans) ---- */
 const PLANS=[
- {k:"essential",name:"Essential",m:19,y:190,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-Commentary from the region’s press","-“What this means for you”","-Hourly Developments and alerts","-Friday weekly report"]},
- {k:"pro",name:"Pro",m:69,y:690,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Commentary: what influential writers across the region are arguing, with the key points of each piece, from five languages","Developments: verified updates every hour between briefs, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
+ {k:"essential",name:"Essential",m:19,y:190,feat:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Deadlines calendar","Archive of the last 30 days, with search","-Commentary from the region’s press","-“What this means for you”","-Developments and alerts through the day","-Friday weekly report"]},
+ {k:"pro",name:"Pro",m:69,y:690,feat:["Everything in Essential","“What this means for you” for your exposures","“How each side frames it” on every major story","Commentary: what influential writers across the region are arguing, with the key points of each piece, from five languages","Developments: verified updates throughout the day, with instant alerts","Risk trend arrows and rating history","Add deadlines to Outlook, Google or Apple Calendar","Weekly report every Friday, with a PDF to forward","Unlimited archive: every brief since launch, with search"]},
  {k:"teams",name:"Enterprise",y:0,feat:["Everything in Pro for your whole team or organization","Five readers or more, each with their own account","Accounts set up for you; readers added or changed on request","One annual agreement and invoice","The weekly PDF, ready to brief a board or clients"]}
 ];
 const PUBLIC_COMPACT=false;   // set to false to show the full feature lists on the landing page
 const SHORT_FEAT={essential:["Morning and afternoon briefs with executive summary","Web and email delivery","“How each side frames it” on the lead story","Risk dashboard with current ratings","Archive of the last 30 days"],
-  pro:["Everything in Essential","Commentary from the region’s press, with key points","“What this means for you” for your exposures","Developments: verified updates every hour, with alerts","Weekly report every Friday, with a PDF","Unlimited archive, with search"],
+  pro:["Everything in Essential","Commentary from the region’s press, with key points","“What this means for you” for your exposures","Developments: verified updates throughout the day, with alerts","Weekly report every Friday, with a PDF","Unlimited archive, with search"],
   teams:["Everything in Pro for your whole team","Five readers or more, set up for you","One annual agreement and invoice"]};
 const COMPARE=[
   ["Morning and afternoon briefs with executive summary","✓","✓","✓"],
@@ -2509,7 +2514,7 @@ const COMPARE=[
   ["Deadlines calendar","View","View and add to your calendar","View and add to your calendar"],
   ["Archive, with search","Last 30 days","Every brief since launch","Every brief since launch"],
   ["“What this means for you”","—","✓","✓"],
-  ["Developments: verified updates every hour, with alerts","—","✓","✓"],
+  ["Developments: verified updates throughout the day, with alerts","—","✓","✓"],
   ["Weekly report every Friday, with a PDF","—","✓","✓"],
   ["People","1","1","5 or more"],
   ["Billing","Monthly or yearly","Monthly or yearly","Annual agreement and invoice"],
@@ -2629,7 +2634,7 @@ function viewHome(){
     <div class="sec-head"><div class="pub-eyebrow">What you get</div><h2>Everything a decision-maker needs before the first meeting of the day.</h2><p>Each edition opens with an executive summary, then goes country by country. Every item links to its sources.</p></div>
     <div class="feat">
       ${fcard("--t-israel","sum","Executive summary, then country by country","The bottom line first, then Iran and the Gulf, Israel and Palestine, Lebanon, Syria, Iraq, Yemen and the Red Sea, Turkey, Egypt, Jordan and North Africa, plus markets.")}
-      ${fcard("--gold","pulse","Developments, every hour","Between the two briefs, every hour: verified updates on anything significant, labeled Developing until a second independent source confirms. Instant alerts for major events.",true)}
+      ${fcard("--gold","pulse","Developments, through the day","Between the two briefs, throughout the day: verified updates on anything significant, labeled Developing until a second independent source confirms. Instant alerts for major events.",true)}
       ${fcard("--t-syria","risk","Risk dashboard","Political, security and sanctions ratings for every country, and a monitor for Hormuz, the Bab el-Mandeb and Gulf export routes.")}
       ${fcard("--f-doh","frames","How each side frames it","For major stories, each government and party in its own words, quoted and attributed side by side. No editorializing.")}
       ${fcard("--t-tech","you","What this means for you","Set your exposures, from operations in Iraq to Red Sea shipping, and each brief adds notes written for them.",true)}
@@ -2676,7 +2681,7 @@ function authShell(inner, side){
   return `<div class="auth"><aside class="auth-side">${brandHTML()}<h2>${side.h}</h2><ul>${side.li.map(x=>`<li>${x}</li>`).join("")}</ul><a href="#home" style="color:#C9D4E2;font-size:13px">← Back to the site</a><div class="auth-by"><span class="oc-by">Built and powered by</span>${ocLogo()}</div></aside><main class="auth-main"><a class="auth-mlogo" href="#home" aria-label="West Asia Report, go to the home page"><img src="${WA_LOCK_L}" alt="West Asia Report. Risk, decoded."></a>${inner}</main></div>`;
 }
 const SIDE_IN={h:"Welcome back.",li:["Today’s briefs at 07:00 and 17:00 ET","Your exposures, alerts and settings, where you left them","Every past brief in your archive"]};
-const SIDE_UP={h:"15 days of Pro, on us.",li:["Both daily briefs with the full executive summary","“What this means for you” for your exposures","Hourly Developments and the Friday weekly report","Risk dashboard, alerts and the full archive","No charge for 15 days; cancel anytime before"]};
+const SIDE_UP={h:"15 days of Pro, on us.",li:["Both daily briefs with the full executive summary","“What this means for you” for your exposures","Developments through the day and the Friday weekly report","Risk dashboard, alerts and the full archive","No charge for 15 days; cancel anytime before"]};
 
 function viewSignin(){
   return authShell(`<form class="auth-card" id="signin-form" novalidate>
@@ -3530,7 +3535,7 @@ function viewAdminBriefsLive(D){
   CH.devs=w=>drawLines(w,{labels:days.map(x=>x.label),fmt:v=>Math.round(v).toString(),series:[{name:"Developments",c:"--s1",values:days.map(x=>x.devs)},{name:"Alerts sent",c:"--s2",values:days.map(x=>x.alerts)}]});
   const etf=d=>d.toLocaleString("en-US",{timeZone:"America/New_York",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
   return adminShell("admin-briefs",`
-  <div class="kpis">${kpi("Briefs published, 30 days",b30.length,b30.length?`on time: ${b30.filter(b=>b.onTime).length} of ${b30.length}`:"")}${kpi("Developments, 30 days",D.devs,"verified hourly updates")}${kpi("Alerts sent, 30 days",D.alerts,"push and email")}${kpi("Average build time",b30.length?avg(b30.map(b=>b.minutes)).toFixed(1)+" min":"—","per brief")}${kpi("Items fixed by fact-check",checked?pct(fixed/checked,1):"—","last 30 days")}${kpi("Items dropped by fact-check",checked?pct(dropped/checked,1):"—","last 30 days")}</div>
+  <div class="kpis">${kpi("Briefs published, 30 days",b30.length,b30.length?`on time: ${b30.filter(b=>b.onTime).length} of ${b30.length}`:"")}${kpi("Developments, 30 days",D.devs,"verified updates")}${kpi("Alerts sent, 30 days",D.alerts,"push and email")}${kpi("Average build time",b30.length?avg(b30.map(b=>b.minutes)).toFixed(1)+" min":"—","per brief")}${kpi("Items fixed by fact-check",checked?pct(fixed/checked,1):"—","last 30 days")}${kpi("Items dropped by fact-check",checked?pct(dropped/checked,1):"—","last 30 days")}</div>
   <p class="anote">Email opens aren’t tracked: tracking is switched off to keep briefs out of spam folders.</p>
   <div class="agrid two">
     ${chart("items","Items per brief","Last 20 editions.",tableView(["Edition","Items"],last.map(b=>[b.date+" "+b.edition,b.items]),"Items per brief"))}
@@ -3676,7 +3681,7 @@ function viewPartner(){
   return head+`<section class="partner-hero"><div class="wrap partner-wrap">
       <p class="eyebrow">Member offer</p>
       <h1>West Asia Report for members of ${esc(P.name)}</h1>
-      <p class="lede">Twice-daily briefs on the politics, security and markets of West Asia, delivered at 07:00 and 17:00 ET, with verified hourly updates between editions.</p>
+      <p class="lede">Twice-daily briefs on the politics, security and markets of West Asia, delivered at 07:00 and 17:00 ET, with verified updates between editions.</p>
       <ul class="partner-perks">
         <li><b>${P.trial_days}-day free trial</b><span>Full Pro access. Cancel anytime before it ends and you pay nothing.</span></li>
         ${P.member_discount_pct?`<li><b>${P.member_discount_pct}% off your first year</b><span>Applied automatically at checkout, on any plan, monthly or yearly.</span></li>`:""}
@@ -3684,7 +3689,7 @@ function viewPartner(){
       ${already?`<p class="mu">You already have an active plan on this account.</p><p><a class="btn-gold" href="#today">Open the app</a></p>`:`<p><a class="btn-gold" href="#signup" data-plan-go="pro|trial">Start your ${P.trial_days}-day free trial</a></p>${signed?"":`<p class="mu small">Already have an account? <a href="#signin">Sign in</a> and the member offer is applied when you add your card.</p>`}`}
     </div></section>
     <section class="pub-sec"><div class="wrap partner-wrap"><h2>What members get</h2>
-      <ul class="partner-list"><li>Morning and afternoon briefs with an executive summary</li><li>How each side frames the lead story, in its own words, from media across the region</li><li>Verified hourly developments and alerts</li><li>The West Asia Risk Index, country by country</li><li>Commentary from across the region and a weekly report every Friday</li></ul>
+      <ul class="partner-list"><li>Morning and afternoon briefs with an executive summary</li><li>How each side frames the lead story, in its own words, from media across the region</li><li>Verified developments and alerts through the day</li><li>The West Asia Risk Index, country by country</li><li>Commentary from across the region and a weekly report every Friday</li></ul>
       <p class="partner-indep">Offered in partnership with ${esc(P.name)}. West Asia Report is editorially independent: partners do not review or influence its content, and we never share subscriber information with them.</p>
     </div></section>${footerHTML()}`;
 }

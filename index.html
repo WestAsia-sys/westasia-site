@@ -2681,6 +2681,7 @@ function authShell(inner, side){
   return `<div class="auth"><aside class="auth-side">${brandHTML()}<h2>${side.h}</h2><ul>${side.li.map(x=>`<li>${x}</li>`).join("")}</ul><a href="#home" style="color:#C9D4E2;font-size:13px">← Back to the site</a><div class="auth-by"><span class="oc-by">Built and powered by</span>${ocLogo()}</div></aside><main class="auth-main"><a class="auth-mlogo" href="#home" aria-label="West Asia Report, go to the home page"><img src="${WA_LOCK_L}" alt="West Asia Report. Risk, decoded."></a>${inner}</main></div>`;
 }
 const SIDE_IN={h:"Welcome back.",li:["Today’s briefs at 07:00 and 17:00 ET","Your exposures, alerts and settings, where you left them","Every past brief in your archive"]};
+const SIDE_BUY={h:"The whole region, every side.",li:["Both daily briefs with the full executive summary","“What this means for you” for your exposures","Developments through the day and the Friday weekly report","Risk dashboard, alerts and the full archive","Cancel anytime from your account"]};
 const SIDE_UP={h:"15 days of Pro, on us.",li:["Both daily briefs with the full executive summary","“What this means for you” for your exposures","Developments through the day and the Friday weekly report","Risk dashboard, alerts and the full archive","No charge for 15 days; cancel anytime before"]};
 
 function viewSignin(){
@@ -2782,7 +2783,7 @@ function viewActivate(){
     <details class="redeem"><summary>Have a press, campus or partner code?</summary>
       <form id="redeem-form" class="redeem-form" novalidate><label for="rd-code">Your code<input id="rd-code" autocomplete="off" autocapitalize="characters" placeholder="PRESS-1A2B3C4D"></label><button class="btn ghost" type="submit">Use code</button></form>
       <p class="form-err" id="rd-err" hidden></p></details>
-  </div>`, SIDE_UP);
+  </div>`, buy?SIDE_BUY:SIDE_UP);
 }
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-abill],[data-aplan],[data-activate]"); if(!t) return;
@@ -3582,7 +3583,7 @@ function render(){setMarks();
   $("#public").hidden=!pub; $("#shell").hidden=pub; $("#tabbar").hidden=pub;
   document.body.classList.toggle("is-public",pub);
   if(pub){ if((v==="welcome"||v==="activate")&&!signed){location.hash="signup";return}
-    $("#public").innerHTML={home:viewHome,signin:viewSignin,signup:viewSignup,verify:viewVerify,activate:viewActivate,welcome:viewWelcome,index:viewIndex,partner:viewPartner}[v](); if(v==="home") setupDemo(); if(v==="index") requestAnimationFrame(drawIndexChart); if(LIVE) pruneSSO(); return; }
+    $("#public").innerHTML={home:viewHome,signin:viewSignin,signup:viewSignup,verify:viewVerify,activate:viewActivate,welcome:viewWelcome,index:viewIndex,partner:viewPartner}[v](); if(v==="home"){ setupDemo(); if(location.hash==="#pricing"||location.hash==="#plans") setTimeout(()=>{const el=document.getElementById("pricing"); if(el) el.scrollIntoView({block:"start"})},60); } if(v==="index") requestAnimationFrame(drawIndexChart); if(LIVE) pruneSSO(); return; }
   $("#public").innerHTML="";
   const adm=v.startsWith("admin");
   renderNav(adm?"admin":v);renderTier();renderAcct();

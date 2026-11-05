@@ -113,12 +113,33 @@ function war_free_box(string $id = "fb", string $title = "Get the Monday brief f
     if (!$assets) {
         $assets = true;
         $out .= "<script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script>"
-              . "<script>" . WAR_FREE_JS . "</script>";
+              . war_ads_tag() . "<script>" . WAR_FREE_JS . "</script>";
     }
     return $out;
 }
 
 const WAR_TURNSTILE = "0x4AAAAAAFfmS4pK5mPvl38P";
+
+/* Google Ads conversion measurement, loaded only on pages with the free sign-up form.
+   It records one thing: that a free sign-up came from one of our ads. No remarketing or
+   ad personalization; in the EU/EEA, UK and Switzerland it runs without cookies
+   (consent mode, storage denied). WAR_ADS_SEND_TO is "AW-.../label" from the
+   conversion action "Free Monday sign-up"; while it is empty, nothing loads. */
+const WAR_ADS_ID = "AW-18533133737";
+const WAR_ADS_SEND_TO = "AW-18533133737/4W81COvk3LIdEKnbpIVF";
+const WAR_ADS_DENY = ["AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT",
+                      "NL","PL","PT","RO","SK","SI","ES","SE","IS","LI","NO","GB","CH"];
+
+function war_ads_tag(): string {
+    if (WAR_ADS_SEND_TO === "") return "";
+    $deny = json_encode(WAR_ADS_DENY);
+    return "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+         . "gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',region:$deny});"
+         . "gtag('consent','default',{ad_storage:'granted',ad_user_data:'granted',ad_personalization:'denied',analytics_storage:'denied'});"
+         . "gtag('js',new Date());gtag('config','" . WAR_ADS_ID . "',{allow_ad_personalization_signals:false});"
+         . "window.WAR_ADS_SEND_TO=" . json_encode(WAR_ADS_SEND_TO) . ";</script>"
+         . "<script async src=\"https://www.googletagmanager.com/gtag/js?id=" . WAR_ADS_ID . "\"></script>";
+}
 
 const WAR_FREE_JS = <<<'JS'
 document.addEventListener("submit",async function(e){
@@ -132,7 +153,8 @@ document.addEventListener("submit",async function(e){
     var r=await fetch(WAR_DB+"/functions/v1/free-signup",{method:"POST",headers:{"Content-Type":"application/json",apikey:WAR_PK,Authorization:"Bearer "+WAR_PK},
       body:JSON.stringify({email:em,token:t,src:warSrc(),website:f.querySelector(".hp").value})});
     var j={}; try{ j=await r.json(); }catch(_){}
-    if(r.ok){ var p=document.createElement("p"); p.className="ok"; p.innerHTML="<b>Check your inbox.</b> We sent a confirmation link to <span></span>. Click it, and your first free brief arrives Monday at 07:00 ET.";
+    if(r.ok){ try{ if(window.gtag&&window.WAR_ADS_SEND_TO) gtag("event","conversion",{send_to:window.WAR_ADS_SEND_TO}); }catch(_){}
+      var p=document.createElement("p"); p.className="ok"; p.innerHTML="<b>Check your inbox.</b> We sent a confirmation link to <span></span>. Click it, and your first free brief arrives Monday at 07:00 ET.";
       p.querySelector("span").textContent=em; f.replaceWith(p); return; }
     m.textContent=j.error||"Something went wrong. Please try again.";
   }catch(_){ m.textContent="We couldn't reach the server. Please check your connection and try again."; }

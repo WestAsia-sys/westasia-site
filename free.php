@@ -55,11 +55,12 @@ war_head("The Monday brief, free · West Asia Report", $desc, "/free", [war_org(
 <section class="hero"><div class="wrap">
   <p class="eyebrow">Free every Monday · No card</p>
   <h1>Know what's moving in West Asia, and how each side tells it.</h1>
-  <p>Every Monday at 07:00 ET, our full morning brief lands in your inbox: the week's turning points across Iran, Israel and Palestine, Lebanon, Syria, Iraq, Yemen, the Gulf and Turkey, sourced in five languages, with risk ratings for each.</p>
+  <p>Our full Monday morning brief, free in your inbox at 07:00 ET.</p>
 </div></section>
 <div class="wrap">
-  <?= war_free_box("fb", "Get the Monday brief free") ?>
-  <section class="card"><h2>What you get</h2><ul class="ticks">
+  <?= war_free_box("fb", "Get it free every Monday", "Just your email. No card, no account.") ?>
+  <section class="card"><h2>What you get</h2>
+  <p>The week's turning points across Iran, Israel and Palestine, Lebanon, Syria, Iraq, Yemen, the Gulf and Turkey, sourced in five languages, with risk ratings for each.</p><ul class="ticks">
     <li>An executive summary you can read in two minutes.</li>
     <li>Every theater, with what happened, who said what, and why it matters.</li>
     <li>"How each side frames it": governments and parties in their own words, translated where needed.</li>

@@ -126,7 +126,7 @@ document.addEventListener("submit",async function(e){
   var m=f.querySelector(".msg"), b=f.querySelector("button"), em=f.querySelector("input[type=email]").value.trim();
   var t=(f.querySelector('[name="cf-turnstile-response"]')||{}).value||"";
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(em)){ m.textContent="Please enter a valid email address."; return; }
-  if(!t){ m.textContent="Please complete the security check above the button."; return; }
+  if(!t){ m.textContent="One moment: the security check below is finishing. Please press the button again."; return; }
   b.disabled=true; var label=b.textContent; b.textContent="Sending…"; m.textContent="";
   try{
     var r=await fetch(WAR_DB+"/functions/v1/free-signup",{method:"POST",headers:{"Content-Type":"application/json",apikey:WAR_PK,Authorization:"Bearer "+WAR_PK},
